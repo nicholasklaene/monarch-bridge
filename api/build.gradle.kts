@@ -1,5 +1,5 @@
 // :api module — Spring Boot 3 + Kotlin 2 + minimal HTTP wrapper.
-// No JPA, no Flyway, no Kafka. account-gateway is stateless: it loads a session token
+// No JPA, no Flyway, no Kafka. monarch-proxy is stateless: it loads a session token
 // from disk and proxies GraphQL calls to api.monarch.com.
 
 plugins {
@@ -12,7 +12,7 @@ plugins {
     alias(libs.plugins.kover)
 }
 
-group = "com.klaenerealestate"
+group = "com.nicholasklaene"
 version = "0.1.0-SNAPSHOT"
 
 java {
@@ -54,19 +54,19 @@ dependencies {
 // Explicitly set the Spring Boot application main class so bootJar doesn't
 // get confused by MonarchBootstrapMain (the interactive CLI entry point).
 springBoot {
-    mainClass.set("com.klaenerealestate.accountgateway.ApplicationKt")
+    mainClass.set("com.nicholasklaene.monarchproxy.ApplicationKt")
 }
 
 // --- Bootstrap CLI task ---
 // One-time auth setup. Prompts for email/password/MFA, writes session JSON to disk.
-// NOT auto-run; the user invokes this when first setting up account-gateway.
+// NOT auto-run; the user invokes this when first setting up monarch-proxy.
 tasks.register<JavaExec>("bootstrapMonarch") {
     group = "application"
     description =
         "One-time interactive Monarch Money authentication. Prompts for email/password/MFA and " +
         "writes a session JSON file the running service loads. Re-run if the session expires."
     classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("com.klaenerealestate.accountgateway.MonarchBootstrapMain")
+    mainClass.set("com.nicholasklaene.monarchproxy.MonarchBootstrapMain")
     standardInput = System.`in`
 }
 
@@ -93,14 +93,14 @@ kover {
             excludes {
                 classes(
                     // Spring entry point — implicitly exercised by every @SpringBootTest
-                    "com.klaenerealestate.accountgateway.Application*",
-                    "com.klaenerealestate.accountgateway.ApplicationKt",
+                    "com.nicholasklaene.monarchproxy.Application*",
+                    "com.nicholasklaene.monarchproxy.ApplicationKt",
                     // Interactive CLI — can't unit-test without stdin
-                    "com.klaenerealestate.accountgateway.MonarchBootstrapMain*",
+                    "com.nicholasklaene.monarchproxy.MonarchBootstrapMain*",
                     // Live-network auth — covered by the future `monarch-auth-payload-verify`
                     // ticket once we have a real session to exercise it against. WireMock
                     // tests would test our own assumptions, not Monarch's actual contract.
-                    "com.klaenerealestate.accountgateway.services.MonarchAuth*",
+                    "com.nicholasklaene.monarchproxy.services.MonarchAuth*",
                 )
             }
         }

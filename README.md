@@ -1,8 +1,8 @@
-# account-gateway
+# monarch-proxy
 
-A thin pass-through HTTP wrapper over [Monarch Money's](https://www.monarchmoney.com) GraphQL API, used inside the KRE systems mesh.
+Personal thin pass-through HTTP wrapper over [Monarch Money's](https://www.monarchmoney.com) GraphQL API.
 
-**Architecturally, this is NOT a typical KRE microservice.** No database, no events, no outbox. Just a stateless Kotlin/Spring Boot service that holds a session token in a local JSON file and proxies GraphQL calls to `api.monarch.com`. Same shape as `local-llm-service` (which is also a stateless wrapper), just in Kotlin.
+Stateless Kotlin/Spring Boot service that holds a session token in a local JSON file and proxies GraphQL calls to `api.monarch.com`. No database, no events. Lives in personal GitHub because the data (every account, transaction, and balance reachable through Monarch) is personal. If/when business tooling needs a slice of this data, the bright line is HTTP — a separate `account-gateway` would call this service and filter to the business-relevant subset.
 
 ## What it owns
 
@@ -15,8 +15,8 @@ A thin pass-through HTTP wrapper over [Monarch Money's](https://www.monarchmoney
 
 - No persistent database (Monarch is the source of truth).
 - No event mesh (Monarch data doesn't change minute-to-minute).
-- No per-source supersession or fact tables (those live in PDS / ES; account-gateway is pass-through).
-- No cross-service identity resolution (caller resolves `owner_entity_id` themselves).
+- No per-source supersession or fact tables (Monarch handles dedup; this service is pure pass-through).
+- No cross-account identity resolution (callers attribute accounts to entities themselves).
 
 ## Endpoints (after bootstrap)
 
@@ -57,7 +57,7 @@ Or with a TOTP secret for non-interactive use:
 ./gradlew :api:bootstrapMonarch --args='--mfa-secret=JBSWY3DPEHPK3PXP...'
 ```
 
-The session is saved to `~/.config/account-gateway/.mm-session.json` (override via `MONARCH_SESSION_PATH`).
+The session is saved to `~/.config/monarch-proxy/.mm-session.json` (override via `MONARCH_SESSION_PATH`).
 
 ### 3. Run
 
@@ -68,38 +68,29 @@ The session is saved to `~/.config/account-gateway/.mm-session.json` (override v
 Then:
 
 ```bash
-curl http://localhost:8084/healthz
-curl http://localhost:8084/v1/accounts | jq
+curl http://localhost:9084/healthz
+curl http://localhost:9084/v1/accounts | jq
 ```
 
 ## Account naming convention
 
-This service does NOT enforce any KRE-side identity convention — it returns Monarch's data verbatim. Callers (BFFE / admin portal / AI agents) interpret the `displayName` field. By convention, KRE-relevant accounts are prefixed in Monarch:
+This service returns Monarch's data verbatim — no rewrite. Display names in Monarch use a convention that callers can parse to attribute accounts to entities:
 
 - `Personal — Chase Checking`
 - `KRE LLC — Operating (PNC)`
 - `8811 — Operating (BoA)`
-
-Callers parse the prefix to attribute accounts to entities.
 
 ## Re-auth
 
 Sessions last several months but eventually expire. When endpoints start returning `401 session_expired`:
 
 1. Re-run `./gradlew :api:bootstrapMonarch`.
-2. `POST http://localhost:8084/v1/auth/refresh` to make the live service pick up the new session (no restart needed).
+2. `POST http://localhost:9084/v1/auth/refresh` to make the live service pick up the new session (no restart needed).
 
 ## Deployment
 
-Local: `docker compose up -d`. Inside the KRE mesh: enable the `monarch` profile in `kre-stack/docker-compose.yml`:
-
-```bash
-cd ~/Desktop/kre-stack
-docker compose --profile monarch up -d account-gateway
-```
-
-The session JSON file is bind-mounted into the container — bootstrap once on the host.
+Local: `docker compose up -d` from this repo. The session JSON file is bind-mounted into the container — bootstrap once on the host.
 
 ## License
 
-Proprietary — KRE internal tooling.
+Proprietary — personal tooling.

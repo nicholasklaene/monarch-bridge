@@ -1,28 +1,28 @@
 ---
-title: Spawn account-gateway service
-slug: account-gateway-spawn-service
+title: Spawn monarch-proxy service
+slug: monarch-proxy-spawn-service
 priority: P0
 status: done
 created: 2026-05-03
-repo: account-gateway
-labels: [account-gateway, scaffold, bootstrap]
+repo: monarch-proxy
+labels: [monarch-proxy, scaffold, bootstrap]
 ---
 
-# Spawn account-gateway Service
+# Spawn monarch-proxy Service
 
 ## Context
 
-`account-gateway` is the financial-aggregation service that consolidates accounts (bank,
+`monarch-proxy` is the financial-aggregation service that consolidates accounts (bank,
 brokerage, real estate-as-asset, etc.) into a unified ledger view. Originally intended as a
 full KRE microservice (Postgres + outbox + events). Pivoted to a stateless pass-through over
 Monarch Money's GraphQL API — see `docs/HLD.md` for rationale.
 
 ## Goal / acceptance
 
-- Private GitHub repo `klaene-real-estate/account-gateway` created and populated.
+- Private GitHub repo `nicholasklaene/monarch-proxy` created and populated.
 - Kotlin/Spring Boot scaffold with minimal deps (no JPA, Flyway, Kafka, kre-events).
 - `./gradlew :api:check` green.
-- Service wired into `kre-stack` under `monarch` Compose profile, port 8084.
+- Service wired into `kre-stack` under `monarch` Compose profile, port 9084.
 - `agents/context/CURRENT_STATE.md` seeded.
 
 ## Resolution

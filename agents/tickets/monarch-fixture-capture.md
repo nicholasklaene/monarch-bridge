@@ -4,8 +4,8 @@ slug: monarch-fixture-capture
 priority: P2
 status: todo
 created: 2026-05-09
-repo: account-gateway
-labels: [account-gateway, monarch, testing, wiremock]
+repo: monarch-proxy
+labels: [monarch-proxy, monarch, testing, wiremock]
 ---
 
 # Monarch Fixture Capture

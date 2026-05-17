@@ -4,8 +4,8 @@ slug: monarch-bootstrap-auth
 priority: P0
 status: todo
 created: 2026-05-09
-repo: account-gateway
-labels: [account-gateway, monarch, auth, bootstrap]
+repo: monarch-proxy
+labels: [monarch-proxy, monarch, auth, bootstrap]
 ---
 
 # Monarch Auth Bootstrap
@@ -14,7 +14,7 @@ labels: [account-gateway, monarch, auth, bootstrap]
 
 The V1 pass-through service (Stages 1–5) compiled and ships with the interactive bootstrap
 CLI (`MonarchBootstrapMain.kt`) but the CLI has NOT been run. All data endpoints return 503
-until `~/.config/account-gateway/.mm-session.json` is written.
+until `~/.config/monarch-proxy/.mm-session.json` is written.
 
 The service logs `MONARCH_SESSION missing — bootstrap required` on startup when the file is
 absent.
@@ -22,17 +22,17 @@ absent.
 ## Goal / acceptance
 
 - `./gradlew :api:bootstrapMonarch` runs interactively (Nick enters email + password + MFA).
-- `~/.config/account-gateway/.mm-session.json` is written with `token`, `email`, `lastVerifiedAt`.
+- `~/.config/monarch-proxy/.mm-session.json` is written with `token`, `email`, `lastVerifiedAt`.
 - `./gradlew :api:bootRun` (or `docker compose up`) starts cleanly.
-- `curl http://localhost:8084/healthz` → `{"authenticated":true,...}`.
-- `curl http://localhost:8084/v1/accounts | jq '.data.accounts | length'` → matches Monarch
+- `curl http://localhost:9084/healthz` → `{"authenticated":true,...}`.
+- `curl http://localhost:9084/v1/accounts | jq '.data.accounts | length'` → matches Monarch
   account count.
-- `curl 'http://localhost:8084/v1/transactions?limit=10' | jq '.data.allTransactions.totalCount'` → > 0.
+- `curl 'http://localhost:9084/v1/transactions?limit=10' | jq '.data.allTransactions.totalCount'` → > 0.
 
 ## Approach
 
 ```bash
-cd ~/Desktop/account-gateway
+cd ~/Desktop/monarch-proxy
 JAVA_HOME=/opt/homebrew/opt/openjdk@21 ./gradlew :api:bootstrapMonarch
 # Follow prompts for email / password / MFA
 ```
@@ -42,7 +42,7 @@ If MFA is a TOTP authenticator: have the code ready. If using a TOTP secret seed
 
 After bootstrap, trigger session reload without restart:
 ```bash
-curl -X POST http://localhost:8084/v1/auth/refresh
+curl -X POST http://localhost:9084/v1/auth/refresh
 ```
 
 ## Open questions

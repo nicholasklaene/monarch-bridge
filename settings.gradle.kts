@@ -1,4 +1,4 @@
-rootProject.name = "account-gateway"
+rootProject.name = "monarch-proxy"
 
 pluginManagement {
     repositories {

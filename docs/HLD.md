@@ -1,33 +1,31 @@
-# High-Level Design — account-gateway
+# High-Level Design — monarch-proxy
 
 ## What this is
 
-`account-gateway` is a **stateless HTTP pass-through wrapper** over Monarch Money's GraphQL
+`monarch-proxy` is a **stateless HTTP pass-through wrapper** over Monarch Money's GraphQL
 API. It exposes Monarch's financial data (accounts, transactions, cashflow, categories, tags)
-as REST endpoints for consumption by Claude agents, BFFE services, or a future portal.
+as REST endpoints for consumption by personal finance tooling and AI agents.
 
-Port: **8084**. Repo: `klaene-real-estate/account-gateway` (private).
+Port: **9084**. Repo: `nicholasklaene/monarch-proxy` (private). Lives in personal GitHub
+because the data is personal — every account, transaction, and balance reachable through
+Monarch belongs to Nick, not to any business entity.
 
-## Why it is NOT a typical KRE microservice
+## Why no DB / events / persistence
 
-Every other KRE service (entities-service, property-data-service) follows the standard
-template: Postgres + Flyway + JPA + outbox + kre-events + ArchUnit with persistence rules.
-account-gateway deliberately drops all of that:
-
-| Standard capability | account-gateway decision |
+| Capability | Decision |
 |---|---|
 | Postgres / JPA | None. Monarch owns the data; duplicating it buys nothing. |
 | Flyway migrations | None. No schema. |
-| Outbox / kre-events | None. Monarch data doesn't change minute-to-minute. Force-refresh on demand. |
+| Event publishing | None. Monarch data doesn't change minute-to-minute. Force-refresh on demand. |
 | Per-source supersession | None. Monarch handles dedup upstream. |
 | PII encryption at rest | Not applicable. Nothing persisted. |
 
-The design mirrors `local-llm-service` (a stateless Python wrapper over llama.cpp). Same
-principle: front an external system with a thin HTTP layer, let that system own the state.
+Same principle as any thin pass-through: front an external system with a stateless HTTP layer,
+let that system own the state.
 
 ## What it owns
 
-- A **file-cached session token** (`~/.config/account-gateway/.mm-session.json`). Written
+- A **file-cached session token** (`~/.config/monarch-proxy/.mm-session.json`). Written
   once by the interactive bootstrap CLI; read on startup and on-demand via `POST /v1/auth/refresh`.
   See `api/src/main/kotlin/.../services/MonarchSessionService.kt`.
 - The **GraphQL query strings** ported from `bradleyseanf/monarchmoneycommunity@dev`
@@ -38,7 +36,7 @@ principle: front an external system with a thin HTTP layer, let that system own 
 
 - Account balances, transaction history, cashflow data — all live in Monarch.
 - Auth credentials — never stored; session token is the only persisted artifact.
-- Cross-service identity mapping (`owner_entity_id`) — callers resolve this themselves.
+- Cross-account identity mapping — callers attribute accounts to entities themselves.
 
 ## Auth-deferred posture
 
@@ -55,7 +53,7 @@ Full end-to-end auth is tracked in ticket `monarch-bootstrap-auth`
 ```
 1. ./gradlew :api:bootstrapMonarch
    → prompts for email + password + MFA code (or TOTP secret)
-   → writes ~/.config/account-gateway/.mm-session.json
+   → writes ~/.config/monarch-proxy/.mm-session.json
 
 2. POST /v1/auth/refresh
    → MonarchSessionService reloads from disk
@@ -80,8 +78,7 @@ Full end-to-end auth is tracked in ticket `monarch-bootstrap-auth`
 ## Deployment
 
 - **Local dev:** `docker compose up -d` (repo root `docker-compose.yml`).
-- **kre-stack:** `docker compose --profile monarch up -d` (see `~/Desktop/kre-stack/docker-compose.yml`).
-- **Session mount:** bind-mount `${HOME}/.config/account-gateway` to `/var/account-gateway/session` in both cases.
+- **Session mount:** bind-mount `${HOME}/.config/monarch-proxy` to `/var/monarch-proxy/session`.
 
 ## Plan reference
 

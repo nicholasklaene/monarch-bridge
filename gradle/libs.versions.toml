@@ -1,5 +1,5 @@
 # Single source of truth for plugin + dep versions.
-# account-gateway is a stateless pass-through — no JPA, no Flyway, no Kafka.
+# monarch-proxy is a stateless pass-through — no JPA, no Flyway, no Kafka.
 
 [versions]
 kotlin            = "2.0.10"

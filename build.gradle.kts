@@ -1,4 +1,4 @@
-// Root build script for account-gateway.
+// Root build script for monarch-proxy.
 // Stateless pass-through wrapper over Monarch Money GraphQL — no DB, no Kafka.
 
 plugins {
@@ -11,7 +11,7 @@ plugins {
     alias(libs.plugins.kover) apply false
 }
 
-group = "com.klaenerealestate"
+group = "com.nicholasklaene"
 version = "0.1.0-SNAPSHOT"
 
 spotless {

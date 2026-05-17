@@ -1,36 +1,36 @@
 # docker-compose.yml — LOCAL DEV ONLY.
 #
-# Brings up account-gateway in isolation (no kre-stack backbone needed).
+# Brings up monarch-proxy in isolation (no kre-stack backbone needed).
 # For the full kre-stack integration (with Redpanda, observability, etc.) see
 # ~/Desktop/kre-stack/docker-compose.yml under the `monarch` profile.
 #
 # Prerequisites:
-#   1. Run `./gradlew :api:bootstrapMonarch` to write ~/.config/account-gateway/.mm-session.json
+#   1. Run `./gradlew :api:bootstrapMonarch` to write ~/.config/monarch-proxy/.mm-session.json
 #   2. docker compose up -d
-#   3. curl http://localhost:8084/healthz
+#   3. curl http://localhost:9084/healthz
 #
 # The session file is bind-mounted read-only from the host. The container itself
 # never writes auth state — session management is a host-side concern.
 
-name: account-gateway-dev
+name: monarch-proxy-dev
 
 services:
-  account-gateway:
+  monarch-proxy:
     build: .
-    container_name: account-gateway
+    container_name: monarch-proxy
     ports:
-      - "8084:8084"
+      - "9084:9084"
     environment:
-      API_PORT: 8084
-      MONARCH_SESSION_PATH: /var/account-gateway/session/.mm-session.json
+      API_PORT: 9084
+      MONARCH_SESSION_PATH: /var/monarch-proxy/session/.mm-session.json
       MONARCH_BASE_URL: ${MONARCH_BASE_URL:-https://api.monarch.com}
       JVM_OPTS: ${JVM_OPTS:--Xmx256m}
     volumes:
       # Bind-mount the host config dir so the service can read the session JSON.
       # The same mount path is used in kre-stack (monarch profile) for consistency.
-      - ${HOME}/.config/account-gateway:/var/account-gateway/session:ro
+      - ${HOME}/.config/monarch-proxy:/var/monarch-proxy/session:ro
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8084/healthz"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:9084/healthz"]
       interval: 15s
       timeout: 5s
       retries: 5

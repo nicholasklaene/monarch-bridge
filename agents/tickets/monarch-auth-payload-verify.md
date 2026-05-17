@@ -4,8 +4,8 @@ slug: monarch-auth-payload-verify
 priority: P1
 status: todo
 created: 2026-05-09
-repo: account-gateway
-labels: [account-gateway, monarch, auth, verification]
+repo: monarch-proxy
+labels: [monarch-proxy, monarch, auth, verification]
 ---
 
 # Monarch Auth Payload Verify

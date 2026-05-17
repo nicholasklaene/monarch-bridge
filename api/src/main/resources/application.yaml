@@ -1,16 +1,16 @@
 server:
-  port: ${API_PORT:8084}
+  port: ${API_PORT:9084}
 
 spring:
   application:
-    name: account-gateway
+    name: monarch-proxy
   jackson:
     default-property-inclusion: NON_NULL
 
 monarch:
   # JSON file holding the session token + email + lastVerifiedAt.
   # Bootstrap CLI writes it; service loads it at startup + on-demand via /v1/auth/refresh.
-  session-path: ${MONARCH_SESSION_PATH:${user.home}/.config/account-gateway/.mm-session.json}
+  session-path: ${MONARCH_SESSION_PATH:${user.home}/.config/monarch-proxy/.mm-session.json}
   base-url: ${MONARCH_BASE_URL:https://api.monarch.com}
   request-timeout-seconds: 30
 
@@ -25,4 +25,4 @@ management:
 
 logging:
   level:
-    com.klaenerealestate.accountgateway: INFO
+    com.nicholasklaene.monarchproxy: INFO
