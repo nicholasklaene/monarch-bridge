@@ -16,8 +16,17 @@ freshness_horizon: 14d
 - **2026-05-17 — moved from `klaene-real-estate/account-gateway` to `nicholasklaene/monarch-proxy`.**
   Package renamed `com.klaenerealestate.accountgateway` → `com.nicholasklaene.monarchproxy`.
   Port `8084` → `9084`. Session path `~/.config/account-gateway/` → `~/.config/monarch-proxy/`.
-  kre-stack tie cut. Old repo `klaene-real-estate/account-gateway` still exists pending archive/delete.
   See `~/.claude/plans/where-did-i-get-merry-harp.md`.
+- **2026-05-17 — KRE-side `account-gateway` rebuilt as the consumer.**
+  `klaene-real-estate/account-gateway` was rebuilt from scratch as a generic provider-agnostic
+  service (port 8084) that calls THIS service via HTTP. It applies scope filtering so KRE
+  business consumers see only authorized accounts. The mesh:
+  ```
+  KRE account-gateway (:8084)  ─HTTP─▶  monarch-proxy (:9084, this repo)  ─GraphQL─▶  api.monarch.com
+  ```
+  See PRs:
+  - [klaene-real-estate/account-gateway#2](https://github.com/klaene-real-estate/account-gateway/pull/2)
+  - [klaene-real-estate/kre-stack#3](https://github.com/klaene-real-estate/kre-stack/pull/3)
 - **Auth bootstrap deferred.** `./gradlew :api:bootstrapMonarch` compiled but not run.
   Service returns 503 from data endpoints until session JSON is present.
   See ticket `monarch-bootstrap-auth`.
@@ -72,8 +81,15 @@ curl -X POST http://localhost:9084/v1/auth/refresh
 | `GET /v1/auth/status` | `{authenticated, email, lastVerifiedAt}`. |
 | `POST /v1/auth/refresh` | Reloads session from disk (post-bootstrap). |
 
+## Consumer
+
+The primary consumer is `klaene-real-estate/account-gateway` (port 8084). It calls this
+service over HTTP (default `http://localhost:9084`; in docker via `host.docker.internal:9084`).
+A future MCP wrapper / CLI wrapper could also consume directly.
+
 ## Next agent: what to do
 
 1. Open ticket `monarch-bootstrap-auth` — run the interactive bootstrap, verify `curl /v1/accounts` returns real Monarch data.
 2. After bootstrap: open `monarch-auth-payload-verify` — reconcile `// VERIFY-AT-BOOTSTRAP` comments in `MonarchAuth.kt`.
-3. If tests fail in CI: check WireMock stubs in `MonarchControllerTest` and `MonarchAuthTest` — they contain `// VERIFY-AT-BOOTSTRAP` markers where payload shapes were assumed.
+3. Verify account-gateway end-to-end: start account-gateway on :8084 and confirm `curl http://localhost:8084/v1/accounts` returns canonical DTOs sourced from this service.
+4. If tests fail in CI: check WireMock stubs in `MonarchControllerTest` and `MonarchAuthTest` — they contain `// VERIFY-AT-BOOTSTRAP` markers where payload shapes were assumed.

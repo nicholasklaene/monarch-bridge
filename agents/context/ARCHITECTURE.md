@@ -77,10 +77,26 @@ MonarchClient  ─── Authorization: Token <t> ──►  api.monarch.com/gra
 The container never writes the session file. The host directory is bind-mounted
 (read-only in production, read-write for bootstrap flow).
 
+## Mesh — KRE account-gateway
+
+```
+KRE account-gateway (:8084)  ─HTTP RestClient─▶  monarch-proxy (this repo, :9084)
+        │                                                │
+        │  reads canonical Account/Transaction DTOs       │  reads raw Monarch GraphQL JSON
+        │  applies scope filter                           │  manages session token
+        ▼                                                 ▼
+  KRE business consumers                            api.monarch.com/graphql
+```
+
+`klaene-real-estate/account-gateway` is the only production consumer today. It calls our
+8 data endpoints, maps each Monarch JSON response → canonical Account/Transaction/etc DTOs,
+and filters to the KRE-allowed subset before returning to its own callers. Our service is
+unaware of this — we return raw Monarch shape verbatim.
+
 ## Plan references
 
 V1 scope and deferred work: `~/.claude/plans/declarative-singing-yao.md`.
-Personal/KRE split + future generic `account-gateway`: `~/.claude/plans/where-did-i-get-merry-harp.md`.
+Personal/KRE split + new `account-gateway`: `~/.claude/plans/where-did-i-get-merry-harp.md`.
 
 ## What's intentionally missing (do not add without a new plan)
 
