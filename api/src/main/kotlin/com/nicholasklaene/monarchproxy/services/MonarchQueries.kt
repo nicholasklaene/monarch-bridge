@@ -9,7 +9,7 @@ package com.nicholasklaene.monarchproxy.services
  * Upstream HEAD commit: befdadc7163f90053be5820346f3095b78c7a857
  * Ported on 2026-05-09
  */
-@Suppress("MaxLineLength")
+@Suppress("MaxLineLength", "LargeClass")
 object MonarchQueries {
     /**
      * GET_ACCOUNTS — fetches all linked accounts + household preferences.

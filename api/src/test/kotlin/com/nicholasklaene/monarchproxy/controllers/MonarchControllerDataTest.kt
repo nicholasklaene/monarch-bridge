@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
  * Shared fixtures live in [MonarchControllerTest.Companion].
  * See [MonarchControllerTest] for healthz, auth, and session-guard tests.
  */
+@Suppress("LargeClass")
 @WebMvcTest(MonarchController::class)
 @Import(GlobalExceptionHandler::class)
 class MonarchControllerDataTest {
