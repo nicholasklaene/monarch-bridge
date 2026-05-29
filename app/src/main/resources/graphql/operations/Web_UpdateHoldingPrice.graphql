@@ -1,0 +1,11 @@
+mutation Web_UpdateHoldingPrice($input: UpdateHoldingPriceInput!) {
+  updateHoldingPrice(input: $input) {
+    holdingId
+    price
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

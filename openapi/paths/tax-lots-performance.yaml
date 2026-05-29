@@ -1,0 +1,21 @@
+get:
+  tags: [TaxLots]
+  summary: Per-holding tax-lot performance chart
+  description: |
+    Per-day cost-basis / unrealized-gain / return-percent series across
+    all tax lots under one holding. Backs the "Lot performance" chart
+    on the holding detail page.
+  operationId: getTaxLotPerformance
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { type: string }
+      description: Monarch holding id.
+  responses:
+    "200":
+      description: Per-day performance points.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetTaxLotPerformanceResponse"

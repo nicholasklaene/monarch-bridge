@@ -1,0 +1,13 @@
+query Web_GetGoalContributionHistory($id: ID!) {
+  savingsGoalContributions(goalId: $id) {
+    contributions {
+      id
+      date
+      amount
+      accountId
+      notes
+      __typename
+    }
+    __typename
+  }
+}

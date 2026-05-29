@@ -1,0 +1,3 @@
+mutation Mobile_CreateCoinbaseAccount {
+  __typename
+}

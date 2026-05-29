@@ -1,0 +1,69 @@
+query Web_GetTransactionFiltersMetadata($input: TransactionFilterInput!) {
+    transactionFiltersMetadata(input: $input) {
+      categories {
+        id
+        name
+        icon
+      }
+      categoryGroups {
+        id
+        name
+      }
+      accounts {
+        id
+        displayName
+        logoUrl
+        icon
+      }
+      merchants {
+        id
+        name
+        logoUrl
+      }
+      tags {
+        id
+        name
+        color
+      }
+      goals {
+        id
+        name
+        imageStorageProvider
+        imageStorageProviderId
+      }
+      goals {
+        id
+        name
+        imageStorageProvider
+        imageStorageProviderId
+      }
+      savingsGoals {
+        id
+        name
+        imageStorageProvider
+        imageStorageProviderId
+      }
+      needsReviewByUser {
+        id
+        name
+      }
+      ownershipSet {
+        includeJointlyOwned
+        users {
+          id
+          name
+          displayName
+          profilePictureUrl
+        }
+      }
+      businessEntitySet {
+        includeUnassigned
+        businessEntities {
+          id
+          name
+          logoUrl
+          color
+        }
+      }
+    }
+  }

@@ -1,0 +1,18 @@
+get:
+  tags: [Goals]
+  summary: Goal contribution history
+  description: |
+    Ledger of contributions logged against one goal: date, amount,
+    source account, optional notes. Distinct from
+    `/v1/goals/{id}/events` which includes auto-linked transactions
+    too; this endpoint returns only explicit contributions.
+  operationId: getGoalContributionHistory
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/GoalIdPath"
+  responses:
+    "200":
+      description: Contribution ledger.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetGoalContributionHistoryResponse"

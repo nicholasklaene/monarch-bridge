@@ -1,0 +1,51 @@
+# Gradle
+.gradle/
+build/
+**/build/
+!**/src/**/build/
+!gradle/wrapper/
+gradle/wrapper/gradle-wrapper.jar.lock
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# OS
+.DS_Store
+*.bak
+*.swp
+
+# macOS iCloud / file-sync conflict copies (e.g. "README 2.md", "api 2.ts")
+* [0-9].*
+* [0-9]
+
+# Python bytecode (e.g. from clients/clean-client-names.py)
+__pycache__/
+*.pyc
+
+# Monarch session: the bootstrap CLI writes this. NEVER commit.
+.mm-session.json
+**/.mm-session.json
+
+node_modules/
+
+# Env files
+.env
+.env.local
+*.env
+!.env.example
+
+# Build outputs
+out/
+target/
+*.log
+
+# Kover
+**/kover/
+
+# Detekt
+**/reports/
+.kotlin/

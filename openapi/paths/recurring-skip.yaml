@@ -1,0 +1,31 @@
+post:
+  tags: [Recurring]
+  summary: Skip one expected occurrence
+  description: |
+    Dismiss a single expected occurrence of a recurring stream - the
+    "this month I'm skipping Netflix" button on the recurring tab.
+    Subsequent occurrences continue to fire on schedule.
+
+    Per-occurrence only. To dismiss the whole stream see the recurring
+    rule editor; to retire it permanently use
+    `POST /v1/transactions/{id}/not-recurring`.
+  operationId: skipRecurringInstance
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { type: string }
+      description: Monarch recurring stream id.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/SkipRecurringInstanceRequest"
+  responses:
+    "200":
+      description: Skipped occurrence confirmation.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/SkipRecurringInstanceResponse"

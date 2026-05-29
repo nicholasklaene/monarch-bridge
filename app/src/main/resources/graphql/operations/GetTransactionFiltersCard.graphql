@@ -1,0 +1,3 @@
+query GetTransactionFiltersCard {
+  __typename
+}

@@ -1,0 +1,20 @@
+post:
+  tags: [TaxLots]
+  summary: Bulk-delete tax lots by id
+  description: |
+    One-shot delete of a list of manual tax lots. Returns the deleted
+    count. Use for cleanup after a wrong bulk import.
+  operationId: deleteTaxLotsBulk
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/DeleteTaxLotsBulkRequest"
+  responses:
+    "200":
+      description: Deleted count.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/DeleteTaxLotsBulkResponse"

@@ -1,0 +1,7 @@
+query Web_ImportStatementGetAccount($id: UUID!) {
+    account(id: $id) {
+      id
+      displayName
+      isManual
+    }
+  }

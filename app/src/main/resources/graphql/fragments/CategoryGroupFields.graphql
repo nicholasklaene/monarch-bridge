@@ -1,0 +1,17 @@
+fragment CategoryGroupFields on CategoryGroup {
+  id
+  name
+  order
+  type
+  color
+  groupLevelBudgetingEnabled
+  budgetVariability
+  rolloverPeriod {
+    id
+    startMonth
+    endMonth
+    startingBalance
+    __typename
+  }
+  __typename
+}

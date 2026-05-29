@@ -1,0 +1,48 @@
+server:
+  port: ${API_PORT:9084}
+  # Bind to localhost only by default — the proxy has no per-request auth, so
+  # anything that can reach it can read every account. Override with API_BIND=0.0.0.0
+  # ONLY behind a reverse-proxy that handles auth (e.g. Tailscale, an SSO header).
+  address: ${API_BIND:127.0.0.1}
+
+spring:
+  application:
+    name: monarch-bridge
+  jackson:
+    default-property-inclusion: NON_NULL
+
+monarch:
+  # JSON file holding the session token + email + lastVerifiedAt.
+  # Bootstrap CLI writes it; service loads it at startup + on-demand via /v1/auth/refresh.
+  session-path: ${MONARCH_SESSION_PATH:${user.home}/.config/monarch-bridge/.mm-session.json}
+  base-url: ${MONARCH_BASE_URL:https://api.monarch.com}
+  request-timeout-seconds: 30
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics
+  endpoint:
+    health:
+      show-details: when_authorized
+
+logging:
+  level:
+    com.nicholasklaene.monarchbridge: INFO
+
+# Spec-first: the hand-curated openapi/monarch-bridge.yaml (copied into the jar at
+# /static/openapi/monarch-bridge.yaml by build.gradle.kts) is the authoritative spec.
+# Swagger UI loads the static file directly — we ignore the auto-generated
+# /v3/api-docs entirely (it's there because disabling api-docs in springdoc 2.x
+# also drops Swagger UI, which we want to keep).
+springdoc:
+  swagger-ui:
+    path: /docs
+    url: /openapi/monarch-bridge.yaml
+    operations-sorter: method
+    tags-sorter: alpha
+    try-it-out-enabled: false
+  api-docs:
+    path: /v3/api-docs
+

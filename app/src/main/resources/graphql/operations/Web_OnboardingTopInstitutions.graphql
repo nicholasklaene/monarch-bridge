@@ -1,0 +1,33 @@
+query Web_OnboardingTopInstitutions($dataProviders: [String]!) {
+    credentials {
+      id
+    }
+    topInstitutionGroups(dataProviders: $dataProviders) {
+      institutions {
+        id
+        ...InstitutionRowFields
+      }
+    }
+  }
+
+fragment InstitutionRowFields on Institution {
+      id
+      name
+      logo
+      largeLogo {
+        url
+      }
+      url
+      status
+      newConnectionsDisabled
+      hasIssuesReported
+      hasIssuesReportedMessage
+      linkFlowWarnBeforeConnecting
+      linkFlowWarningMessage
+      linkFlowWarningTitle
+      preferredDataProvider
+      firstBackupDataProvider
+      plaidInstitutionId
+      finicityInstitutionId
+      mxInstitutionId
+    }

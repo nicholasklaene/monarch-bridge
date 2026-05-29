@@ -1,0 +1,10 @@
+query Web_ListTaxLots($holdingId: ID!) {
+  taxLots(holdingId: $holdingId) {
+    id
+    createdAt
+    acquisitionDate
+    acquisitionQuantity
+    costBasisPerUnit
+    __typename
+  }
+}

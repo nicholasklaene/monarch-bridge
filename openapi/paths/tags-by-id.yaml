@@ -1,0 +1,33 @@
+delete:
+  tags: [Tags]
+  summary: Delete a tag
+  description: |
+    Removes one transaction tag household-wide. **Destructive** - the tag is
+    detached from every transaction it was attached to and disappears from
+    the tag picker.
+
+    Use to retire labeling dimensions the household no longer needs (stale
+    project codes, expired test tags). For bulk transaction edits use
+    `PATCH /v1/transactions/bulk`; this endpoint only deletes the tag
+    definition itself.
+  operationId: deleteTag
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: Monarch tag id.
+  responses:
+    "200":
+      description: Confirmation - `deleted=true` on success, `false` when Monarch reports a payload error.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/DeleteTagResponse"
+    "404":
+      description: Tag not found.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

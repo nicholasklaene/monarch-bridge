@@ -1,0 +1,14 @@
+mutation Web_SetFiscalYearPreferences($input: SetFiscalYearPreferencesInput!) {
+  setFiscalYearPreferences(input: $input) {
+    fiscalYear {
+      startMonth
+      startDay
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

@@ -1,0 +1,29 @@
+get:
+  tags: [Accounts]
+  summary: Net-worth snapshots over time
+  description: |
+    Returns the user's aggregate net-worth series for the date window:
+    one row per day with total assets, total liabilities, and net
+    (assets minus liabilities).
+
+    `start` is the oldest date in the window; omit for full history
+    back to the first account link. `accountType` optionally scopes the
+    series to one account type (e.g. only `brokerage` to chart investments
+    in isolation).
+
+    Use for top-of-dashboard net-worth charts or trend analysis. For
+    a per-account-type breakdown see `GET /v1/networth/by-type`; for
+    per-account recent fluctuations see `GET /v1/networth/recent`. For
+    a single account's history use `GET /v1/account/{id}/history`.
+  operationId: getNetworth
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/AccountType"
+  responses:
+    "200":
+      description: Daily snapshots within the window.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/NetworthResponse"

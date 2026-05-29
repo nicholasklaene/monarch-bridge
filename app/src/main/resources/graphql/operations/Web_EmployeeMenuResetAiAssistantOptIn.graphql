@@ -1,0 +1,8 @@
+mutation Web_EmployeeMenuResetAiAssistantOptIn {
+    resetAiAssistantOptIn {
+      userProfile {
+        id
+        aiAssistantOptedInAt
+      }
+    }
+  }

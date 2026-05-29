@@ -1,0 +1,12 @@
+query Common_GetExpenseByTagReport($startDate: Date, $endDate: Date) {
+  expenseByTagReport(startDate: $startDate, endDate: $endDate) {
+    rows {
+      tagId
+      tagName
+      amount
+      transactionCount
+      __typename
+    }
+    __typename
+  }
+}

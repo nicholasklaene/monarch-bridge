@@ -1,0 +1,9 @@
+query Web_GetExpenseByCategory($startDate: String, $endDate: String) {
+  expenseByCategory(startDate: $startDate, endDate: $endDate) {
+    categoryId
+    categoryName
+    amount
+    transactionCount
+    __typename
+  }
+}

@@ -1,0 +1,22 @@
+query Web_FindMatchTransactions($search: String, $limit: Int) {
+  allTransactions(filters: { search: $search }) {
+    results(limit: $limit) {
+      id
+      amount
+      date
+      plaidName
+      merchant {
+        id
+        name
+        __typename
+      }
+      account {
+        id
+        displayName
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}

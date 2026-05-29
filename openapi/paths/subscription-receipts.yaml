@@ -1,0 +1,14 @@
+get:
+  tags: [System]
+  summary: Subscription payment receipts
+  description: |
+    All payment receipts for the current subscription, with download
+    URLs. Used at tax time for proof of expense.
+  operationId: getSubscriptionReceipts
+  responses:
+    "200":
+      description: Receipts list.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetSubscriptionReceiptsResponse"

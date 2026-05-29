@@ -1,0 +1,35 @@
+get:
+  tags: [Settings]
+  summary: Push notification preferences
+  description: |
+    Per-topic push delivery toggles (weeklyRecap, budgetAlerts,
+    billReminders, goalUpdates, marketingTips). Returned as a flat
+    boolean map.
+  operationId: getPushNotificationPrefs
+  responses:
+    "200":
+      description: Push notification preferences.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetChannelNotificationPrefsResponse"
+put:
+  tags: [Settings]
+  summary: Update push notification preferences
+  description: |
+    Patch any subset of the push-channel toggles. Omit a field to leave
+    it untouched.
+  operationId: setPushNotificationPrefs
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/SetChannelNotificationPrefsRequest"
+  responses:
+    "200":
+      description: Updated push notification preferences.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/SetChannelNotificationPrefsResponse"

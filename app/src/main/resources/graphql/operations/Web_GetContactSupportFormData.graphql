@@ -1,0 +1,25 @@
+query Web_GetContactSupportFormData($formType: ContactSupportFormType, $topic: ContactSupportTopic, $reason: String) {
+    contactFormData {
+      id
+
+      topics(formType: $formType) {
+        id
+        value
+        label
+      }
+
+      reasonsForTopic(topic: $topic) {
+        id
+        value
+        label
+      }
+
+      impacts {
+        id
+        value
+        label
+      }
+
+      requiredFieldsForReason(reason: $reason)
+    }
+  }

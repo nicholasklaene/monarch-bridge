@@ -1,0 +1,19 @@
+get:
+  tags: [Merchants]
+  summary: Transactions for one merchant
+  description: |
+    Transaction list scoped to a single merchant. Lighter than calling
+    `/v1/transactions?search=<merchant>` when you already have the
+    merchant id. Returns date, amount, merchant, and category per row.
+  operationId: getMerchantTransactions
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/MerchantIdPath"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Limit"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Offset"
+  responses:
+    "200":
+      description: Merchant transaction list.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetMerchantTransactionsResponse"

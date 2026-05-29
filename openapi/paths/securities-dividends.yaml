@@ -1,0 +1,23 @@
+get:
+  tags: [Holdings]
+  summary: Security dividend history
+  description: |
+    Dividend payment history for one security. Each entry has the
+    payment date, per-share amount, and dividend type (regular,
+    special, etc.).
+  operationId: getSecurityDividends
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { type: string }
+      description: Monarch security id.
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: Dividend history.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetSecurityDividendsResponse"

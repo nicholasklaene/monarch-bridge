@@ -1,0 +1,9 @@
+query Web_GetSavingsRateTrends($months: Int!) {
+  savingsRateTrends(months: $months) {
+    period
+    savingsRate
+    income
+    expense
+    __typename
+  }
+}

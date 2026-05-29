@@ -1,0 +1,31 @@
+put:
+  tags: [Goals]
+  summary: Set monthly budget allocation for a savings goal
+  description: |
+    Sets the planned contribution amount for a goal for one month, or
+    (with `applyToFuture: true`) cascades the same amount to every
+    subsequent month. This is the FORECAST, not a recorded contribution:
+    use `POST /v1/goals/{id}/contributions` to log actual money in.
+
+    Required: `startDate` (first-of-month) and `amount`. `accountId` is
+    optional: omit to set the household-level planned amount; supply
+    when the contribution comes from one specific account.
+
+    Pairs with `GET /v1/goals/current-month-totals` to read back the
+    planned totals.
+  operationId: setGoalBudgetAmount
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/GoalIdPath"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/SetGoalBudgetAmountRequest"
+  responses:
+    "200":
+      description: Confirmation flag from Monarch.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/SetGoalBudgetAmountResponse"

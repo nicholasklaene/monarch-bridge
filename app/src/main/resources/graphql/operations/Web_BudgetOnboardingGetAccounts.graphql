@@ -1,0 +1,20 @@
+query Web_BudgetOnboardingGetAccounts {
+    visibleAccounts: accounts(filters: { includeHidden: false }) {
+      id
+    }
+
+    accountTypeSummaries {
+      isAsset
+      totalDisplayBalance
+      type {
+        name
+      }
+      accounts {
+        id
+        displayName
+        displayBalance
+        icon
+        logoUrl
+      }
+    }
+  }

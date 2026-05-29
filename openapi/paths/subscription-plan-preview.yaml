@@ -1,0 +1,21 @@
+post:
+  tags: [System]
+  summary: Preview a plan-change charge
+  description: |
+    Computes the prorated charge for switching to `targetTier` (and
+    optionally `billingFrequency`). Does NOT mutate the subscription.
+    Use to show "you will be charged USD X today" before the user confirms.
+  operationId: previewSubscriptionPlanChange
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/PreviewSubscriptionPlanChangeRequest"
+  responses:
+    "200":
+      description: Preview of prorated charge and new renewal date.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/PreviewSubscriptionPlanChangeResponse"

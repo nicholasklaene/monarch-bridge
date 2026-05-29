@@ -1,0 +1,10 @@
+mutation Common_DeleteGoalV2($input: DeleteGoalInput!) {
+  deleteGoalV2(input: $input) {
+    success
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

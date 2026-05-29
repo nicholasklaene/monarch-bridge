@@ -1,0 +1,3 @@
+query Mobile_GetInvestmentsHoldingsList {
+  __typename
+}

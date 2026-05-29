@@ -1,0 +1,21 @@
+get:
+  tags: [Transactions]
+  summary: Attachment detail
+  description: |
+    Resolve an attachment id to its `originalAssetUrl` (a pre-signed download URL).
+    Use the URL to GET the underlying file from Monarch's storage backend.
+  operationId: getAttachment
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: Monarch transaction-attachment id (UUID).
+  responses:
+    "200":
+      description: Attachment detail.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetAttachmentResponse"

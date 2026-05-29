@@ -1,0 +1,13 @@
+query Web_GetHoldingTransactions($holdingId: ID!, $startDate: Date, $endDate: Date, $limit: Int, $offset: Int) {
+  holdingTransactions(holdingId: $holdingId, startDate: $startDate, endDate: $endDate, limit: $limit, offset: $offset) {
+    id
+    date
+    type
+    quantity
+    price
+    amount
+    fees
+    notes
+    __typename
+  }
+}

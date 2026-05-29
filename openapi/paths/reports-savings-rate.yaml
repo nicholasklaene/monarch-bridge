@@ -1,0 +1,18 @@
+get:
+  tags: [System]
+  summary: Savings-rate report
+  description: |
+    Month-over-month savings rate report. Rates are fractions
+    (`0.42` = 42%). `overallSavingsRate` is the window aggregate;
+    `monthlyRates` is the per-month series.
+  operationId: getSavingsRateReport
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: Overall savings rate plus per-month series.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetSavingsRateReportResponse"

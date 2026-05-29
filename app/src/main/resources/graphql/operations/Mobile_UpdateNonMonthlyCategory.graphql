@@ -1,0 +1,3 @@
+mutation Mobile_UpdateNonMonthlyCategory {
+  __typename
+}

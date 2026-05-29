@@ -1,0 +1,29 @@
+get:
+  tags: [Accounts]
+  summary: Account display balance at a specific date
+  description: |
+    "What was this account worth on YYYY-MM-DD." Walks back through Monarch's
+    daily snapshot series and returns the displayed (sign-adjusted) balance
+    as of the requested date.
+
+    Use for point-in-time reporting (year-end statements, lookback charts) when
+    you need one date for one account. For the full series use
+    `GET /v1/account/{id}/history`; for aggregate net worth at a date use
+    `GET /v1/networth`.
+  operationId: getAccountBalanceAtDate
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/AccountIdPath"
+    - in: query
+      name: date
+      required: true
+      schema:
+        type: string
+        format: date
+      description: Lookback date, `YYYY-MM-DD`.
+  responses:
+    "200":
+      description: Display balance for the account on `date`.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetAccountBalanceAtDateResponse"

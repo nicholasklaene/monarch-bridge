@@ -1,0 +1,20 @@
+get:
+  tags: [System]
+  summary: Liveness probe with auth-presence hint
+  description: |
+    Cheap liveness check for the proxy itself. Always returns 200 if the
+    HTTP server is up. Body includes a `monarchAuthLoaded` flag so callers
+    can distinguish "service alive but unauthenticated" from "service
+    alive and ready". No session required.
+
+    Use for uptime monitoring, LaunchAgent readiness checks, or as a
+    first-call probe before calling any data endpoint. For richer auth
+    detail use `GET /v1/auth/status`.
+  operationId: getHealth
+  responses:
+    "200":
+      description: Service is up.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/HealthResponse"

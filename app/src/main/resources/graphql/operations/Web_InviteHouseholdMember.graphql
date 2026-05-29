@@ -1,0 +1,12 @@
+mutation Web_InviteHouseholdMember($input: InviteHouseholdMemberInput!) {
+  inviteHouseholdMember(input: $input) {
+    invited
+    email
+    role
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

@@ -1,0 +1,16 @@
+fragment InstitutionInfoFields on Credential {
+  id
+  displayLastUpdatedAt
+  dataProvider
+  updateRequired
+  disconnectedFromDataProviderAt
+  ...InstitutionLogoWithStatusFields
+  institution {
+    id
+    name
+    hasIssuesReported
+    hasIssuesReportedMessage
+    __typename
+  }
+  __typename
+}

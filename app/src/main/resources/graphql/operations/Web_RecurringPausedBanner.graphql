@@ -1,0 +1,5 @@
+query Web_RecurringPausedBanner {
+    spinwheelUser {
+      isBillSyncTrackingEnabled
+    }
+  }

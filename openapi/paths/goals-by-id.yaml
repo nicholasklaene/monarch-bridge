@@ -1,0 +1,76 @@
+get:
+  tags: [Goals]
+  summary: Get one savings goal
+  description: |
+    Returns the full detail for a single v2 savings goal: name,
+    target amount, current balance, target date, type (savings or
+    debt), priority, linked accounts, and archive state.
+
+    Use to surface a goal in a detail view or to inspect state before a
+    PATCH or contribution. For the contribution / withdrawal event log
+    use `GET /v1/goals/{id}/events`.
+  operationId: getGoal
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/GoalIdPath"
+  responses:
+    "200":
+      description: The goal.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ArchiveGoalResponse"
+patch:
+  tags: [Goals]
+  summary: Update a savings goal
+  description: |
+    Patches one goal. Only populated fields are forwarded to Monarch;
+    omit a field to leave it untouched.
+
+    Common edits: rename, change `targetAmount` or `targetDate`,
+    re-link `accounts`, update the icon. To re-order priority across
+    goals use `PUT /v1/goals/priorities` instead. To archive use
+    `DELETE /v1/goals/{id}` (reversible) or `DELETE /v1/goals/{id}/hard`
+    (permanent).
+  operationId: updateGoal
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/GoalIdPath"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/UpdateGoalRequest"
+  responses:
+    "200":
+      description: The updated goal.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CreateGoalResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+delete:
+  tags: [Goals]
+  summary: Archive a savings goal
+  description: |
+    **Soft-deletes** the goal by setting its `archivedAt` timestamp.
+    The goal remains visible via `GET /v1/goals` (filter on
+    `archivedAt` to hide) but its `status` flips to `archived` and it
+    drops out of active-goal aggregates.
+
+    Reversible via `POST /v1/goals/{id}/unarchive`. For permanent
+    removal use `DELETE /v1/goals/{id}/hard` instead.
+  operationId: archiveGoal
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/GoalIdPath"
+  responses:
+    "200":
+      description: The archived goal.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ArchiveGoalResponse"

@@ -1,0 +1,12 @@
+mutation Web_CopySnapshots($input: CopySnapshotsInput!) {
+    copySnapshots(input: $input) {
+      numSnapshotsCopied
+      toAccount {
+        id
+        displayName
+      }
+      errors {
+        message
+      }
+    }
+  }

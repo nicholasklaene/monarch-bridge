@@ -1,0 +1,3 @@
+query Common_UpdateTransactionTag {
+  __typename
+}

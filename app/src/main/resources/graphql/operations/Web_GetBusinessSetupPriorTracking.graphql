@@ -1,0 +1,9 @@
+query Web_GetBusinessSetupPriorTracking {
+    me {
+      id
+      profile {
+        id
+        businessSetupPriorTracking
+      }
+    }
+  }

@@ -1,0 +1,36 @@
+get:
+  tags: [Goals]
+  summary: Current-month planned-contribution totals per goal
+  description: |
+    Returns the sum of `totalPlannedAmount` across the requested month
+    window, broken out per goal. Used for "how much am I planning to
+    contribute this month and to which goals" rollups without pulling
+    each goal's full plan series.
+
+    Defaults to the current calendar month when both params are
+    omitted (`startMonth = first-of-this-month`, `endMonth =
+    first-of-this-month`). Pass a wider window to get a multi-month
+    plan summary.
+  operationId: getGoalsCurrentMonthTotals
+  parameters:
+    - in: query
+      name: startMonth
+      required: false
+      schema:
+        type: string
+        format: date
+      description: First-of-month lower bound (`YYYY-MM-DD`).
+    - in: query
+      name: endMonth
+      required: false
+      schema:
+        type: string
+        format: date
+      description: First-of-month upper bound (`YYYY-MM-DD`).
+  responses:
+    "200":
+      description: Per-goal totals for the window.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetGoalsCurrentMonthTotalsResponse"

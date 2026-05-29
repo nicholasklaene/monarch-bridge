@@ -1,0 +1,12 @@
+{
+  "allTransactions": {
+    "totalCount": 1,
+    "results": [
+      {
+        "id": "t-bare",
+        "date": "2026-01-15",
+        "amount": -5.0
+      }
+    ]
+  }
+}

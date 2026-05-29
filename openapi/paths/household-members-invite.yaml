@@ -1,0 +1,21 @@
+post:
+  tags: [Settings]
+  summary: Invite a household member
+  description: |
+    Send a Monarch invitation email to a new household member. `email` is
+    required; `role` is optional and defaults to `member` (one of `owner`,
+    `member`, `viewer`).
+  operationId: inviteHouseholdMember
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/InviteHouseholdMemberRequest"
+  responses:
+    "200":
+      description: Invitation queued.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/InviteHouseholdMemberResponse"

@@ -1,0 +1,13 @@
+mutation Common_BulkUpdateAccounts($input: [UpdateAccountsMutationInput]!) {
+  updateAccounts(input: $input) {
+    accounts {
+      ...AccountFields
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

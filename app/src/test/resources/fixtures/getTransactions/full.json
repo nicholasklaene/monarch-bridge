@@ -1,0 +1,41 @@
+{
+  "allTransactions": {
+    "totalCount": 42,
+    "results": [
+      {
+        "id": "t-1",
+        "date": "2026-05-25",
+        "amount": -19.99,
+        "pending": false,
+        "plaidName": "STARBUCKS #4123",
+        "notes": "morning coffee",
+        "hideFromReports": false,
+        "needsReview": false,
+        "isRecurring": false,
+        "isSplitTransaction": false,
+        "createdAt": "2026-05-25T15:01:00Z",
+        "updatedAt": "2026-05-25T15:02:00Z",
+        "account": {"id": "a-1", "displayName": "Acme Bank"},
+        "merchant": {"id": "m-1", "name": "Starbucks", "transactionsCount": 12},
+        "category": {"id": "c-1", "name": "Coffee"},
+        "tags": [{"id": "tg-1", "name": "personal", "color": "#ffaa00", "order": 1}]
+      },
+      {
+        "id": "t-2",
+        "date": "2026-05-24",
+        "amount": 4500.0,
+        "pending": false,
+        "plaidName": "ACME PAYROLL",
+        "notes": null,
+        "hideFromReports": false,
+        "needsReview": false,
+        "isRecurring": true,
+        "isSplitTransaction": false,
+        "account": {"id": "a-1", "displayName": "Acme Bank"},
+        "merchant": {"id": "m-2", "name": "Acme Bank", "transactionsCount": 24},
+        "category": {"id": "c-2", "name": "Paychecks"},
+        "tags": []
+      }
+    ]
+  }
+}

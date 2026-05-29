@@ -1,0 +1,26 @@
+query Web_GoalsDashboardCardV2 {
+    goalsV2 {
+      id
+      priority
+      ...Web_GoalDashboardRowFields
+    }
+  }
+
+fragment Web_GoalDashboardRowFields on GoalV2 {
+      id
+      name
+      imageStorageProvider
+      imageStorageProviderId
+      currentAmount
+      completionPercent
+      completedAt
+      archivedAt
+      type
+      accountAllocations {
+        id
+        currentMonthChange {
+          percent
+          amount
+        }
+      }
+    }

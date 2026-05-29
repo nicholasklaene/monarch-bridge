@@ -1,0 +1,17 @@
+get:
+  tags: [Transactions]
+  summary: Transaction audit log
+  description: |
+    History of changes against one transaction. Each entry has the
+    timestamp, actor, action, and old / new value for the field that
+    changed.
+  operationId: getTransactionAuditLog
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TransactionIdPath"
+  responses:
+    "200":
+      description: Audit entries (oldest first).
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetTransactionAuditLogResponse"

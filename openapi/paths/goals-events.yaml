@@ -1,0 +1,23 @@
+get:
+  tags: [Goals]
+  summary: Event log for one savings goal
+  description: |
+    Returns the full event ledger for a single goal: every
+    contribution, withdrawal, and transaction Monarch auto-linked to
+    the goal. Each event has type, amount, date, account, and source
+    transaction id (if any).
+
+    Use to surface a "history" tab on a goal detail view or to compute
+    actual-vs-planned contribution totals over time. For a quick
+    current-month rollup across all goals use
+    `GET /v1/goals/current-month-totals`.
+  operationId: listGoalEvents
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/GoalIdPath"
+  responses:
+    "200":
+      description: All goal events, newest-first per upstream order.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ListGoalEventsResponse"

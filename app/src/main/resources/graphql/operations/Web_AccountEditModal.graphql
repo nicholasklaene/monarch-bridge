@@ -1,0 +1,81 @@
+query Web_AccountEditModal($id: UUID!) {
+    account(id: $id) {
+      id
+      ...EditAccountFormFields
+    }
+  }
+
+fragment EditAccountFormFields on Account {
+      id
+      displayName
+      deactivatedAt
+      displayBalance
+      logoUrl
+      hasCustomizedLogo
+      includeInNetWorth
+      hideFromList
+      hideInBudget
+      hideTransactionsFromReports
+      dataProvider
+      dataProviderAccountId
+      isManual
+      manualInvestmentsTrackingMethod
+      isAsset
+      invertSyncedBalance
+      canInvertBalance
+      useAvailableBalance
+      canUseAvailableBalance
+      limit
+      dataProviderCreditLimit
+      apr
+      interestRate
+      minimumPayment
+      plannedPayment
+      excludeFromDebtPaydown
+
+      originalProviderData {
+        apr
+        interestRate
+        minimumPayment
+      }
+
+      type {
+        name
+        display
+      }
+
+      subtype {
+        name
+        display
+      }
+
+      creditReportLiabilityAccount {
+        id
+        lastStatement {
+          id
+          dueDate
+        }
+        recurringTransactionStream {
+          id
+          isActive
+          dayOfTheMonth
+          frequency
+          defaultPaymentAccount {
+            id
+            name
+          }
+          defaultPaymentCategory {
+            id
+            name
+          }
+        }
+      }
+
+      ownedByUser {
+        id
+      }
+
+      businessEntity {
+        id
+      }
+    }

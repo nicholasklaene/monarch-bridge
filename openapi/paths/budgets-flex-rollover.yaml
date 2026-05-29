@@ -1,0 +1,28 @@
+put:
+  tags: [Budgets]
+  summary: Configure / reset the Flex bucket rollover period
+  description: |
+    Sets how the Flex bucket's leftover (positive or negative) carries
+    forward month-to-month. `rolloverStartMonth` anchors the rolling
+    window; `rolloverStartingBalance` seeds the carryover dollar amount.
+
+    Common use: point `rolloverStartMonth` at the current month with
+    `rolloverStartingBalance: 0` to clear accumulated negative rollover
+    (the classic "I overspent for 6 months, wipe the slate" reset).
+
+    Pair with `PUT /v1/budgets/flex` to set the new monthly cap once
+    rollover is reset.
+  operationId: updateFlexRolloverSettings
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/UpdateFlexRolloverSettingsRequest"
+  responses:
+    "200":
+      description: New rollover period.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/UpdateFlexRolloverSettingsResponse"

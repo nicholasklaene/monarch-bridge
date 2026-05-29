@@ -1,0 +1,13 @@
+query Web_GetMerchantTransactions($merchantId: ID!, $limit: Int, $offset: Int) {
+  merchantTransactions(merchantId: $merchantId, limit: $limit, offset: $offset) {
+    transactions {
+      id
+      date
+      amount
+      merchantName
+      categoryName
+      __typename
+    }
+    __typename
+  }
+}

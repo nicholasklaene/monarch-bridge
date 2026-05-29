@@ -1,0 +1,14 @@
+get:
+  tags: [Tax]
+  summary: All categories including `systemCategory` (for tax-prep)
+  description: |
+    Returns every category with its `systemCategory` tag (so callers can
+    map to tax schedules without re-querying per category).
+  operationId: getTaxCategories
+  responses:
+    "200":
+      description: All categories with system-category tags.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetTaxCategoriesResponse"

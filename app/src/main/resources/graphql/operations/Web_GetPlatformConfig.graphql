@@ -1,0 +1,9 @@
+query Web_GetPlatformConfig {
+  platformConfig {
+    platform
+    configVersion
+    apiBaseUrl
+    settings
+    __typename
+  }
+}

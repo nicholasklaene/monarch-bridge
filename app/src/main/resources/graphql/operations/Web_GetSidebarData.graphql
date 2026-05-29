@@ -1,0 +1,45 @@
+query Web_GetSidebarData($promoCode: String) {
+    me {
+      id
+      displayName
+      email
+      profilePicture {
+        id
+        cloudinaryPublicId
+      }
+      profilePictureUrl
+      sponsorAccountName
+    }
+    subscription {
+      id
+      billingPeriod
+      paymentSource
+      isOnFreeTrial
+      hasPremiumEntitlement
+      nextPaymentAmount
+
+      activeSponsorship {
+        id
+      }
+
+      ...FreeTrialDurationPanelData
+    }
+    subscriptionOffering(stripePromoCode: $promoCode) {
+      promoCodeError
+      promoCodeDescription
+      plans {
+        period
+        pricePerPeriodDollars
+      }
+    }
+  }
+
+fragment FreeTrialDurationPanelData on HouseholdSubscription {
+      id
+      trialEndsAt
+      plusTrialEndsAt
+      canceledPlusTrialAt
+      trialDurationDays
+      trialType
+      entitlements
+    }

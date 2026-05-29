@@ -1,0 +1,27 @@
+post:
+  tags: [Transactions]
+  summary: Mark a transaction as the start of a recurring stream
+  description: |
+    The inverse of `POST /v1/transactions/{id}/not-recurring`. Tells
+    Monarch the transaction IS the first instance of a recurring stream
+    at the given `frequency` (`monthly`, `weekly`, `quarterly`, `yearly`,
+    `biweekly`). Monarch creates the stream definition and returns its id.
+
+    Use to teach Monarch a stream it missed (a new subscription, a
+    private-vendor recurring invoice).
+  operationId: markAsRecurring
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TransactionIdPath"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/MarkAsRecurringRequest"
+  responses:
+    "200":
+      description: Confirmation + the new stream ref.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/MarkAsRecurringResponse"

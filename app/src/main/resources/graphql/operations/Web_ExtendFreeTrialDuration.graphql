@@ -1,0 +1,10 @@
+mutation Web_ExtendFreeTrialDuration {
+    extendFreeTrialDuration {
+      errors {
+        message
+      },
+      subscription {
+        trialEndsAt
+      }
+    }
+  }

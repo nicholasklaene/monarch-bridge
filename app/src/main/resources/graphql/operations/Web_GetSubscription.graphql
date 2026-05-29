@@ -1,0 +1,70 @@
+query Web_GetSubscription {
+    subscription {
+      id
+      ...SubscriptionFields
+      ...SponsoredSubscriptionFields
+    }
+    invoices {
+      id
+      date
+      amount
+      receiptUrl
+    }
+    creditBalance
+    constants {
+      monthlyPriceDollars
+    }
+  }
+
+fragment SubscriptionFields on HouseholdSubscription {
+    id
+    trialEndsAt
+    trialType
+    trialDurationDays
+    isOnFreeTrial
+    canceledPlusTrialAt
+    plusTrialEndsAt
+    hasChargedForLifetime
+    currentPeriodEndsAt
+    billingPeriod
+    nextPaymentAmount
+    hasStripeSubscriptionId
+    hasPremiumEntitlement
+    entitlements
+    eligibleForTrial
+    willCancelAtPeriodEnd
+    paymentSource
+    hasBillingIssue
+    isSponsor
+    hasHadFreeTrialExtension
+
+    paymentMethod {
+      lastFour
+      brand
+    }
+
+    activePromoCode {
+      code
+      description
+    }
+
+    sponsoredBy {
+      name
+      email
+      profilePictureUrl
+    }
+
+    analyticsFreemiumSummaryStatus
+    isEligibleForCoreToPlusPromo
+  }
+
+fragment SponsoredSubscriptionFields on HouseholdSubscription {
+    activeSponsorship {
+      id
+      sponsor {
+        name
+        email
+        profilePictureUrl
+      }
+    }
+  }

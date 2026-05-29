@@ -1,0 +1,59 @@
+query GetTransactionDrawer($id: UUID!, $redirectPosted: Boolean) {
+  getTransaction(id: $id, redirectPosted: $redirectPosted) {
+    id
+    amount
+    pending
+    isRecurring
+    date
+    originalDate
+    hideFromReports
+    needsReview
+    reviewedAt
+    plaidName
+    notes
+    hasSplitTransactions
+    isSplitTransaction
+    isManual
+    splitTransactions {
+      id
+      amount
+      notes
+      merchant { id name __typename }
+      category { id name __typename }
+      __typename
+    }
+    attachments {
+      id
+      publicId
+      extension
+      sizeBytes
+      filename
+      originalAssetUrl
+      __typename
+    }
+    account {
+      id
+      displayName
+      __typename
+    }
+    category {
+      id
+      name
+      __typename
+    }
+    merchant {
+      id
+      name
+      transactionCount
+      logoUrl
+      __typename
+    }
+    tags {
+      id
+      name
+      color
+      __typename
+    }
+    __typename
+  }
+}

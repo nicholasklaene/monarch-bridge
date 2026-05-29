@@ -1,0 +1,3 @@
+query GetHoldingSummarySecurityDetails {
+  __typename
+}

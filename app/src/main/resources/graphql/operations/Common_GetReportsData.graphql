@@ -1,0 +1,3 @@
+query Common_GetReportsData {
+  __typename
+}

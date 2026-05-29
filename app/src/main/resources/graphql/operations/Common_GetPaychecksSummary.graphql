@@ -1,0 +1,25 @@
+query Common_GetPaychecksSummary(
+  $startDate: Date
+  $endDate: Date
+  $ownerIds: [ID!]
+  $employerId: ID
+) {
+  paychecksSummary(
+    startDate: $startDate
+    endDate: $endDate
+    ownerIds: $ownerIds
+    employerId: $employerId
+  ) {
+    count
+    totalGross
+    totalDeductions
+    totalNet
+    deductionRate
+    deductionsByType {
+      deductionType
+      totalAmount
+      __typename
+    }
+    __typename
+  }
+}

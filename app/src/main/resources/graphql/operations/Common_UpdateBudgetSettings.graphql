@@ -1,0 +1,12 @@
+mutation Common_UpdateBudgetSettings($input: UpdateBudgetSettingsMutationInput!) {
+  updateBudgetSettings(input: $input) {
+    budgetSystem
+    budgetApplyToFutureMonthsDefault
+    budgetRolloverPeriod {
+      id
+      startMonth
+      __typename
+    }
+    __typename
+  }
+}

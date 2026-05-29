@@ -1,0 +1,18 @@
+mutation Common_UpdateMe($input: UpdateMeInput!) {
+  updateMe(input: $input) {
+    me {
+      id
+      email
+      name
+      displayName
+      timezone
+      birthday
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

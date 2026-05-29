@@ -1,0 +1,11 @@
+query Web_GetScheduleCLineItems($taxYear: Int!) {
+    scheduleCLineItems(taxYear: $taxYear) {
+      key
+      lineNumber
+      description
+      lineType
+      sortOrder
+      isNotTracked
+      displayInfo
+    }
+  }

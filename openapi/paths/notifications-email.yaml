@@ -1,0 +1,35 @@
+get:
+  tags: [Settings]
+  summary: Email notification preferences
+  description: |
+    Per-topic email delivery toggles (weeklyRecap, budgetAlerts,
+    billReminders, goalUpdates, marketingTips). Returned as a flat
+    boolean map.
+  operationId: getEmailNotificationPrefs
+  responses:
+    "200":
+      description: Email notification preferences.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetChannelNotificationPrefsResponse"
+put:
+  tags: [Settings]
+  summary: Update email notification preferences
+  description: |
+    Patch any subset of the email-channel toggles. Omit a field to leave
+    it untouched.
+  operationId: setEmailNotificationPrefs
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/SetChannelNotificationPrefsRequest"
+  responses:
+    "200":
+      description: Updated email notification preferences.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/SetChannelNotificationPrefsResponse"

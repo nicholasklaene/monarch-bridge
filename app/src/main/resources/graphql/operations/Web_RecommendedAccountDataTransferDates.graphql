@@ -1,0 +1,8 @@
+query Web_RecommendedAccountDataTransferDates($fromAccountId: ID, $toAccountId: ID) {
+    recommendedAccountDataTransferDates(fromAccountId: $fromAccountId, toAccountId: $toAccountId) {
+      transactionsStartDate
+      transactionsEndDate
+      snapshotsStartDate
+      snapshotsEndDate
+    }
+  }

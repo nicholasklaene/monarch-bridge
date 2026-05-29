@@ -1,0 +1,26 @@
+post:
+  tags: [Recurring]
+  summary: Merge recurring streams
+  description: |
+    Collapse two or more recurring streams into one. The `primaryStreamId`
+    survives; all `mergedStreamIds` are absorbed into it (their
+    transactions, history, and rules transfer over). Optional `newName`
+    overrides the merged stream's display name.
+
+    Used when Monarch detects the same bill from two angles (credit-report
+    liability + transaction-feed merchant) and the user wants one canonical
+    stream.
+  operationId: mergeRecurringStreams
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/MergeRecurringStreamsRequest"
+  responses:
+    "200":
+      description: The surviving stream.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/MergeRecurringStreamsResponse"

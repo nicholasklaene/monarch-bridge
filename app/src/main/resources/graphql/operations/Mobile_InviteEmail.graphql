@@ -1,0 +1,3 @@
+mutation Mobile_InviteEmail {
+  __typename
+}

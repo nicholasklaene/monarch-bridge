@@ -1,0 +1,13 @@
+query Web_GetMonthlyReportSummary($month: Date!) {
+  monthlyReportSummary(month: $month) {
+    month
+    netIncome
+    totalSpending
+    totalIncome
+    savingsRate
+    topMerchant
+    topCategory
+    biggestSpend
+    __typename
+  }
+}

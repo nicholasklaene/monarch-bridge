@@ -1,0 +1,9 @@
+query Common_GetCookiePreferences {
+  cookiePreferences {
+    analytics
+    marketing
+    functional
+    updatedAt
+    __typename
+  }
+}

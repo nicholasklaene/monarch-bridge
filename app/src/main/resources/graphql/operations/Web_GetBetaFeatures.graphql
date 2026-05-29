@@ -1,0 +1,8 @@
+query Web_GetBetaFeatures {
+  betaFeatures {
+    name
+    description
+    enrolled
+    __typename
+  }
+}

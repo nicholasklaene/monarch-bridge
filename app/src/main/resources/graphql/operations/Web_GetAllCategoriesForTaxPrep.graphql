@@ -1,0 +1,9 @@
+query Web_GetAllCategoriesForTaxPrep {
+  categories {
+    id
+    name
+    icon
+    systemCategory
+    __typename
+  }
+}

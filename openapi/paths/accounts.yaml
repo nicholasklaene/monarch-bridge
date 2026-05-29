@@ -1,0 +1,66 @@
+get:
+  tags: [Accounts]
+  summary: List all linked + manual accounts
+  description: |
+    Returns every account the user has in Monarch: Plaid-linked depository,
+    credit, loan, brokerage accounts plus any manually-created accounts.
+
+    Use this to enumerate accounts before scoping a transaction query, or to
+    grab `account.id` values for filter params like `accountIds`. The shape
+    includes `displayName`, `type`, `subtype`, `currentBalance`, `institution`,
+    `includeInNetWorth`, and timestamps.
+
+    No filtering on the wire: hidden accounts and accounts with
+    `isAsset: false` come back too. Filter client-side on `includeInNetWorth`
+    or `hideFromList` if needed. For institution-scoped views use
+    `GET /v1/institutions`.
+  operationId: listAccounts
+  responses:
+    "200":
+      description: All accounts (including hidden; filter client-side).
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ListAccountsResponse"
+post:
+  tags: [Accounts]
+  summary: Create a manual (non-Plaid) account
+  description: |
+    Creates an account Monarch will not auto-sync. Use for cash, foreign
+    accounts, employer 401k where Plaid has no coverage, real-estate holdings,
+    or any other balance the user wants tracked in net worth.
+
+    Required: `name`, `type`, `subtype`, `displayBalance`. Use
+    `GET /v1/account-type-options` to enumerate the valid `(type, subtype)`
+    pairs. For brokerage-style accounts with per-security holdings, use
+    `POST /v1/accounts/manual-investments` instead.
+
+    Returns the new account id. After creation, set up balance history via
+    `POST /v1/accounts/{id}/balance-history` (CSV upload) or just let the
+    daily snapshots accumulate from this point forward.
+  operationId: createManualAccount
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/CreateManualAccountRequest"
+  responses:
+    "200":
+      description: New account id.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CreateManualAccountResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+    "422":
+      description: Monarch PayloadError.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

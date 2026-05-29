@@ -1,0 +1,8 @@
+query Common_GetFeatureFlags {
+  featureFlags {
+    name
+    enabled
+    variant
+    __typename
+  }
+}

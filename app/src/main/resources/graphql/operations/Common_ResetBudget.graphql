@@ -1,0 +1,9 @@
+mutation Common_ResetBudget($input: ResetBudgetMutationInput!) {
+  resetBudget(input: $input) {
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

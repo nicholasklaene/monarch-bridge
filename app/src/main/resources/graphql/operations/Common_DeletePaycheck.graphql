@@ -1,0 +1,16 @@
+mutation Common_DeletePaycheck($input: DeletePaycheckInput!) {
+  deletePaycheck(input: $input) {
+    success
+    errors {
+      fieldErrors {
+        field
+        messages
+        __typename
+      }
+      message
+      code
+      __typename
+    }
+    __typename
+  }
+}

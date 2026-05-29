@@ -1,0 +1,8 @@
+query Web_SearchMerchants($search: String!) {
+    merchants(search: $search) {
+      id
+      name
+      transactionCount
+      logoUrl
+    }
+  }

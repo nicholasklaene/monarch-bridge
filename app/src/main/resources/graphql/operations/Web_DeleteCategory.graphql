@@ -1,0 +1,10 @@
+mutation Web_DeleteCategory($id: UUID!, $moveToCategoryId: UUID) {
+  deleteCategory(id: $id, moveToCategoryId: $moveToCategoryId) {
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    deleted
+    __typename
+  }
+}

@@ -1,0 +1,18 @@
+get:
+  tags: [Transactions]
+  summary: Accounts that match a transaction filter
+  description: |
+    Returns the accounts that would be touched by a bulk transaction
+    operation given the supplied filter (date window only here for
+    simplicity; extends to full filter via repeat params).
+  operationId: getAccountsForTransactionFilter
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: Matching accounts (display + provider metadata).
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetAccountsForTransactionsResponse"

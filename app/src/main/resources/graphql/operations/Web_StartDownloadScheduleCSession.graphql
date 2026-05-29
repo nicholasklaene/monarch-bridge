@@ -1,0 +1,24 @@
+mutation Web_StartDownloadScheduleCSession(
+    $taxYear: Int!
+    $period: String!
+    $entityId: ID
+    $includeCategories: Boolean
+    $includeTransactions: Boolean
+    $includeTotals: Boolean
+    $format: String
+    $entityLabel: String
+  ) {
+    startDownloadScheduleCSession(
+      taxYear: $taxYear
+      period: $period
+      entityId: $entityId
+      includeCategories: $includeCategories
+      includeTransactions: $includeTransactions
+      includeTotals: $includeTotals
+      format: $format
+      entityLabel: $entityLabel
+    ) {
+      sessionKey
+      status
+    }
+  }

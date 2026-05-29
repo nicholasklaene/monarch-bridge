@@ -1,0 +1,10 @@
+query Common_GetEmailNotificationPrefs {
+  emailNotificationPreferences {
+    weeklyRecap
+    budgetAlerts
+    billReminders
+    goalUpdates
+    marketingTips
+    __typename
+  }
+}

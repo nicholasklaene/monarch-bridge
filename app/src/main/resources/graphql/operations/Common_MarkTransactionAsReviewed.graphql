@@ -1,0 +1,15 @@
+mutation Common_MarkTransactionAsReviewed($input: UpdateTransactionMutationInput!) {
+  updateTransaction(input: $input) {
+    transaction {
+      id
+      reviewedAt
+      needsReview
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

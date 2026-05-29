@@ -1,0 +1,21 @@
+mutation Web_ReviewStream($input: ReviewRecurringStreamInput!) {
+    reviewRecurringStream(input: $input) {
+      stream {
+        id
+        reviewStatus
+      }
+
+      errors {
+        ...PayloadErrorFields
+      }
+    }
+  }
+
+fragment PayloadErrorFields on PayloadError {
+    fieldErrors {
+      field
+      messages
+    }
+    message
+    code
+  }

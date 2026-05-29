@@ -1,0 +1,5 @@
+query Web_SnapshotsForAccountCopyBalancePreview($accountId: UUID!) {
+    snapshotsForAccount(accountId: $accountId) {
+      date
+    }
+  }

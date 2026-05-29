@@ -1,0 +1,105 @@
+mutation Web_UpdateTransactionOverview($input: UpdateTransactionMutationInput!) {
+    updateTransaction(input: $input) {
+      transaction {
+        id
+        ...TransactionOverviewFields
+      }
+      errors {
+        ...PayloadErrorFields
+      }
+    }
+  }
+
+fragment TransactionOverviewFields on Transaction {
+    id
+    amount
+    pending
+    date
+    hideFromReports
+    hiddenByAccount
+    plaidName
+    notes
+    isRecurring
+    reviewStatus
+    needsReview
+    isSplitTransaction
+    dataProviderDescription
+    deletedAt
+    deletedByType
+
+    attachments {
+      id
+    }
+
+    goal {
+      id
+      name
+    }
+
+    savingsGoalEvent {
+      id
+
+      goal {
+        id
+        name
+      }
+    }
+
+    category {
+      id
+      name
+      icon
+      systemCategory
+      group {
+        id
+        type
+      }
+    }
+
+    merchant {
+      name
+      id
+      transactionsCount
+      logoUrl
+      recurringTransactionStream {
+        frequency
+        isActive
+      }
+    }
+
+    tags {
+      id
+      name
+      color
+      order
+    }
+
+    account {
+      id
+      displayName
+      icon
+      logoUrl
+    }
+
+    ownedByUser {
+      id
+      displayName
+      profilePictureUrl
+    }
+
+    businessEntity {
+      id
+      name
+      logoUrl
+      color
+    }
+  }
+
+fragment PayloadErrorFields on PayloadError {
+    fieldErrors {
+      field
+      messages
+    }
+    message
+    code
+  }

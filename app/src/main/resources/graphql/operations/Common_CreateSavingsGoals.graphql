@@ -1,0 +1,15 @@
+mutation Common_CreateSavingsGoals($input: CreateSavingsGoalsInput!) {
+  createSavingsGoals(input: $input) {
+    savingsGoals {
+      id
+      name
+      type
+      status
+      targetAmount
+      targetDate
+      currentBalance
+      __typename
+    }
+    __typename
+  }
+}

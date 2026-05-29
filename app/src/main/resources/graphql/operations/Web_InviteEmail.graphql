@@ -1,0 +1,20 @@
+mutation Web_InviteEmail($input: InviteUserToHouseholdMutationInput!) {
+    inviteUserToHousehold(input: $input) {
+      errors {
+        ...PayloadErrorFields
+      }
+      invite {
+        id
+        invitedEmail
+      }
+    }
+  }
+
+fragment PayloadErrorFields on PayloadError {
+    fieldErrors {
+      field
+      messages
+    }
+    message
+    code
+  }

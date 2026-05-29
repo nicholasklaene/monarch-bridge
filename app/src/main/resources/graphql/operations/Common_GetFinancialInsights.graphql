@@ -1,0 +1,49 @@
+query Common_GetFinancialInsights(
+  $statuses: [InsightStatusEnum!]
+  $summaryStartDate: Date
+  $summaryEndDate: Date
+) {
+  financialInsights(statuses: $statuses) {
+    id
+    merchantNameDisplay
+    merchantLogoUrl
+    dashboardSubtitle
+    description
+    reasoning
+    effort
+    status
+    savingsEstimateLow
+    savingsEstimateHigh
+    capturedSavingsLow
+    currentAnnualCost
+    recurringStreamSnapshot
+    nextChargeDate
+    score
+    opportunityType
+    suggestedActionType
+    relatedMerchants {
+      name
+      logoUrl
+      merchantId
+      __typename
+    }
+    __typename
+  }
+  financialInsightSummary(startDate: $summaryStartDate, endDate: $summaryEndDate) {
+    totalCapturedSavings
+    completedCount
+    totalIdentifiedSavingsLow
+    totalIdentifiedSavingsHigh
+    acceptedCount
+    inProgressCount
+    newCount
+    __typename
+  }
+  financialInsightRuns(limit: 1) {
+    id
+    status
+    createdAt
+    insightsGeneratedCount
+    __typename
+  }
+}

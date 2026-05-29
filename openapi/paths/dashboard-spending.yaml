@@ -1,0 +1,17 @@
+get:
+  tags: [Transactions]
+  summary: Home-tab spending dashboard widget
+  description: |
+    Compact spending widget for the home tab: total spend for the
+    window, remaining budget, and the top spending categories.
+  operationId: getSpendingDashboard
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: Dashboard widget data.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetSpendingDashboardResponse"

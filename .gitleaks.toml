@@ -1,0 +1,32 @@
+# gitleaks config — runs in CI and via lefthook pre-commit
+# https://github.com/gitleaks/gitleaks
+#
+# IMPORTANT: do NOT exempt agents/context/ or CLAUDE.md from scanning. Those files
+# are written through by AI; the safest assumption is they could leak a real key.
+# Allowlist only the example/template files that intentionally contain placeholders.
+
+title = "template gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allowlist for placeholder values in template files"
+paths = [
+    '''\.env\.example$''',
+    '''\.env\.tpl$''',
+    '''docs/adrs/.*''',                  # ADRs talk about secrets in prose
+    '''agents/context/OPERATIONS\.md$''', # OPERATIONS.md documents secrets-handling patterns
+    '''.*test.*\.(kt|java|ts|tsx)$''',    # test fixtures may contain dummy keys
+    '''.*/test/resources/fixtures/.*''',  # captured third-party HTML/JSON for parser tests
+]
+regexes = [
+    '''app:app''',                    # local Postgres dev creds
+    '''postgres:postgres''',
+    '''localhost''',
+    '''example\.com''',
+    '''test-token''',
+    '''test-dummy-key''',
+    '''dummy-key''',
+    '''placeholder-set-real-key-via-env''',
+]

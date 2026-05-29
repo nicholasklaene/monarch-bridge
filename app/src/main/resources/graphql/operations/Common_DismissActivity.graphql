@@ -1,0 +1,10 @@
+mutation Common_DismissActivity($id: ID!) {
+  dismissActivity(id: $id) {
+    node {
+      id
+      dismissedAt
+      __typename
+    }
+    __typename
+  }
+}

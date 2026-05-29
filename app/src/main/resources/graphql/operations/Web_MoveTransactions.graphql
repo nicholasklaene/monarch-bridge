@@ -1,0 +1,10 @@
+mutation Web_MoveTransactions($input: MoveTransactionsInput!) {
+  moveTransactions(input: $input) {
+    numTransactionsMoved
+    errors {
+      message
+      __typename
+    }
+    __typename
+  }
+}

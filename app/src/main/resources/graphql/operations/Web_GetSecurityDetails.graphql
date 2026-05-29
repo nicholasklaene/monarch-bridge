@@ -1,0 +1,16 @@
+query Web_GetSecurityDetails($id: ID!) {
+  security(id: $id) {
+    id
+    ticker
+    name
+    type
+    currentPrice
+    closingPrice
+    sector
+    industry
+    marketCap
+    peRatio
+    dividendYield
+    __typename
+  }
+}

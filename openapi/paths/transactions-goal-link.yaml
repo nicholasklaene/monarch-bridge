@@ -1,0 +1,64 @@
+post:
+  tags: [Goals]
+  summary: Link a transaction to a savings goal
+  description: |
+    Create a goal-event that ties a single transaction to a goal. The
+    transaction's `savingsGoalEvent` becomes non-null and the goal
+    balance reconciliation picks it up. Used to credit a specific
+    purchase ("plane tickets") against the matching goal ("Vacation").
+
+    Pair with `DELETE /v1/transactions/{id}/goal-link` to unlink.
+  operationId: linkTransactionToGoal
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TransactionIdPath"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required: [goalId]
+          properties:
+            goalId:
+              type: string
+              description: Target Monarch goal id.
+  responses:
+    "200":
+      description: Linkage created.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [goalEventId]
+                properties:
+                  goalEventId: { type: string }
+                  transactionId: { type: string, nullable: true }
+                  goalId: { type: string, nullable: true }
+delete:
+  tags: [Goals]
+  summary: Unlink any goal-reconciliation records for a transaction
+  description: |
+    Drops all goal-reconciliation records for one transaction (the
+    inverse of `POST /v1/transactions/{id}/goal-link`). The transaction
+    stops being credited against any goal.
+  operationId: unlinkTransactionGoalRecords
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TransactionIdPath"
+  responses:
+    "200":
+      description: Deletion result.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [success]
+                properties:
+                  success: { type: boolean }

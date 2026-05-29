@@ -1,0 +1,10 @@
+mutation Common_DeleteSavingsGoal($input: DeleteSavingsGoalInput!) {
+  deleteSavingsGoal(input: $input) {
+    success
+    errors {
+      message
+      __typename
+    }
+    __typename
+  }
+}

@@ -1,0 +1,12 @@
+query Common_GetDisplayBalanceAtDate($date: Date!, $filters: AccountFilters) {
+  accounts(filters: $filters) {
+    id
+    displayBalance(date: $date)
+    includeInNetWorth
+    type {
+      name
+      __typename
+    }
+    __typename
+  }
+}

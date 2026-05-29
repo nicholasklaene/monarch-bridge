@@ -1,0 +1,14 @@
+get:
+  tags: [Transactions]
+  summary: Review-queue counts by household user
+  description: |
+    For each household member, how many transactions are currently flagged as
+    needing review. Empty list = nothing in the review queue.
+  operationId: getReviewSummaryByUser
+  responses:
+    "200":
+      description: Per-user review counts.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ReviewSummaryByUserResponse"

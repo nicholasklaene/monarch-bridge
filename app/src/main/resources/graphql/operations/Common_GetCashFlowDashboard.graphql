@@ -1,0 +1,13 @@
+query Common_GetCashFlowDashboard($filters: TransactionFilterInput) {
+  byDay: aggregates(filters: $filters, fillEmptyValues: true, groupBy: ["day"]) {
+    summary {
+      sumExpense
+      __typename
+    }
+    groupBy {
+      day
+      __typename
+    }
+    __typename
+  }
+}

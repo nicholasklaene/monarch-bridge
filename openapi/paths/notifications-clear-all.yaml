@@ -1,0 +1,21 @@
+post:
+  tags: [System]
+  summary: Clear all notifications
+  description: |
+    Bulk-dismiss every activity event in the bell. Returns a simple
+    success boolean.
+  operationId: clearAllNotifications
+  responses:
+    "200":
+      description: True on success.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [success]
+                properties:
+                  success: { type: boolean }

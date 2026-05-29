@@ -1,0 +1,8 @@
+mutation Web_UpdateAccountOrder($input: UpdateAccountOrderInput!) {
+    updateAccountOrder(input: $input) {
+      account {
+        id
+        order
+      }
+    }
+  }

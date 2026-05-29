@@ -1,0 +1,11 @@
+mutation Web_UpdateHouseholdMember($input: UpdateHouseholdMemberInput!) {
+  updateHouseholdMember(input: $input) {
+    updated
+    role
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

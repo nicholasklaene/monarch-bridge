@@ -1,0 +1,37 @@
+post:
+  tags: [TaxLots]
+  summary: Create one manual tax lot under a holding
+  description: |
+    Adds one manual cost-basis tax lot under the given holding. The Monarch
+    web client surfaces this when the user edits a manual investments
+    holding and clicks "Add a tax lot".
+
+    The lot is independent of any data-provider basis - manual lots
+    accumulate alongside synced basis, with the user-side total reflected
+    in the holding's per-lot performance chart.
+  operationId: createManualTaxLot
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { type: string }
+      description: Monarch holding id.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/CreateManualTaxLotRequest"
+  responses:
+    "200":
+      description: The created tax lot.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CreateManualTaxLotResponse"
+    "422":
+      description: Monarch PayloadError.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

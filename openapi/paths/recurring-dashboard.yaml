@@ -1,0 +1,24 @@
+get:
+  tags: [Recurring]
+  summary: Dashboard view of upcoming recurring items + total due
+  description: |
+    Returns the per-item upcoming recurring transaction stream PLUS the
+    remaining-due dollar total for the same window. Drop-in shape for a
+    "next 30 days bills" widget.
+  operationId: getRecurringDashboard
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+    - in: query
+      name: includeLiabilities
+      required: false
+      schema:
+        type: boolean
+      description: Include liability payments (credit cards, loans) in the list.
+  responses:
+    "200":
+      description: Upcoming items + remaining-due summary.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetRecurringDashboardResponse"

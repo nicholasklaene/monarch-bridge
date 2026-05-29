@@ -1,0 +1,25 @@
+{
+  "recap": {
+    "id": "rec-1",
+    "dateRangeStart": "2026-05-18",
+    "dateRangeEnd": "2026-05-24",
+    "summary": "You spent less than usual.",
+    "sentiment": "positive",
+    "createdAt": "2026-05-25T00:00:00Z",
+    "updatedAt": null,
+    "cards": [
+      {
+        "module": "cashflow",
+        "title": "Cashflow",
+        "headline": "Net positive",
+        "message": "Income exceeded spend",
+        "sentiment": "positive",
+        "titleMarkdown": "**Cashflow**",
+        "headlineMarkdown": null,
+        "messageMarkdown": null,
+        "metrics": {"net": 420.5, "income": 5000},
+        "richBlocks": {"blocks": []}
+      }
+    ]
+  }
+}

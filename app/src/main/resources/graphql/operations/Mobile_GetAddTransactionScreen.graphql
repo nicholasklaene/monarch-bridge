@@ -1,0 +1,3 @@
+query Mobile_GetAddTransactionScreen {
+  __typename
+}

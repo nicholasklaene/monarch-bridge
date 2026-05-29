@@ -1,0 +1,21 @@
+get:
+  tags: [TaxLots]
+  summary: List tax lots under a holding
+  description: |
+    All manual tax lots attached to one holding. Ordered by
+    `acquisitionDate` ascending. Pairs with the "Lot performance" chart -
+    one row per lot.
+  operationId: listTaxLots
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { type: string }
+      description: Monarch holding id.
+  responses:
+    "200":
+      description: All tax lots for this holding.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ListTaxLotsResponse"

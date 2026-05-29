@@ -1,0 +1,24 @@
+get:
+  tags: [Accounts]
+  summary: Top institution groups (popular providers by category)
+  description: |
+    Monarch's top-N institutions grouped by category, scoped to the
+    requested data providers. Used by the Add-Account UI.
+  operationId: getTopInstitutionGroups
+  parameters:
+    - in: query
+      name: dataProvider
+      required: false
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+      description: One or more data providers (`PLAID`, `FINICITY`, `MX`).
+  responses:
+    "200":
+      description: Top institution groups.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetTopInstitutionGroupsResponse"

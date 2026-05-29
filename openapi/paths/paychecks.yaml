@@ -1,0 +1,69 @@
+get:
+  tags: [Paychecks]
+  summary: List paychecks (with optional date + owner + employer filter)
+  description: |
+    Returns paycheck records (Monarch's structured paycheck model, not
+    raw transactions). Each entry has `payDate`, gross, net, employer,
+    owner (household member), plus the deductions and deposits arrays.
+
+    Filter on `payDate` via `start` / `end`; omit both for full
+    history. Use `ownerId` to scope to one household member,
+    `employerId` to scope to one employer.
+
+    For window-level rollups use `GET /v1/paychecks/summary`. For full
+    detail on one paycheck use `GET /v1/paychecks/{id}`.
+  operationId: listPaychecks
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+    - in: query
+      name: ownerId
+      required: false
+      schema:
+        type: string
+      description: Filter to one household-member id.
+    - in: query
+      name: employerId
+      required: false
+      schema:
+        type: string
+      description: Filter to one employer id.
+  responses:
+    "200":
+      description: All paychecks matching the filter.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ListPaychecksResponse"
+post:
+  tags: [Paychecks]
+  summary: Record a new paycheck
+  description: |
+    Creates a paycheck record from scratch. Required: `employerId`,
+    `ownerId`, `payDate`, `gross`, `net`. Optional: `deductions[]`
+    (per-line: taxes, retirement, insurance, etc.) and `deposits[]`
+    (per-account splits of the net amount).
+
+    `employerId` must already exist; register it via
+    `POST /v1/paycheck-employers` first. Deductions and deposits can be
+    omitted on create and filled in later via `PATCH /v1/paychecks/{id}`.
+  operationId: createPaycheck
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/CreatePaycheckRequest"
+  responses:
+    "200":
+      description: New paycheck.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CreatePaycheckResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

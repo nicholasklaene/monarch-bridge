@@ -1,0 +1,10 @@
+query Web_GetSubscriptionReceipts {
+  subscriptionReceipts {
+    id
+    issueDate
+    amount
+    currency
+    downloadUrl
+    __typename
+  }
+}

@@ -1,0 +1,10 @@
+query Web_GetChannelNotificationPrefs($channel: String!) {
+  channelNotificationPrefs(channel: $channel) {
+    weeklyRecap
+    budgetAlerts
+    billReminders
+    goalUpdates
+    marketingTips
+    __typename
+  }
+}

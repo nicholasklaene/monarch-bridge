@@ -1,0 +1,75 @@
+name: Publish Python client to PyPI
+
+# Triggers on a semver tag push (v1.2.3). The Python client lives under
+# clients/python/ and is generated from openapi/monarch-bridge.yaml; we ship
+# the generator's output as `monarch-bridge-client` on PyPI.
+#
+# `twine upload --skip-existing` makes the workflow idempotent: re-tagging the
+# same version is a no-op rather than a hard failure.
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-python-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Build + publish wheel + sdist
+    runs-on: ubuntu-latest
+    environment: pypi
+    defaults:
+      run:
+        working-directory: clients/python
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install build tooling
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build twine
+
+      - name: Derive version from tag
+        id: version
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          version="${tag#v}"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "Publishing monarch-bridge-client version: ${version}"
+
+      - name: Pin package version to tag
+        # The generated pyproject.toml hard-codes version = "1.0.0" from the
+        # OpenAPI spec's `info.version`. Override at publish time so every tag
+        # publishes a distinct version without requiring a spec edit.
+        run: |
+          python - <<PY
+          import re, pathlib
+          p = pathlib.Path("pyproject.toml")
+          text = p.read_text()
+          text = re.sub(r'^version\s*=\s*".*"', 'version = "${{ steps.version.outputs.version }}"', text, count=1, flags=re.M)
+          p.write_text(text)
+          PY
+          grep '^version' pyproject.toml
+
+      - name: Build wheel + sdist
+        run: python -m build
+
+      - name: Check distributions
+        run: python -m twine check dist/*
+
+      - name: Publish to PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: python -m twine upload --skip-existing dist/*

@@ -1,0 +1,3 @@
+query GetInstitutionLogoByPlaidId {
+  __typename
+}

@@ -1,0 +1,12 @@
+query Web_GetMerchantStats($merchantId: ID!, $startDate: Date, $endDate: Date) {
+  merchantStats(merchantId: $merchantId, startDate: $startDate, endDate: $endDate) {
+    merchantId
+    totalSpend
+    transactionCount
+    averageTransaction
+    firstSeen
+    lastSeen
+    monthsActive
+    __typename
+  }
+}

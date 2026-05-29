@@ -1,0 +1,6 @@
+query Web_GetAdvisorProfilePage {
+    subscriptionSponsor {
+      id
+      name
+    }
+  }

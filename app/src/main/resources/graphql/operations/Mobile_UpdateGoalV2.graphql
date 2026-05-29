@@ -1,0 +1,3 @@
+mutation Mobile_UpdateGoalV2 {
+  __typename
+}

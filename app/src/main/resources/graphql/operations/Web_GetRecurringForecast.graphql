@@ -1,0 +1,12 @@
+query Web_GetRecurringForecast($startDate: Date, $endDate: Date) {
+  recurringTransactionForecast(startDate: $startDate, endDate: $endDate) {
+    forecast {
+      date
+      amount
+      merchantName
+      streamId
+      __typename
+    }
+    __typename
+  }
+}

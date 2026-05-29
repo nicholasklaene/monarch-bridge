@@ -1,0 +1,6 @@
+in: query
+name: accountType
+required: false
+schema:
+  type: string
+description: Filter to one Monarch account type (e.g. `brokerage`, `real_estate`).

@@ -1,0 +1,10 @@
+mutation Common_RemoveHouseholdMember($id: ID!) {
+  removeHouseholdMember(id: $id) {
+    deleted
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

@@ -1,0 +1,90 @@
+get:
+  tags: [Settings]
+  summary: Household preferences
+  description: |
+    Household-wide feature flags + review settings. Examples:
+    `newTransactionsNeedReview`, `aiAssistantEnabled`,
+    `investmentTransactionsEnabled`, `excludeBusinessFromBudget`.
+  operationId: getHouseholdPreferences
+  responses:
+    "200":
+      description: Preferences object.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [id]
+                properties:
+                  id: { type: string }
+                  newTransactionsNeedReview: { type: boolean, nullable: true }
+                  uncategorizedTransactionsNeedReview: { type: boolean, nullable: true }
+                  pendingTransactionsCanBeEdited: { type: boolean, nullable: true }
+                  aiAssistantEnabled: { type: boolean, nullable: true }
+                  llmEnrichmentEnabled: { type: boolean, nullable: true }
+                  investmentTransactionsEnabled: { type: boolean, nullable: true }
+                  budgetApplyToFutureMonthsDefault: { type: boolean, nullable: true }
+                  hiddenTransactionsBetaEnabled: { type: boolean, nullable: true }
+                  collaborationToolsEnabled: { type: boolean, nullable: true }
+                  aggDataSharingEnabled: { type: boolean, nullable: true }
+                  aiModelTrainingOnUserDataEnabled: { type: boolean, nullable: true }
+                  excludeBusinessFromBudget: { type: boolean, nullable: true }
+                  continuousFinancialMonitoringEnabled: { type: boolean, nullable: true }
+                  eligibleForFinancialInsights: { type: boolean, nullable: true }
+patch:
+  tags: [Settings]
+  summary: Update household preferences
+  description: |
+    Patch any subset of household preference flags. All fields optional;
+    omit to leave unchanged.
+  operationId: updateHouseholdPreferences
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            newTransactionsNeedReview: { type: boolean, nullable: true }
+            uncategorizedTransactionsNeedReview: { type: boolean, nullable: true }
+            pendingTransactionsCanBeEdited: { type: boolean, nullable: true }
+            aiAssistantEnabled: { type: boolean, nullable: true }
+            llmEnrichmentEnabled: { type: boolean, nullable: true }
+            investmentTransactionsEnabled: { type: boolean, nullable: true }
+            budgetApplyToFutureMonthsDefault: { type: boolean, nullable: true }
+            hiddenTransactionsBetaEnabled: { type: boolean, nullable: true }
+            collaborationToolsEnabled: { type: boolean, nullable: true }
+            aggDataSharingEnabled: { type: boolean, nullable: true }
+            aiModelTrainingOnUserDataEnabled: { type: boolean, nullable: true }
+            excludeBusinessFromBudget: { type: boolean, nullable: true }
+            continuousFinancialMonitoringEnabled: { type: boolean, nullable: true }
+  responses:
+    "200":
+      description: Updated preferences.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [id]
+                properties:
+                  id: { type: string }
+                  newTransactionsNeedReview: { type: boolean, nullable: true }
+                  uncategorizedTransactionsNeedReview: { type: boolean, nullable: true }
+                  pendingTransactionsCanBeEdited: { type: boolean, nullable: true }
+                  aiAssistantEnabled: { type: boolean, nullable: true }
+                  llmEnrichmentEnabled: { type: boolean, nullable: true }
+                  investmentTransactionsEnabled: { type: boolean, nullable: true }
+                  budgetApplyToFutureMonthsDefault: { type: boolean, nullable: true }
+                  hiddenTransactionsBetaEnabled: { type: boolean, nullable: true }
+                  collaborationToolsEnabled: { type: boolean, nullable: true }
+                  aggDataSharingEnabled: { type: boolean, nullable: true }
+                  aiModelTrainingOnUserDataEnabled: { type: boolean, nullable: true }
+                  excludeBusinessFromBudget: { type: boolean, nullable: true }
+                  continuousFinancialMonitoringEnabled: { type: boolean, nullable: true }

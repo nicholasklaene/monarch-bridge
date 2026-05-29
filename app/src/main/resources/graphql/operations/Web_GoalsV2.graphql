@@ -1,0 +1,62 @@
+query Web_GoalsV2 {
+    goalsV2 {
+      id
+      ...WebGoalCardFields
+    }
+    accountsWithUnallocatedBalancesForGoals {
+      id
+      ...Web_GoalsAllocateBannerFields
+    }
+  }
+
+fragment WebGoalCardFields on GoalV2 {
+      id
+      imageStorageProvider
+      imageStorageProviderId
+      priority
+      archivedAt
+      objective
+      plannedMonthlyContribution
+      plannedMonthlyPretaxContribution
+      accountAllocations {
+        id
+        currentAmount
+
+        currentMonthChange {
+          amount
+        }
+
+        account {
+          id
+          logoUrl
+          icon
+          displayName
+          currentBalance
+          displayBalance
+        }
+      }
+      ...WebGoalNameProgressBarFields
+    }
+
+fragment WebGoalNameProgressBarFields on GoalV2 {
+      id
+      name
+      defaultName
+      targetAmount
+      startingAmount
+      currentAmount
+      completedAt
+      archivedAt
+      type
+      completionPercent
+      accountAllocations {
+        id
+      }
+    }
+
+fragment Web_GoalsAllocateBannerFields on Account {
+      id
+      name
+      logoUrl
+      icon
+    }

@@ -1,0 +1,14 @@
+mutation Common_UpdateHouseholdMember($input: UpdateHouseholdMemberInput!) {
+  updateHouseholdMember(input: $input) {
+    member {
+      id
+      householdRole
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

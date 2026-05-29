@@ -1,0 +1,27 @@
+mutation Common_UpdateSavingsGoal($input: UpdateSavingsGoalInput!) {
+  updateSavingsGoal(input: $input) {
+    savingsGoal {
+      id
+      name
+      priority
+      imageStorageProvider
+      imageStorageProviderId
+      targetAmount
+      targetDate
+      currentMonthPlannedContributionAmount
+      status
+      isSinkingFund
+      progress
+      spendingTotal
+      netContribution
+      netContributionWithSpending
+      netContributionWithoutSpending
+      forecastedCompletionDate
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+    }
+    __typename
+  }
+}

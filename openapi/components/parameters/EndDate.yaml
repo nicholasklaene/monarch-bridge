@@ -1,0 +1,7 @@
+in: query
+name: end
+required: false
+schema:
+  type: string
+  format: date
+description: Upper bound (inclusive), `YYYY-MM-DD`.

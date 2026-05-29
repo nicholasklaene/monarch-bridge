@@ -1,0 +1,17 @@
+mutation Web_CreateManualTaxLot($input: CreateManualTaxLotInput!) {
+  createManualTaxLot(input: $input) {
+    taxLot {
+      id
+      createdAt
+      acquisitionDate
+      acquisitionQuantity
+      costBasisPerUnit
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

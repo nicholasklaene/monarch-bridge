@@ -1,0 +1,3 @@
+mutation Mobile_CustomizeGoalScreen {
+  __typename
+}

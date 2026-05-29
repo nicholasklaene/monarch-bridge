@@ -1,0 +1,55 @@
+get:
+  tags: [Categories]
+  summary: List all transaction categories
+  description: |
+    Returns every category Monarch knows about: built-in system
+    categories (Groceries, Rent, Income, etc.) plus any custom ones the
+    user has created. Each entry carries its name, icon, color, parent
+    group id, `isSystemCategory` flag, and order.
+
+    Use to populate a category picker, resolve a `categoryId` to a
+    display name, or enumerate ids before scoping a transaction query
+    with `categoryIds`. For the one-level-up grouping see
+    `GET /v1/category-groups`.
+  operationId: listCategories
+  responses:
+    "200":
+      description: All categories (system + custom).
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ListCategoriesResponse"
+post:
+  tags: [Categories]
+  summary: Create a custom category
+  description: |
+    Creates a user-defined category under an existing category group.
+
+    Required: `name` and `groupId` (from `GET /v1/category-groups`).
+    Optional: `icon` (emoji string), `color` (hex), and `orderBefore`
+    (uuid of an existing category to insert before). The new category
+    is then available to assign on any transaction via
+    `PATCH /v1/transactions/{id}` or to bulk-assign via the bulk
+    transaction endpoints.
+
+    System categories are not user-editable - they come from Monarch.
+  operationId: createCategory
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/CreateCategoryRequest"
+  responses:
+    "200":
+      description: New category.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CreateCategoryResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

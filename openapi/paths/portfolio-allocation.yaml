@@ -1,0 +1,26 @@
+get:
+  tags: [Holdings]
+  summary: Portfolio allocation by classification
+  description: |
+    Pie-chart-style allocation breakdown for the portfolio (or a subset filtered
+    via `accountIds`). Pass `classificationField` to bucket by security type, asset
+    class, or sector. Returns each bucket's percent + dollar value, plus the total
+    portfolio value.
+  operationId: getPortfolioAllocation
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/AccountIdsQuery"
+    - in: query
+      name: classificationField
+      required: false
+      schema:
+        type: string
+      description: |
+        Monarch's `PortfolioAllocationClassificationField` enum value (e.g. `SECURITY_TYPE`).
+        Omit to use Monarch's default classification.
+  responses:
+    "200":
+      description: Allocation breakdown.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/PortfolioAllocationResponse"

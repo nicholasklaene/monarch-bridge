@@ -1,0 +1,28 @@
+query Web_SearchInstitutionsQuery($search: String, $dataProviders: [String]!) {
+    allInstitutions(search: $search, dataProviders: $dataProviders) {
+      id
+      ...InstitutionRowFields
+    }
+  }
+
+fragment InstitutionRowFields on Institution {
+      id
+      name
+      logo
+      largeLogo {
+        url
+      }
+      url
+      status
+      newConnectionsDisabled
+      hasIssuesReported
+      hasIssuesReportedMessage
+      linkFlowWarnBeforeConnecting
+      linkFlowWarningMessage
+      linkFlowWarningTitle
+      preferredDataProvider
+      firstBackupDataProvider
+      plaidInstitutionId
+      finicityInstitutionId
+      mxInstitutionId
+    }

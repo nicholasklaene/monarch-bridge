@@ -1,0 +1,39 @@
+query Web_GetFilteredAccounts($filters: AccountFilters) {
+    accounts(filters: $filters) {
+      id
+      createdAt
+      displayName
+      displayBalance
+      displayLastUpdatedAt
+      dataProvider
+      icon
+      logoUrl
+      order
+      isAsset
+      includeBalanceInNetWorth
+      deactivatedAt
+      manualInvestmentsTrackingMethod
+      isManual
+      syncDisabled
+      type {
+        display
+        name
+      }
+      credential {
+        updateRequired
+        syncDisabledAt
+      }
+      institution {
+        status
+        newConnectionsDisabled
+      }
+      ownedByUser {
+        id
+        displayName
+        profilePictureUrl
+      }
+      businessEntity {
+        id
+      }
+    }
+  }

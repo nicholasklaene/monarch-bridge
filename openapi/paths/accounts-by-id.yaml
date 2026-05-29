@@ -1,0 +1,58 @@
+patch:
+  tags: [Accounts]
+  summary: Partial-update an account
+  description: |
+    Patches an existing account. Only fields present in the body are
+    forwarded to Monarch; omit a field to leave it untouched.
+
+    Common edits: rename via `name`, toggle visibility with
+    `includeInNetWorth` / `hideFromList`, override the institution-reported
+    `displayBalance` for manual accounts, or change `type`/`subtype`.
+
+    Works on both Plaid-linked and manual accounts, but balance edits only
+    persist on manual accounts (Plaid will overwrite on next sync). Use
+    `PATCH /v1/accounts/bulk` to update several at once.
+  operationId: updateAccount
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/AccountIdPath"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/UpdateAccountRequest"
+  responses:
+    "200":
+      description: Updated account.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/UpdateAccountResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+delete:
+  tags: [Accounts]
+  summary: Delete an account
+  description: |
+    **Destructive**: removes the account AND every transaction Monarch
+    associated with it. Balance-history snapshots are also discarded.
+
+    Use to clean up a manual account that's no longer relevant, or to
+    fully purge a Plaid-linked account whose credential was already
+    unlinked via `DELETE /v1/institutions/{id}`. There is no undo and
+    no soft-delete fallback for this endpoint - the institution-level
+    delete soft-deletes accounts; this one hard-deletes a single one.
+  operationId: deleteAccount
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/AccountIdPath"
+  responses:
+    "200":
+      description: Confirmation.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/DeleteAccountResponse"

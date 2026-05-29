@@ -1,0 +1,15 @@
+mutation Common_ArchiveSavingsGoal($input: ArchiveSavingsGoalInput!) {
+  archiveSavingsGoal(input: $input) {
+    savingsGoal {
+      id
+      archivedAt
+      status
+      __typename
+    }
+    errors {
+      message
+      __typename
+    }
+    __typename
+  }
+}

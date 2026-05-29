@@ -1,0 +1,25 @@
+mutation Common_BulkUpdateTransactionsMutation(
+  $selectedTransactionIds: [ID!]
+  $excludedTransactionIds: [ID!]
+  $allSelected: Boolean!
+  $expectedAffectedTransactionCount: Int!
+  $updates: TransactionUpdateParams!
+  $filters: TransactionFilterInput
+) {
+  bulkUpdateTransactions(
+    selectedTransactionIds: $selectedTransactionIds
+    excludedTransactionIds: $excludedTransactionIds
+    updates: $updates
+    allSelected: $allSelected
+    expectedAffectedTransactionCount: $expectedAffectedTransactionCount
+    filters: $filters
+  ) {
+    success
+    affectedCount
+    errors {
+      message
+      __typename
+    }
+    __typename
+  }
+}

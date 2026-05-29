@@ -1,0 +1,25 @@
+query Web_RecurringFilterQuery {
+    categoryGroups {
+      id
+      name
+      order
+
+      categories {
+        id
+        name
+        icon
+        order
+      }
+    }
+
+    accounts {
+      id
+      displayName
+      logoUrl
+      icon
+      type {
+        name
+        display
+      }
+    }
+  }

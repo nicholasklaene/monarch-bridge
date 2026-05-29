@@ -1,0 +1,26 @@
+patch:
+  tags: [Holdings]
+  summary: Bulk reprice manual holdings
+  description: |
+    Reprice many manual holdings in one round trip. Each entry carries the
+    holding id plus optional new `quantity` and `costBasis`. Monarch
+    processes each row independently and returns the success / failure
+    counts plus per-row failure reasons.
+
+    Bulk-best-effort: partial success returns 200 with `failedCount > 0`.
+    A blanket failure (auth, malformed request) returns the usual error
+    envelope.
+  operationId: bulkUpdateHoldings
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/BulkUpdateHoldingsRequest"
+  responses:
+    "200":
+      description: Counts plus any per-row failures.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/BulkUpdateHoldingsResponse"

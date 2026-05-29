@@ -1,0 +1,19 @@
+get:
+  tags: [System]
+  summary: Monarch subscription tier + payment source
+  description: |
+    Returns the household's Monarch subscription details: current plan
+    (Plus, Premium, etc.), trial state, renewal date, and the payment
+    source (Stripe / Apple App Store / Play Store).
+
+    Useful for checking entitlement before calling tier-gated endpoints
+    (some richer reporting features fall back to empty responses on free
+    tier) or for surfacing renewal warnings to the user.
+  operationId: getSubscription
+  responses:
+    "200":
+      description: Subscription details.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetSubscriptionResponse"

@@ -1,0 +1,32 @@
+query Web_AccountFilterQuery {
+    accounts {
+      id
+      displayName
+      logoUrl
+      icon
+      type {
+        name
+        display
+        group
+      }
+      subtype {
+        name
+        display
+      }
+    }
+
+    myHousehold {
+      id
+
+      users {
+        id
+        name
+        profilePictureUrl
+      }
+    }
+
+    householdPreferences {
+      accountGroupOrder
+      collaborationToolsEnabled
+    }
+  }

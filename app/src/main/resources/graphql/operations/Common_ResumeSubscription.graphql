@@ -1,0 +1,15 @@
+mutation Common_ResumeSubscription {
+  resumeSubscription {
+    subscription {
+      id
+      status
+      resumedAt
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

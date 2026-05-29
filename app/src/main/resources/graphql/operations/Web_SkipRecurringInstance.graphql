@@ -1,0 +1,10 @@
+mutation Web_SkipRecurringInstance($input: SkipRecurringInstanceInput!) {
+  skipRecurringInstance(input: $input) {
+    instance {
+      streamId
+      skippedDate
+      __typename
+    }
+    __typename
+  }
+}

@@ -1,0 +1,7 @@
+mutation Web_UpdateCategoryGroupOrder($id: UUID!, $order: Int!) {
+    updateCategoryGroupOrder(id: $id, order: $order) {
+      categoryGroups {
+        id
+      }
+    }
+  }

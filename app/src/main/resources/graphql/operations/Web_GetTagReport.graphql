@@ -1,0 +1,15 @@
+query Web_GetTagReport($tagId: ID!, $startDate: Date, $endDate: Date) {
+  tagReport(tagId: $tagId, startDate: $startDate, endDate: $endDate) {
+    tagId
+    tagName
+    totalAmount
+    transactionCount
+    months {
+      month
+      amount
+      count
+      __typename
+    }
+    __typename
+  }
+}

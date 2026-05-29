@@ -1,0 +1,18 @@
+get:
+  tags: [System]
+  summary: Subscription invoice history
+  description: |
+    Billing-history rows shown on the Settings → Billing page. Each row
+    is one charge (monthly / annual / proration) with status, amount,
+    PDF receipt URL, and the period it covered.
+
+    `status` values seen in production: `paid`, `pending`, `failed`,
+    `refunded`.
+  operationId: getSubscriptionInvoices
+  responses:
+    "200":
+      description: All subscription invoices for the household.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetSubscriptionInvoicesResponse"

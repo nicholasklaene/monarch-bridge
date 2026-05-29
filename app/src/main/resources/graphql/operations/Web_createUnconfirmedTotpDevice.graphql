@@ -1,0 +1,8 @@
+mutation Web_createUnconfirmedTotpDevice {
+    createUnconfirmedTotpDevice {
+      device {
+        configUrl
+        secret
+      }
+    }
+  }

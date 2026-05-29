@@ -1,0 +1,25 @@
+mutation Common_LinkTransactionToGoal($input: LinkTransactionToGoalInput!) {
+  linkTransactionToGoal(input: $input) {
+    goalEvent {
+      id
+      transaction {
+        id
+        savingsGoalEvent {
+          id
+          goal {
+            id
+            __typename
+          }
+          __typename
+        }
+        __typename
+      }
+      __typename
+    }
+    errors {
+      message
+      __typename
+    }
+    __typename
+  }
+}

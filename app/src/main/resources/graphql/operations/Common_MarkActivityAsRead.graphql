@@ -1,0 +1,10 @@
+mutation Common_MarkActivityAsRead($id: UUID!) {
+  markActivityAsRead(id: $id) {
+    node {
+      id
+      readAt
+      __typename
+    }
+    __typename
+  }
+}

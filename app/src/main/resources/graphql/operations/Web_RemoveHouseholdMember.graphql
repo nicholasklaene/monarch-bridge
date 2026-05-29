@@ -1,0 +1,10 @@
+mutation Web_RemoveHouseholdMember($input: RemoveHouseholdMemberInput!) {
+  removeHouseholdMember(input: $input) {
+    removed
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

@@ -1,0 +1,10 @@
+query Web_AdvisorPortalGetSubscription {
+    subscription {
+      id
+      entitlements
+      paymentMethod {
+        brand
+        lastFour
+      }
+    }
+  }

@@ -1,0 +1,8 @@
+mutation Web_UpdateBusinessTrackingSetupIntent($input: UpdateUserProfileInput!) {
+    updateUserProfile(input: $input) {
+      userProfile {
+        id
+        businessSetupPriorTracking
+      }
+    }
+  }

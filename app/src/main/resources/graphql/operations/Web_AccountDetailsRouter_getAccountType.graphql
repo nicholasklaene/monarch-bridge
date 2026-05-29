@@ -1,0 +1,8 @@
+query Web_AccountDetailsRouter_getAccountType($id: UUID!) {
+    account(id: $id) {
+      id
+      type {
+        name
+      }
+    }
+  }

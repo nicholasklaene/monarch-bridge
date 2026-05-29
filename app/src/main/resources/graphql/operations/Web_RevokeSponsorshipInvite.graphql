@@ -1,0 +1,17 @@
+mutation Web_RevokeSponsorshipInvite($input: RevokeSponsorshipInviteInput!) {
+    revokeSubscriptionSponsorshipInvite(input: $input) {
+      revoked
+      errors {
+        ...PayloadErrorFields
+      }
+    }
+  }
+
+fragment PayloadErrorFields on PayloadError {
+    fieldErrors {
+      field
+      messages
+    }
+    message
+    code
+  }

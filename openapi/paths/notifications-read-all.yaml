@@ -1,0 +1,37 @@
+post:
+  tags: [System]
+  summary: Mark all notifications as read
+  description: |
+    Bulk-flip `readAt` for every activity event in the bell. Echoes back
+    the first page of events (so the client can refresh state without a
+    second round-trip).
+  operationId: markAllNotificationsAsRead
+  parameters:
+    - in: query
+      name: first
+      required: false
+      schema:
+        type: integer
+        default: 20
+      description: Page size for the echoed event list.
+  responses:
+    "200":
+      description: Updated id + readAt for each event in the echoed page.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [edges]
+                properties:
+                  edges:
+                    type: array
+                    items:
+                      type: object
+                      required: [id]
+                      properties:
+                        id: { type: string }
+                        readAt: { type: string, nullable: true }

@@ -1,0 +1,7 @@
+query Common_LatestForceRefreshOperation {
+  latestForceRefreshOperation {
+    id
+    state
+    __typename
+  }
+}

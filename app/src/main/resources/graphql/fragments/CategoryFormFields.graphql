@@ -1,0 +1,23 @@
+fragment CategoryFormFields on Category {
+  id
+  order
+  name
+  systemCategory
+  systemCategoryDisplayName
+  budgetVariability
+  isSystemCategory
+  isDisabled
+  group {
+    id
+    type
+    groupLevelBudgetingEnabled
+    __typename
+  }
+  rolloverPeriod {
+    id
+    startMonth
+    startingBalance
+    __typename
+  }
+  __typename
+}

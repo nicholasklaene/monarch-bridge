@@ -1,0 +1,23 @@
+get:
+  tags: [Budgets]
+  summary: Single-month budget data (slim), per-category amounts only
+  description: |
+    A trimmed Common_BudgetDataQuery: returns budget system + the
+    per-category monthly amounts for one month. Use for a per-category
+    plan/actual view without pulling the full GetBudgets tree.
+  operationId: getBudgetMonth
+  parameters:
+    - in: query
+      name: month
+      required: true
+      schema:
+        type: string
+        format: date
+      description: First-of-month date, e.g. `2026-05-01`.
+  responses:
+    "200":
+      description: Single-month budget data.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetBudgetMonthResponse"

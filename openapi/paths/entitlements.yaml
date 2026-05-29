@@ -1,0 +1,26 @@
+get:
+  tags: [System]
+  summary: Subscription entitlements
+  description: |
+    Feature entitlements granted by the active subscription. Returns the raw
+    entitlement-key array Monarch ships, plus the subscription id for
+    cross-reference with `/v1/subscription`. Used to gate Plus-only flows
+    on the client side without an extra round-trip.
+  operationId: getEntitlements
+  responses:
+    "200":
+      description: Subscription id + entitlement keys.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [id, entitlements]
+                properties:
+                  id: { type: string }
+                  entitlements:
+                    type: array
+                    items: { type: string }

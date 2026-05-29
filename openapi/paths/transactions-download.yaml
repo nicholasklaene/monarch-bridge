@@ -1,0 +1,42 @@
+post:
+  tags: [Transactions]
+  summary: Start a transaction CSV download session
+  description: |
+    Kick off the async "download my transactions as CSV" job Monarch
+    backs the Web download button with. Returns a `sessionKey` to poll
+    via `GET /v1/transactions/download/{sessionKey}` until the CSV `url`
+    is ready.
+
+    Filters mirror `GET /v1/transactions`: pass a JSON map under
+    `filters` (search string, categoryIds, accountIds, date window).
+  operationId: startDownloadTransactions
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            filters:
+              type: object
+              description: TransactionFilterInput - passed through verbatim. Common keys, `search`, `categories`, `accounts`, `tags`, `startDate`, `endDate`, `hideFromReports`.
+              additionalProperties: true
+            orderBy:
+              type: string
+              nullable: true
+              description: Sort key (e.g. `date` or `amount`). Optional.
+  responses:
+    "200":
+      description: Session key + initial status.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [sessionKey]
+                properties:
+                  sessionKey: { type: string }
+                  status: { type: string, nullable: true }

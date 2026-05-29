@@ -1,0 +1,5 @@
+query Web_MintTransactionsCountQuery {
+    allMintTransactions: allTransactions(filters: { importedFromMint: true }) {
+      totalCount
+    }
+  }

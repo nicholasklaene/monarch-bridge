@@ -1,0 +1,16 @@
+get:
+  tags: [Categories]
+  summary: Slim category snapshot for the delete-confirm flow
+  description: |
+    Returns just id, name, icon, and `isSystemCategory`. Use before
+    showing a delete-confirmation dialog.
+  operationId: getCategoryDeletionInfo
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/CategoryIdPath"
+  responses:
+    "200":
+      description: Deletion-info snapshot.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetCategoryDeletionInfoResponse"

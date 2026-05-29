@@ -1,0 +1,13 @@
+query Web_GetTaxLotPerformance($holdingId: ID!) {
+  taxLotPerformance(holdingId: $holdingId) {
+    holdingId
+    historicalChart {
+      date
+      unrealizedGains
+      returnPercent
+      costBasis
+      __typename
+    }
+    __typename
+  }
+}

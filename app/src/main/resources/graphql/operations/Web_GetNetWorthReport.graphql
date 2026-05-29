@@ -1,0 +1,14 @@
+query Web_GetNetWorthReport($startDate: Date, $endDate: Date) {
+  netWorthReport(startDate: $startDate, endDate: $endDate) {
+    currentNetWorth
+    startingNetWorth
+    changeAmount
+    changePercent
+    series {
+      date
+      balance
+      __typename
+    }
+    __typename
+  }
+}

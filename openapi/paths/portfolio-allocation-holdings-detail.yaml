@@ -1,0 +1,31 @@
+get:
+  tags: [Holdings]
+  summary: Holdings within one allocation bucket
+  description: |
+    Drill-down: lists the individual holdings inside one classification bucket (e.g.
+    every equity inside the "Equities" classification value). Requires
+    `classificationField` + `classificationValue` plus optional pagination.
+  operationId: getPortfolioAllocationHoldingsDetail
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/AccountIdsQuery"
+    - in: query
+      name: classificationField
+      required: true
+      schema:
+        type: string
+      description: Monarch's `PortfolioAllocationClassificationField` enum value.
+    - in: query
+      name: classificationValue
+      required: true
+      schema:
+        type: string
+      description: The specific bucket value within `classificationField` to drill into.
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Limit"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Offset"
+  responses:
+    "200":
+      description: Holdings inside the requested bucket.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/PortfolioAllocationHoldingsDetailResponse"

@@ -1,0 +1,11 @@
+query Web_GetTargetAllocation {
+  targetAllocation {
+    entries {
+      classification
+      targetPercent
+      currentPercent
+      __typename
+    }
+    __typename
+  }
+}

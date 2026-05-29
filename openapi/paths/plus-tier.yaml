@@ -1,0 +1,27 @@
+get:
+  tags: [System]
+  summary: Plus-tier access info
+  description: |
+    Subscription entitlements plus Plus-trial window endpoints
+    (`plusTrialEndsAt`, `canceledPlusTrialAt`). Use to gate "you are in
+    your trial" banners and Plus-feature promotional copy.
+  operationId: getPlusTierAccess
+  responses:
+    "200":
+      description: Entitlements + Plus-trial timestamps.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [id, entitlements]
+                properties:
+                  id: { type: string }
+                  entitlements:
+                    type: array
+                    items: { type: string }
+                  plusTrialEndsAt: { type: string, nullable: true }
+                  canceledPlusTrialAt: { type: string, nullable: true }

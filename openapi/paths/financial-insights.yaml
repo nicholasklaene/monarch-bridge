@@ -1,0 +1,42 @@
+get:
+  tags: [System]
+  summary: List AI savings insights
+  description: |
+    Monarch's AI-driven money-saving opportunities (subscription audits, bill
+    negotiation candidates, etc.). Each insight has a savings estimate range,
+    effort tag, and current annual cost. Filter by status (e.g. `NEW`, `ACCEPTED`).
+
+    Also returns an aggregate `summary` over the window (counts + identified
+    savings totals) and the `latestRun` metadata to gauge freshness.
+  operationId: listFinancialInsights
+  parameters:
+    - in: query
+      name: status
+      required: false
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+      description: Filter to one or more `InsightStatusEnum` values. Repeat the param for each.
+    - in: query
+      name: summaryStart
+      required: false
+      schema:
+        type: string
+        format: date
+      description: Lower bound for the `summary` aggregate window.
+    - in: query
+      name: summaryEnd
+      required: false
+      schema:
+        type: string
+        format: date
+      description: Upper bound for the `summary` aggregate window.
+  responses:
+    "200":
+      description: Insights plus summary plus latest-run metadata.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ListFinancialInsightsResponse"

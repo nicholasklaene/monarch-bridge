@@ -1,0 +1,70 @@
+query Web_GoalsAllocateBalanceModal {
+    accountsWithUnallocatedBalancesForGoals {
+      ...Web_GoalsAllocateBalanceModalFields
+    }
+  }
+
+fragment Web_GoalsAllocateBalanceModalFields on Account {
+      id
+      displayName
+      displayBalance
+      logoUrl
+      icon
+      availableBalanceForGoals
+      goalAllocations {
+        id
+        amount
+        currentAmount
+        account {
+          id
+          availableBalanceForGoals
+        }
+        goal {
+          id
+          targetAmount
+          currentAmount
+          completionPercent
+          completedAt
+          archivedAt
+          ...GoalAccountsMapRowFields
+        }
+      }
+    }
+
+fragment GoalAccountsMapRowFields on GoalV2 {
+    id
+    name
+    priority
+    imageStorageProvider
+    imageStorageProviderId
+    targetAmount
+    startingAmount
+    currentAmount
+    completionPercent
+    type
+    defaultName
+    accountAllocations {
+      id
+      account {
+        id
+        logoUrl
+        icon
+        dataProvider
+
+        type {
+          name
+          display
+        }
+
+        subtype {
+          name
+        }
+
+        institution {
+          id
+          logo
+          primaryColor
+        }
+      }
+    }
+  }

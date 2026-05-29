@@ -1,0 +1,68 @@
+# Keep the docker build context small + reproducible.
+# Anything not needed by the Dockerfile (which only COPYs gradle wrapper,
+# build files, app/, and openapi/) is excluded.
+
+# VCS
+.git
+.gitignore
+.gitattributes
+.gitleaks.toml
+
+# Docs + meta (not needed at build time)
+*.md
+LICENSE
+docs/
+agents/
+homebrew/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.editorconfig
+.kotlin/
+
+# OS
+.DS_Store
+*.bak
+*.swp
+
+# Build outputs (will be regenerated inside the image)
+build/
+**/build/
+.gradle/
+out/
+
+# Generated clients (not part of the server image)
+clients/python/__pycache__/
+clients/python/.openapi-generator/
+clients/python/dist/
+clients/python/build/
+clients/python/*.egg-info/
+clients/typescript/node_modules/
+clients/typescript/dist/
+clients/typescript/.openapi-generator/
+clients/kotlin/build/
+clients/kotlin/.gradle/
+clients/bash/
+
+# Env / secrets
+.env
+.env.local
+*.env
+.mm-session.json
+**/.mm-session.json
+
+# Local dev configs not used in container
+docker-compose.yml
+scripts/
+cli/
+mcp/
+
+# CI
+.github/
+
+# Misc
+*.log
+node_modules/
+**/node_modules/

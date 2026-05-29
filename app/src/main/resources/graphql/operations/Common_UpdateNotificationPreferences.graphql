@@ -1,0 +1,18 @@
+mutation Common_UpdateNotificationPreferences($input: UpdateNotificationPreferencesInput!) {
+  updateNotificationPreferences(input: $input) {
+    errors {
+      ...PayloadErrorFields
+    }
+    notificationPreference {
+      id
+      group
+      type
+      title
+      description
+      emailEnabled
+      pushEnabled
+      inAppEnabled
+      __typename
+    }
+  }
+}

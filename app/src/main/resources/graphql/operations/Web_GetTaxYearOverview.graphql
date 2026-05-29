@@ -1,0 +1,16 @@
+query Web_GetTaxYearOverview($taxYear: Int!) {
+  taxYearOverview(taxYear: $taxYear) {
+    taxYear
+    totalIncome
+    totalDeductions
+    estimatedTax
+    transactionCount
+    scheduleSummaries {
+      schedule
+      total
+      lineItemCount
+      __typename
+    }
+    __typename
+  }
+}

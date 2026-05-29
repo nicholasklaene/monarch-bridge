@@ -1,0 +1,24 @@
+get:
+  tags: [System]
+  summary: Per-tag historical report
+  description: |
+    Per-month series for one transaction tag across a window. Backs the
+    "view tag" drill-down in the web Reports tab. Each month carries both
+    the sum amount and the transaction count, so callers can render either
+    a spend chart or a frequency chart from one response.
+  operationId: getTagReport
+  parameters:
+    - in: query
+      name: tagId
+      required: true
+      schema: { type: string }
+      description: Monarch tag id.
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: Per-month sums + counts for the tag.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetTagReportResponse"

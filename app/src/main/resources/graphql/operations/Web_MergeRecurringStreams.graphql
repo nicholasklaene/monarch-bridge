@@ -1,0 +1,10 @@
+mutation Web_MergeRecurringStreams($input: MergeRecurringStreamsInput!) {
+  mergeRecurringStreams(input: $input) {
+    stream {
+      id
+      name
+      __typename
+    }
+    __typename
+  }
+}

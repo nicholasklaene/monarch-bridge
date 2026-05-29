@@ -1,0 +1,41 @@
+# docker-compose.yml - LOCAL DEV ONLY.
+#
+# Brings up monarch-bridge on :9084 with the host session JSON bind-mounted in.
+#
+# Prerequisites:
+#   1. Run `./gradlew :app:bootstrapMonarch` to write ~/.config/monarch-bridge/.mm-session.json
+#   2. docker compose up -d
+#   3. curl http://localhost:9084/healthz
+#
+# The session file is bind-mounted read-only from the host. The container itself
+# never writes auth state - session management is a host-side concern.
+
+name: monarch-bridge-dev
+
+services:
+  monarch-bridge:
+    build: .
+    container_name: monarch-bridge
+    ports:
+      # Bind ONLY to host loopback - same protection as the in-process API_BIND default.
+      # No per-request auth on the proxy, so we don't want it reachable from the LAN.
+      - "127.0.0.1:9084:9084"
+    environment:
+      API_PORT: 9084
+      # Inside the container, bind to all interfaces so docker port-forward from
+      # 127.0.0.1:9084 (host) -> container reaches Tomcat. Localhost-only protection
+      # is enforced at the docker-compose port mapping ("127.0.0.1:9084:9084") below.
+      API_BIND: 0.0.0.0
+      MONARCH_SESSION_PATH: /var/monarch-bridge/session/.mm-session.json
+      MONARCH_BASE_URL: ${MONARCH_BASE_URL:-https://api.monarch.com}
+      JVM_OPTS: ${JVM_OPTS:--Xmx256m}
+    volumes:
+      # Bind-mount the host config dir so the service can read the session JSON.
+      - ${HOME}/.config/monarch-bridge:/var/monarch-bridge/session:ro
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9084/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped

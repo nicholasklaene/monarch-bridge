@@ -1,0 +1,10 @@
+query Web_GetGiftedSubscriptionsForPolling {
+    giftedSubscriptionsPurchasedByHousehold {
+      id
+      createdAt
+      recipientName
+      promoCode
+      status
+      stripeCheckoutSessionId
+    }
+  }

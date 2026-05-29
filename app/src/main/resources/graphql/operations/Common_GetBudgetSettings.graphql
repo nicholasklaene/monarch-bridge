@@ -1,0 +1,10 @@
+query Common_GetBudgetSettings {
+  budgetSystem
+  budgetApplyToFutureMonthsDefault
+  flexExpenseRolloverPeriod {
+    id
+    startMonth
+    startingBalance
+    __typename
+  }
+}

@@ -1,0 +1,13 @@
+query Web_GetSavingsRateReport($startDate: Date, $endDate: Date) {
+  savingsRateReport(startDate: $startDate, endDate: $endDate) {
+    overallSavingsRate
+    monthlyRates {
+      month
+      savingsRate
+      income
+      expense
+      __typename
+    }
+    __typename
+  }
+}

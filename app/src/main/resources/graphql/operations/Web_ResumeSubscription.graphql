@@ -1,0 +1,11 @@
+mutation Web_ResumeSubscription {
+  resumeSubscription {
+    resumed
+    resumedAt
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

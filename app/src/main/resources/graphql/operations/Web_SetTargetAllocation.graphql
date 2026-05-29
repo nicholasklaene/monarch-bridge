@@ -1,0 +1,15 @@
+mutation Web_SetTargetAllocation($input: SetTargetAllocationInput!) {
+  setTargetAllocation(input: $input) {
+    entries {
+      classification
+      targetPercent
+      currentPercent
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

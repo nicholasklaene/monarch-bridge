@@ -1,0 +1,30 @@
+package com.nicholasklaene.monarchbridge.graphql.operations.features
+
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.nicholasklaene.monarchbridge.graphql.GraphQLLoader
+import com.nicholasklaene.monarchbridge.graphql.MonarchOperation
+
+/**
+ * Monarch `Common_DeleteReportConfiguration` op wired as an opaque FreeForm pass-through. The
+ * deep response tree is intentionally untyped (Map<String, Any>) because the
+ * `ReportConfig` feature surface churns across Monarch releases; modeling each leaf
+ * would create churn with no caller benefit. Null leaves are dropped to satisfy
+ * the spec-generated non-nullable value type on FreeForm.
+ */
+object DeleteReportConfiguration : MonarchOperation<Unit, Map<String, Any>> {
+    override val operationName: String = "Common_DeleteReportConfiguration"
+    override val query: String by lazy { GraphQLLoader.load(operationName) }
+
+    override fun variables(input: Unit): Map<String, Any> = emptyMap()
+
+    @Suppress("UNCHECKED_CAST")
+    override fun parseOutput(data: JsonNode): Map<String, Any> {
+        val mapped =
+            ObjectMapper()
+                .convertValue(data, Map::class.java)
+                ?: emptyMap<String, Any?>()
+        val raw = mapped as Map<String, Any?>
+        return raw.filterValues { it != null } as Map<String, Any>
+    }
+}

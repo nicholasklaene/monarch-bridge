@@ -1,0 +1,29 @@
+query Common_GetNotificationCenter($first: Int!, $afterCursor: String) {
+  activityEvents(first: $first, after: $afterCursor) {
+    pageInfo {
+      hasNextPage
+      endCursor
+      __typename
+    }
+    edges {
+      node {
+        id
+        createdAt
+        readAt
+        title
+        body
+        action
+        actionLabel
+        eventPriority
+        isPinned
+        logo
+        dismissedAt
+        eventType
+        secondaryUrl
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}

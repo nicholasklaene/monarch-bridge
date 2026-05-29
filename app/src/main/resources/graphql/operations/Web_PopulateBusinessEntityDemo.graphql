@@ -1,0 +1,3 @@
+mutation Web_PopulateBusinessEntityDemo {
+  __typename
+}

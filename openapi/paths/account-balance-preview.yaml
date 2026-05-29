@@ -1,0 +1,40 @@
+get:
+  tags: [Accounts]
+  summary: Preview an account display balance under edit options
+  description: |
+    Returns the `displayBalance` Monarch would show for an account if
+    `invertSyncedBalance` and/or `useAvailableBalance` were toggled.
+    Used by the "edit account" form to live-preview the effect of those
+    settings without committing the change.
+
+    Pure read-only - no state is mutated.
+  operationId: previewAccountBalance
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/AccountIdPath"
+    - in: query
+      name: invertSyncedBalance
+      required: false
+      schema:
+        type: boolean
+      description: Preview what the displayed balance would be if synced balances were sign-flipped.
+    - in: query
+      name: useAvailableBalance
+      required: false
+      schema:
+        type: boolean
+      description: Preview what the displayed balance would be using the available (vs current) balance.
+  responses:
+    "200":
+      description: Previewed display balance.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [id]
+                properties:
+                  id: { type: string }
+                  displayBalancePreview: { type: number, format: double, nullable: true }

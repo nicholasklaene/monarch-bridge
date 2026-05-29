@@ -1,0 +1,7 @@
+query Web_GetFiscalYearPreferences {
+  fiscalYearPreferences {
+    startMonth
+    startDay
+    __typename
+  }
+}

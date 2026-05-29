@@ -1,0 +1,3 @@
+query GoalSelectAccounts {
+  __typename
+}

@@ -1,0 +1,9 @@
+query Common_GetAppVersion {
+  appVersion {
+    current
+    minimum
+    recommended
+    buildSha
+    __typename
+  }
+}

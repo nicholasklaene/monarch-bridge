@@ -1,0 +1,2321 @@
+# monarch-api completion                               -*- shell-script -*-
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !
+# ! Note:
+# !
+# ! THIS SCRIPT HAS BEEN AUTOMATICALLY GENERATED USING
+# ! openapi-generator (https://openapi-generator.tech)
+# ! FROM OPENAPI SPECIFICATION IN JSON.
+# !
+# ! Generator version: 7.14.0
+# !
+# !
+# ! System wide installation:
+# !
+# ! $ sudo cp monarch-api.bash-completion /etc/bash-completion.d/monarch-api
+# !
+# !
+# ! User home installation (add this line to .bash_profile):
+# !
+# ! [ -r ~/monarch-api.bash-completion ] && source ~/monarch-api.bash-completion
+# !
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+declare -A mime_type_abbreviations
+# text/*
+mime_type_abbreviations["text"]="text/plain"
+mime_type_abbreviations["html"]="text/html"
+mime_type_abbreviations["md"]="text/x-markdown"
+mime_type_abbreviations["csv"]="text/csv"
+mime_type_abbreviations["css"]="text/css"
+mime_type_abbreviations["rtf"]="text/rtf"
+# application/*
+mime_type_abbreviations["json"]="application/json"
+mime_type_abbreviations["xml"]="application/xml"
+mime_type_abbreviations["yaml"]="application/yaml"
+mime_type_abbreviations["js"]="application/javascript"
+mime_type_abbreviations["bin"]="application/octet-stream"
+mime_type_abbreviations["rdf"]="application/rdf+xml"
+# image/*
+mime_type_abbreviations["jpg"]="image/jpeg"
+mime_type_abbreviations["png"]="image/png"
+mime_type_abbreviations["gif"]="image/gif"
+mime_type_abbreviations["bmp"]="image/bmp"
+mime_type_abbreviations["tiff"]="image/tiff"
+
+
+#
+# Check if this is OSX, if so defined custom init_completion
+#
+if [[ `uname` =~ "Darwin" ]]; then
+    __osx_init_completion()
+    {
+        COMPREPLY=()
+        _get_comp_words_by_ref cur prev words cword
+    }
+fi
+
+_monarch-api()
+{
+    local cur
+    local prev
+    local words
+    local cword
+
+    # The reference of currently selected REST operation
+    local operation=""
+
+    # The list of available operation in the REST service
+    # It's modelled as an associative array for efficient key lookup
+    declare -A operations
+    operations["bulkUpdateAccounts"]=1
+    operations["createManualAccount"]=1
+    operations["deleteAccount"]=1
+    operations["deleteInstitution"]=1
+    operations["getAccountBalanceAtDate"]=1
+    operations["getAccountGroups"]=1
+    operations["getAccountHistory"]=1
+    operations["getAccountHoldings"]=1
+    operations["getAccountTypeOptions"]=1
+    operations["getBalanceHistoryStatus"]=1
+    operations["getCredentialInstitutions"]=1
+    operations["getInstitutionByPlaidId"]=1
+    operations["getInstitutions"]=1
+    operations["getNetworth"]=1
+    operations["getNetworthByType"]=1
+    operations["getNetworthRecent"]=1
+    operations["getTopInstitutionGroups"]=1
+    operations["listAccounts"]=1
+    operations["listLinkedCredentials"]=1
+    operations["previewAccountBalance"]=1
+    operations["updateAccount"]=1
+    operations["updateAccountGroupOrder"]=1
+    operations["uploadAccountBalanceHistory"]=1
+    operations["advice"]=1
+    operations["adviceDashboardWidget"]=1
+    operations["adviceItemDrawer"]=1
+    operations["adviceQuestionnaire"]=1
+    operations["adviceTaskComplete"]=1
+    operations["adviceTaskDrawer"]=1
+    operations["adviceTaskIncomplete"]=1
+    operations["billsAdvisorBilling"]=1
+    operations["billsBillingSettings"]=1
+    operations["billsCancelSponsorship"]=1
+    operations["billsClaimItem"]=1
+    operations["billsDetail"]=1
+    operations["billsEmployeeBillingState"]=1
+    operations["billsHouseholdCountry"]=1
+    operations["billsMobileSignupUpdatePostalCode"]=1
+    operations["billsOnboardingGetPostalCode"]=1
+    operations["billsOnboardingUpdatePostalCode"]=1
+    operations["billsRegisterSplitParticipant"]=1
+    operations["billsSetEmployeeBillingIssue"]=1
+    operations["billsSubmitSplitInitiatorEdit"]=1
+    operations["billsToggleSyncTracking"]=1
+    operations["billsUnclaimItem"]=1
+    operations["billsUpdatePostalCode"]=1
+    operations["getBudgetMonth"]=1
+    operations["getBudgetStatus"]=1
+    operations["getBudgetTimeline"]=1
+    operations["getBudgets"]=1
+    operations["resetBudget"]=1
+    operations["setBudgetAmount"]=1
+    operations["updateBudgetSettings"]=1
+    operations["updateFlexRolloverSettings"]=1
+    operations["updateFlexibleBudget"]=1
+    operations["businessEntitiesDelete"]=1
+    operations["businessEntitiesDeleteLogo"]=1
+    operations["businessEntitiesDemoPopulate"]=1
+    operations["businessEntitiesDemoScenarios"]=1
+    operations["businessEntitiesDetail"]=1
+    operations["businessEntitiesFinancials"]=1
+    operations["businessEntitiesReportsByCategory"]=1
+    operations["businessEntitiesReportsByGroup"]=1
+    operations["businessEntitiesUpsert"]=1
+    operations["bulkDeleteCategories"]=1
+    operations["createCategory"]=1
+    operations["createCategoryGroup"]=1
+    operations["deleteCategory"]=1
+    operations["deleteCategoryGroup"]=1
+    operations["getCategoryDeletionInfo"]=1
+    operations["getCategoryEdit"]=1
+    operations["getCategoryGroupDetails"]=1
+    operations["listCategories"]=1
+    operations["listCategoryGroups"]=1
+    operations["updateCategoryGroup"]=1
+    operations["updateCategoryGroupBudgetVariability"]=1
+    operations["equityGrantsCreate"]=1
+    operations["equityGrantsDelete"]=1
+    operations["equityGrantsEditModal"]=1
+    operations["equityGrantsList"]=1
+    operations["equityGrantsManageHoldingsModal"]=1
+    operations["equityGrantsPreview"]=1
+    operations["equityGrantsUpdate"]=1
+    operations["forecastCreateScenario"]=1
+    operations["forecastDeleteScenario"]=1
+    operations["forecastDuplicateScenario"]=1
+    operations["forecastInitialize"]=1
+    operations["forecastOnboardingComplete"]=1
+    operations["forecastReplaceEvents"]=1
+    operations["forecastResetData"]=1
+    operations["forecastResetOnboarding"]=1
+    operations["forecastSaveAccounts"]=1
+    operations["forecastSaveParticipantOverrides"]=1
+    operations["forecastSavePriorityRules"]=1
+    operations["forecastSaveScenarioKpis"]=1
+    operations["forecastScenario"]=1
+    operations["forecastScenarios"]=1
+    operations["forecastUpdateScenario"]=1
+    operations["forecastUpdateScenarioOrder"]=1
+    operations["forecastUpdateUserFinancialProfile"]=1
+    operations["archiveGoal"]=1
+    operations["contributeToGoal"]=1
+    operations["createGoal"]=1
+    operations["deleteGoalV2"]=1
+    operations["getGoal"]=1
+    operations["getGoalContributionHistory"]=1
+    operations["getGoalProjection"]=1
+    operations["getGoalsCurrentMonthTotals"]=1
+    operations["hardDeleteGoal"]=1
+    operations["linkTransactionToGoal"]=1
+    operations["listGoalEvents"]=1
+    operations["listGoals"]=1
+    operations["markGoalComplete"]=1
+    operations["markGoalIncomplete"]=1
+    operations["setGoalBudgetAmount"]=1
+    operations["spendFromGoal"]=1
+    operations["unarchiveGoal"]=1
+    operations["unlinkTransactionGoalRecords"]=1
+    operations["updateGoal"]=1
+    operations["updateGoalsPriorities"]=1
+    operations["withdrawFromGoal"]=1
+    operations["bulkUpdateHoldings"]=1
+    operations["createManualHolding"]=1
+    operations["createManualInvestmentsAccount"]=1
+    operations["deleteHolding"]=1
+    operations["getHoldingHistory"]=1
+    operations["getHoldingTransactions"]=1
+    operations["getPortfolioAllocation"]=1
+    operations["getPortfolioAllocationByAccount"]=1
+    operations["getPortfolioAllocationByHoldings"]=1
+    operations["getPortfolioAllocationHoldingsDetail"]=1
+    operations["getSecurityDetails"]=1
+    operations["getSecurityDividends"]=1
+    operations["getSecurityHistoricalPerformance"]=1
+    operations["searchSecurities"]=1
+    operations["updateHolding"]=1
+    operations["longTailAccountTransferResultQuery"]=1
+    operations["longTailAccountTransferStatusQuery"]=1
+    operations["longTailAccountsTransferEligibility"]=1
+    operations["longTailAllActiveInstitutionNotices"]=1
+    operations["longTailArchiveGoal"]=1
+    operations["longTailCancelMessageThread"]=1
+    operations["longTailCancelSubscriptionForHousehold"]=1
+    operations["longTailCategoryDeletionInfo"]=1
+    operations["longTailCheckActivityMutation"]=1
+    operations["longTailCompleteRetailSync"]=1
+    operations["longTailCompleteSavingsGoalsMigration"]=1
+    operations["longTailCreateAccountsFromPlaidToken"]=1
+    operations["longTailCreateBudgetForHousehold"]=1
+    operations["longTailCreateBulkRetailSync"]=1
+    operations["longTailCreateGoalAccountAllocation"]=1
+    operations["longTailCreateGoals"]=1
+    operations["longTailCreateHouseholdAccessGrant"]=1
+    operations["longTailCreateInstitutionIssueReportMutation"]=1
+    operations["longTailCreateOrUpdateGoalV2PlannedContributionMutation"]=1
+    operations["longTailCreatePromoCodeCheckoutSession"]=1
+    operations["longTailCreateRetailSync"]=1
+    operations["longTailCreateSavingsGoalAccountInitialContributions"]=1
+    operations["longTailCreateThreadMutation"]=1
+    operations["longTailDebtPaydown"]=1
+    operations["longTailDebtPaydownAccounts"]=1
+    operations["longTailDeleteAllMessageThreads"]=1
+    operations["longTailDeleteGoalAccountAllocation"]=1
+    operations["longTailDeleteHousehold"]=1
+    operations["longTailDeleteMessageThread"]=1
+    operations["longTailDeleteRetailSync"]=1
+    operations["longTailDeleteSavingsGoalEvent"]=1
+    operations["longTailDeleteSyncedSnapshotsMutation"]=1
+    operations["longTailDeleteSyncedTransactionsMutation"]=1
+    operations["longTailDeleteTransactionsMutation"]=1
+    operations["longTailDisableCredentialAndDeleteFromDataProvider"]=1
+    operations["longTailDisconnectSpinwheel"]=1
+    operations["longTailDismissBusinessEntitiesBanner"]=1
+    operations["longTailDispatchSavingsGoalMigration"]=1
+    operations["longTailFixCoinbaseCredential"]=1
+    operations["longTailForceRefreshAccountMutation"]=1
+    operations["longTailForceRefreshAccountQuery"]=1
+    operations["longTailForceRefreshOperationQuery"]=1
+    operations["longTailGetAccount"]=1
+    operations["longTailGetAccountsForEditingEntities"]=1
+    operations["longTailGetAccountsForEditingOwnership"]=1
+    operations["longTailGetActAsUserExternalId"]=1
+    operations["longTailGetAggregatesGraph"]=1
+    operations["longTailGetAggregatesGraphCategoryGroup"]=1
+    operations["longTailGetAggregatesGraphFlexExpense"]=1
+    operations["longTailGetAssistantFeedback"]=1
+    operations["longTailGetBusinessEntities"]=1
+    operations["longTailGetBusinessEntitiesBannerProfile"]=1
+    operations["longTailGetBusinessEntitiesSummary"]=1
+    operations["longTailGetCanRequestReview"]=1
+    operations["longTailGetCanSkipPremiumUpsell"]=1
+    operations["longTailGetCategoryDetails"]=1
+    operations["longTailGetCategoryEntity"]=1
+    operations["longTailGetCategoryGroup"]=1
+    operations["longTailGetCategoryGroups"]=1
+    operations["longTailGetCloudinaryUploadInfo"]=1
+    operations["longTailGetContactSupportFormRecommendedResolution"]=1
+    operations["longTailGetDashboardConfig"]=1
+    operations["longTailGetDebtAccountsForMigration"]=1
+    operations["longTailGetDecagonInstitutionsStatus"]=1
+    operations["longTailGetDecagonLinkedCredentials"]=1
+    operations["longTailGetDecagonSubscriptionStatus"]=1
+    operations["longTailGetDecagonToken"]=1
+    operations["longTailGetFeatureEntitlementParams"]=1
+    operations["longTailGetGiftedSubscriptions"]=1
+    operations["longTailGetGoalsV2"]=1
+    operations["longTailGetHasAccounts"]=1
+    operations["longTailGetHasSpinwheelUser"]=1
+    operations["longTailGetHasSyncedAccounts"]=1
+    operations["longTailGetHoldingDetailsFormSecurityDetails"]=1
+    operations["longTailGetHoldingSummarySecurityDetails"]=1
+    operations["longTailGetHouseHoldMemberSettings"]=1
+    operations["longTailGetInstitutionByProviderId"]=1
+    operations["longTailGetInstitutionLogoByPlaidId"]=1
+    operations["longTailGetMerchant"]=1
+    operations["longTailGetMerchantDetails"]=1
+    operations["longTailGetMerchantEntity"]=1
+    operations["longTailGetMessageThread"]=1
+    operations["longTailGetMessageThreads"]=1
+    operations["longTailGetMobileSubscriptionOffering"]=1
+    operations["longTailGetNotificationPreference"]=1
+    operations["longTailGetOnboardingFinancialGoals"]=1
+    operations["longTailGetPlanOnboardingState"]=1
+    operations["longTailGetPremiumUpgradePlans"]=1
+    operations["longTailGetReferralConstants"]=1
+    operations["longTailGetReferralSettings"]=1
+    operations["longTailGetReportsData"]=1
+    operations["longTailGetRetailExtensionSettings"]=1
+    operations["longTailGetReviewedAccountLastStatements"]=1
+    operations["longTailGetReviewedMerchantLastTransactions"]=1
+    operations["longTailGetSmartPrompts"]=1
+    operations["longTailGetSpinwheelCreditReport"]=1
+    operations["longTailGetSubscriptionHasEntitlementAfterSync"]=1
+    operations["longTailGetSubscriptionStatus"]=1
+    operations["longTailGetTransactionFiltersCard"]=1
+    operations["longTailGetTransactions"]=1
+    operations["longTailGetTrialStatus"]=1
+    operations["longTailGetUploadStatementSession"]=1
+    operations["longTailGetUserReportedOnboardingAttributionChannels"]=1
+    operations["longTailGetYearlyReviewStatus"]=1
+    operations["longTailGoalAccountsForInitialContribution"]=1
+    operations["longTailGoalOptions"]=1
+    operations["longTailGoalReconciliationHistory"]=1
+    operations["longTailGoalReconciliationTransactionInfo"]=1
+    operations["longTailGoalSelectAccounts"]=1
+    operations["longTailGoalsV2MigrationQuery"]=1
+    operations["longTailHasActivity"]=1
+    operations["longTailInitializeFlexBudget"]=1
+    operations["longTailLegacyGoalsMigrationQuery"]=1
+    operations["longTailMarkRecurringLiabilityStatementAsPaid"]=1
+    operations["longTailMatchRetailTransaction"]=1
+    operations["longTailMigratedToSavingsGoals"]=1
+    operations["longTailMigratedToSavingsGoalsAt"]=1
+    operations["longTailMoveMoneyScreenQuery"]=1
+    operations["longTailOldestDeletableTransactionDate"]=1
+    operations["longTailOnboardingChecklist"]=1
+    operations["longTailPreviewDeleteTransactions"]=1
+    operations["longTailQuestionnaireIntroQuery"]=1
+    operations["longTailReconcileAccountGoalSpendingForTransactions"]=1
+    operations["longTailReconcileExternalSpending"]=1
+    operations["longTailRecordBusinessEntitiesBannerImpression"]=1
+    operations["longTailRecordSmartPromptClick"]=1
+    operations["longTailRecordSmartPromptImpressions"]=1
+    operations["longTailRecurringMerchantSearch"]=1
+    operations["longTailRecurringUpdateLiabilityStatement"]=1
+    operations["longTailRecurringUpdateMerchant"]=1
+    operations["longTailRedeemTrustAndWill"]=1
+    operations["longTailRequestInstitution"]=1
+    operations["longTailResendInviteToHousehold"]=1
+    operations["longTailResendReferralRewardEmail"]=1
+    operations["longTailRetailSyncQuery"]=1
+    operations["longTailRetailSyncsQueryWithTotal"]=1
+    operations["longTailReviewQuery"]=1
+    operations["longTailReviewStream"]=1
+    operations["longTailRevokeHouseholdAccessGrant"]=1
+    operations["longTailRevokeInviteToHousehold"]=1
+    operations["longTailSaveDebtPaydownProjectionToBudget"]=1
+    operations["longTailSavingsGoalAccount"]=1
+    operations["longTailSavingsGoalAccounts"]=1
+    operations["longTailSavingsGoalAccountsAllocationSummary"]=1
+    operations["longTailSavingsGoalBudgetAmounts"]=1
+    operations["longTailSavingsGoalBudgetAmountsWithRecommendation"]=1
+    operations["longTailSavingsGoalEditAccounts"]=1
+    operations["longTailSavingsGoalMigrationStatus"]=1
+    operations["longTailSavingsGoalReconciliationAccount"]=1
+    operations["longTailSavingsGoalsAllocationAmountsByAccount"]=1
+    operations["longTailSavingsGoalsPrioritizeList"]=1
+    operations["longTailSavingsGoalsTypes"]=1
+    operations["longTailSavingsGoalsWithThisMonthBalances"]=1
+    operations["longTailSelectBudgetCategoryScreenQuery"]=1
+    operations["longTailSendMessage"]=1
+    operations["longTailSetAccountLogo"]=1
+    operations["longTailSetDebtPaydownBudgetAmount"]=1
+    operations["longTailSetFinancialInsightsEnabled"]=1
+    operations["longTailSetHasDismissedYearlyReview"]=1
+    operations["longTailSetHasSkippedPremiumUpsell"]=1
+    operations["longTailSetOnboardingCompleted"]=1
+    operations["longTailSetUserOnboardingFinancialGoals"]=1
+    operations["longTailSetUserProfilePicture"]=1
+    operations["longTailSetUserReportedAttributionChannels"]=1
+    operations["longTailStartRetailSync"]=1
+    operations["longTailStartSavingsGoalsMigration"]=1
+    operations["longTailSubmitAssistantFeedback"]=1
+    operations["longTailSyncCredentialAfterReconnect"]=1
+    operations["longTailToggleCreditScoreTracking"]=1
+    operations["longTailTopInstitutionsQuery"]=1
+    operations["longTailTransferAccountDataAsync"]=1
+    operations["longTailTriggerRecurringMerchantSearch"]=1
+    operations["longTailUnarchiveGoal"]=1
+    operations["longTailUndeleteAccount"]=1
+    operations["longTailUnreconciledSpendingEvents"]=1
+    operations["longTailUpdateAccountsForEditingEntities"]=1
+    operations["longTailUpdateAccountsForEditingOwnership"]=1
+    operations["longTailUpdateAllNotificationPreferencesForPlatform"]=1
+    operations["longTailUpdateCategoryBudgetVariability"]=1
+    operations["longTailUpdateCategoryExcludeFromBudget"]=1
+    operations["longTailUpdateCredential"]=1
+    operations["longTailUpdateDashboardConfig"]=1
+    operations["longTailUpdateDoNotSellOrShare"]=1
+    operations["longTailUpdateFinancialInsightStatus"]=1
+    operations["longTailUpdateGoalAccountAllocation"]=1
+    operations["longTailUpdateMyHousehold"]=1
+    operations["longTailUpdateRetailOrder"]=1
+    operations["longTailUpdateRetailVendorSettings"]=1
+    operations["longTailUpdateSavingsGoalAccountIncludeInGoalContributions"]=1
+    operations["longTailUpdateSavingsGoalAccountLink"]=1
+    operations["longTailUpdateSavingsGoalEvent"]=1
+    operations["longTailUpdateSponsorshipInvite"]=1
+    operations["longTailUpdateTransaction"]=1
+    operations["longTailUpdateTransactionTag"]=1
+    operations["longTailUpdateTransactionTagOrder"]=1
+    operations["longTailUpdateUserProfile"]=1
+    operations["longTailUpdateUserProfileFlags"]=1
+    operations["longTailUserDevicesUsage"]=1
+    operations["longTailUserProfileFlags"]=1
+    operations["longTailVehiclesSearch"]=1
+    operations["longTailWithdrawAllGoalContributionsFromAccount"]=1
+    operations["deleteMerchant"]=1
+    operations["getMerchant"]=1
+    operations["getMerchantStats"]=1
+    operations["getMerchantTransactions"]=1
+    operations["searchMerchants"]=1
+    operations["setMerchantLogo"]=1
+    operations["mobileAccountsMessageBlock"]=1
+    operations["mobileAddCategoryGroupMutation"]=1
+    operations["mobileCategoryDetailQuery"]=1
+    operations["mobileCategoryGroupDetailChartQuery"]=1
+    operations["mobileCategoryGroupDetailContainerQuery"]=1
+    operations["mobileCategoryRecommendationForTransaction"]=1
+    operations["mobileCreateAppleCardAccount"]=1
+    operations["mobileCreateCoinbaseAccount"]=1
+    operations["mobileCreateEditRuleSettings"]=1
+    operations["mobileCreateHouseholdAccessGrant"]=1
+    operations["mobileCreateReviewCheckinMutation"]=1
+    operations["mobileCreateSyncedVehicleAccount"]=1
+    operations["mobileCreateZillowAccount"]=1
+    operations["mobileCustomizeGoalScreen"]=1
+    operations["mobileDebugGetFinancialInsightIds"]=1
+    operations["mobileDebugSoftDeleteFinancialInsight"]=1
+    operations["mobileDeleteAccountLogo"]=1
+    operations["mobileDeleteAttachment"]=1
+    operations["mobileDeleteUserFromHousehold"]=1
+    operations["mobileDeleteUserProfilePicture"]=1
+    operations["mobileDidRequestReviewMutation"]=1
+    operations["mobileDirectLinkInstitutionModal"]=1
+    operations["mobileDrawerMenu"]=1
+    operations["mobileGetAccount"]=1
+    operations["mobileGetAccountDetailScreen"]=1
+    operations["mobileGetAccountOptions"]=1
+    operations["mobileGetAccountsListBlock"]=1
+    operations["mobileGetAddTransactionScreen"]=1
+    operations["mobileGetCategoryDeletionInfo"]=1
+    operations["mobileGetCategoryGroupsWithCategories"]=1
+    operations["mobileGetDuplicateCredentials"]=1
+    operations["mobileGetEditAccountScreen"]=1
+    operations["mobileGetEventPopoverTransactions"]=1
+    operations["mobileGetInvestmentsAccounts"]=1
+    operations["mobileGetInvestmentsDashboardCard"]=1
+    operations["mobileGetInvestmentsHoldingsList"]=1
+    operations["mobileGetInvestmentsPortfolio"]=1
+    operations["mobileGetInvestmentsWidgetData"]=1
+    operations["mobileGetMerchantsListScreen"]=1
+    operations["mobileGetPastSplits"]=1
+    operations["mobileGetPortfolioBenchmarks"]=1
+    operations["mobileGetSecuritiesHistoricalChart"]=1
+    operations["mobileGetSecuritiesHistoricalPerformance"]=1
+    operations["mobileGetSelectCategoryScreen"]=1
+    operations["mobileGetSelectMerchantScreenHouseholdMerchants"]=1
+    operations["mobileGetSelectMerchantScreenRecommendedMerchants"]=1
+    operations["mobileGetSelectMerchantScreenTransactionDetails"]=1
+    operations["mobileGetTransactionDetailScreen"]=1
+    operations["mobileGetTransactionsAndCategoriesForWidget"]=1
+    operations["mobileGoalDetailScreenV2"]=1
+    operations["mobileGoalSelectGoals"]=1
+    operations["mobileGoalsAllocateBalanceScreen"]=1
+    operations["mobileGoalsDashboardCardV2"]=1
+    operations["mobileGoalsMapAccountsScreen"]=1
+    operations["mobileGoalsMessageBlock"]=1
+    operations["mobileGoalsMonthlyBudgetsScreen"]=1
+    operations["mobileGoalsPreTaxBudgetsScreen"]=1
+    operations["mobileGoalsScreenV2"]=1
+    operations["mobileGoalsTargetAmountsScreen"]=1
+    operations["mobileInitialPermissionRequestModal"]=1
+    operations["mobileInviteEmail"]=1
+    operations["mobileInvitePartner"]=1
+    operations["mobileLinkGoalOptions"]=1
+    operations["mobileLinkSearchInstitutionsQuery"]=1
+    operations["mobileMerchantChartQuery"]=1
+    operations["mobileMerchantDetailContainerQuery"]=1
+    operations["mobileMoveMoneyScreenMutation"]=1
+    operations["mobileNetWorthChartOverlyQuery"]=1
+    operations["mobileOldestDeletableSyncedSnapshotDate"]=1
+    operations["mobilePreviewDeleteSyncedSnapshots"]=1
+    operations["mobileRankGoalsScreen"]=1
+    operations["mobileRapidTransactionReviewFormContainer"]=1
+    operations["mobileRapidTransactionReviewScreen"]=1
+    operations["mobileResetHouseholdRecurringMerchantSearch"]=1
+    operations["mobileResetRolloverMutation"]=1
+    operations["mobileRestoreCategoryMutation"]=1
+    operations["mobileReviewDashboardQuery"]=1
+    operations["mobileReviewTransactionsDashboardButton"]=1
+    operations["mobileRulesSettingsScreenQuery"]=1
+    operations["mobileSavingsGoalFilterOptions"]=1
+    operations["mobileSearchInstitutionsQuery"]=1
+    operations["mobileSearchMerchants"]=1
+    operations["mobileSearchVehiclesQuery"]=1
+    operations["mobileSelectGoalsScreen"]=1
+    operations["mobileSetTransactionTagsRapidReview"]=1
+    operations["mobileToggleSupportAccountAccess"]=1
+    operations["mobileTransactionsMessageBlock"]=1
+    operations["mobileUpdateCategoryGroupOrderMutation"]=1
+    operations["mobileUpdateCategoryMutation"]=1
+    operations["mobileUpdateCategoryOrderMutation"]=1
+    operations["mobileUpdateGoalV2"]=1
+    operations["mobileUpdateGoalsPriorities"]=1
+    operations["mobileUpdateNonMonthlyCategory"]=1
+    operations["mobileUpdateReviewCheckinMutation"]=1
+    operations["mobileUpdateTransactionDetailScreen"]=1
+    operations["mobileUpdateTransactionRapidReview"]=1
+    operations["mobileUpdateUserFinancialProfile"]=1
+    operations["mobileUpsellPostalCode"]=1
+    operations["mobileUserAvatar"]=1
+    operations["createPaycheck"]=1
+    operations["createPaycheckEmployer"]=1
+    operations["deletePaycheck"]=1
+    operations["deletePaycheckEmployer"]=1
+    operations["getPaycheck"]=1
+    operations["getPaychecksSummary"]=1
+    operations["listPaycheckEmployers"]=1
+    operations["listPaychecks"]=1
+    operations["updatePaycheck"]=1
+    operations["updatePaycheckEmployer"]=1
+    operations["getRecurringDashboard"]=1
+    operations["getRecurringForecast"]=1
+    operations["listAllRecurring"]=1
+    operations["listRecurring"]=1
+    operations["listRecurringAggregate"]=1
+    operations["listRecurringStreams"]=1
+    operations["mergeRecurringStreams"]=1
+    operations["skipRecurringInstance"]=1
+    operations["updateMerchantRecurrence"]=1
+    operations["reportConfigsCommandPalette"]=1
+    operations["reportConfigsCreate"]=1
+    operations["reportConfigsDelete"]=1
+    operations["reportConfigsList"]=1
+    operations["reportConfigsUpdate"]=1
+    operations["createTransactionRule"]=1
+    operations["deleteTransactionRule"]=1
+    operations["listTransactionRules"]=1
+    operations["previewTransactionRule"]=1
+    operations["updateTransactionRule"]=1
+    operations["getAppearance"]=1
+    operations["getCookiePreferences"]=1
+    operations["getCurrency"]=1
+    operations["getEmailNotificationPrefs"]=1
+    operations["getFiscalYear"]=1
+    operations["getHouseholdMembers"]=1
+    operations["getHouseholdPreferences"]=1
+    operations["getMe"]=1
+    operations["getMyHousehold"]=1
+    operations["getNotificationPreferences"]=1
+    operations["getPushNotificationPrefs"]=1
+    operations["inviteHouseholdMember"]=1
+    operations["removeHouseholdMember"]=1
+    operations["setCurrency"]=1
+    operations["setEmailNotificationPrefs"]=1
+    operations["setFiscalYear"]=1
+    operations["setPushNotificationPrefs"]=1
+    operations["updateAppearance"]=1
+    operations["updateCookiePreferences"]=1
+    operations["updateHouseholdName"]=1
+    operations["updateHouseholdPreferences"]=1
+    operations["updateMe"]=1
+    operations["updateNotificationPreferences"]=1
+    operations["clearAllNotifications"]=1
+    operations["dismissNotification"]=1
+    operations["getAppVersion"]=1
+    operations["getAuthStatus"]=1
+    operations["getBetaFeatures"]=1
+    operations["getCalendarEvents"]=1
+    operations["getCashflowReport"]=1
+    operations["getCategoryReport"]=1
+    operations["getCreditHistory"]=1
+    operations["getEntitlements"]=1
+    operations["getExpenseByCategory"]=1
+    operations["getExpenseByMerchant"]=1
+    operations["getExpenseByTag"]=1
+    operations["getFeatureFlags"]=1
+    operations["getFinancialInsight"]=1
+    operations["getHealth"]=1
+    operations["getIncomeReport"]=1
+    operations["getIncomeVsExpenseYoy"]=1
+    operations["getIntegrationStatus"]=1
+    operations["getLatestInsightRun"]=1
+    operations["getLatestRefreshOperation"]=1
+    operations["getLookup"]=1
+    operations["getMonthlyReportSummary"]=1
+    operations["getNetWorthReport"]=1
+    operations["getNotifications"]=1
+    operations["getPlatformConfig"]=1
+    operations["getPlusTierAccess"]=1
+    operations["getRefreshStatus"]=1
+    operations["getSavingsRateReport"]=1
+    operations["getSavingsRateTrends"]=1
+    operations["getSpendingReport"]=1
+    operations["getSubscription"]=1
+    operations["getSubscriptionDetails"]=1
+    operations["getSubscriptionInvoices"]=1
+    operations["getSubscriptionReceipts"]=1
+    operations["getTagReport"]=1
+    operations["getWeeklyRecap"]=1
+    operations["getZestimate"]=1
+    operations["initiatePasswordChange"]=1
+    operations["listFinancialInsights"]=1
+    operations["markAllNotificationsAsRead"]=1
+    operations["markNotificationAsRead"]=1
+    operations["pauseSubscription"]=1
+    operations["previewSubscriptionPlanChange"]=1
+    operations["refreshAuth"]=1
+    operations["requestRefresh"]=1
+    operations["requestRefreshAndWait"]=1
+    operations["resumeSubscription"]=1
+    operations["createTag"]=1
+    operations["deleteTag"]=1
+    operations["listTags"]=1
+    operations["getTaxBracketEstimates"]=1
+    operations["getTaxCategories"]=1
+    operations["getTaxCategoryAggregates"]=1
+    operations["getTaxScheduleCategoryMappings"]=1
+    operations["getTaxYearOverview"]=1
+    operations["createManualTaxLot"]=1
+    operations["createManualTaxLotsBulk"]=1
+    operations["deleteTaxLot"]=1
+    operations["deleteTaxLotsBulk"]=1
+    operations["getTaxLotPerformance"]=1
+    operations["listTaxLots"]=1
+    operations["updateTaxLot"]=1
+    operations["bulkDeleteTransactions"]=1
+    operations["bulkUpdateTransactions"]=1
+    operations["createTransaction"]=1
+    operations["deleteTransaction"]=1
+    operations["explainTransaction"]=1
+    operations["explainTransactionByPath"]=1
+    operations["getAccountsForTransactionFilter"]=1
+    operations["getAttachment"]=1
+    operations["getCashflow"]=1
+    operations["getCashflowBreakdown"]=1
+    operations["getCashflowDashboard"]=1
+    operations["getCashflowEntities"]=1
+    operations["getCashflowFiltered"]=1
+    operations["getCashflowTimeframe"]=1
+    operations["getDownloadTransactionsSession"]=1
+    operations["getReviewSummaryByUser"]=1
+    operations["getSpendingDashboard"]=1
+    operations["getSpendingTrends"]=1
+    operations["getTransactionAuditLog"]=1
+    operations["getTransactionDetail"]=1
+    operations["getTransactionNotes"]=1
+    operations["getTransactionSplitTemplates"]=1
+    operations["getTransactionSplits"]=1
+    operations["getTransactionsDashboard"]=1
+    operations["getTransactionsDuplicates"]=1
+    operations["getTransactionsSummary"]=1
+    operations["listTransactions"]=1
+    operations["markAsRecurring"]=1
+    operations["markTransactionAsReviewed"]=1
+    operations["markTransactionStreamAsNotRecurring"]=1
+    operations["matchSearchTransactions"]=1
+    operations["moveTransactions"]=1
+    operations["setTransactionTags"]=1
+    operations["startDownloadTransactions"]=1
+    operations["updateTransaction"]=1
+    operations["updateTransactionSplits"]=1
+    operations["uploadTransactionAttachment"]=1
+    operations["webAccountDetailsRouterGetAccountType"]=1
+    operations["webAccountEditModal"]=1
+    operations["webAccountFilterQuery"]=1
+    operations["webAccountsMessageBlock"]=1
+    operations["webAdvisorPortalGetSubscription"]=1
+    operations["webAnswerQuestionMutation"]=1
+    operations["webAssignTaxScheduleCategoryMapping"]=1
+    operations["webBudgetOnboardingGetAccounts"]=1
+    operations["webCancelSponsorship"]=1
+    operations["webChangeSubscription"]=1
+    operations["webClearAllMutation"]=1
+    operations["webConfirmTotpDevice"]=1
+    operations["webConvertEmployeeTrial"]=1
+    operations["webCopySnapshots"]=1
+    operations["webCreateAIReport"]=1
+    operations["webCreateAdvisorSubscription"]=1
+    operations["webCreateCoinbaseAccount"]=1
+    operations["webCreateEquityAccountWithGrants"]=1
+    operations["webCreateFeedbackEvent"]=1
+    operations["webCreatePromoCodeCheckoutSession"]=1
+    operations["webCreateSpinwheelAccountMapping"]=1
+    operations["webCreateSubscription"]=1
+    operations["webCreateSubscriptionSponsorshipInvites"]=1
+    operations["webCreateUnconfirmedTotpDevice"]=1
+    operations["webCreateZillowAccount"]=1
+    operations["webDeleteAccountLogo"]=1
+    operations["webDeleteAllGoalReconciliationRecords"]=1
+    operations["webDeleteAllTransactionRulesMutation"]=1
+    operations["webDeleteTaxScheduleCategoryMapping"]=1
+    operations["webDeleteUserFromHousehold"]=1
+    operations["webDirectLinkAccountSelectDataProvider"]=1
+    operations["webDisableMfa"]=1
+    operations["webDisconnectCredentialMutation"]=1
+    operations["webDisconnectDiscord"]=1
+    operations["webDiscordOAuthCallback"]=1
+    operations["webEmployeeMenuDeleteCreditScoreSnapshots"]=1
+    operations["webEmployeeMenuGetFinancialInsightIds"]=1
+    operations["webEmployeeMenuResetAiAssistantOptIn"]=1
+    operations["webEmployeeMenuSoftDeleteFinancialInsight"]=1
+    operations["webEquityAccountDetailsGetAccount"]=1
+    operations["webEquityAccountDetailsGetLinkedAccount"]=1
+    operations["webExtendFreeTrialDuration"]=1
+    operations["webGenerateReportName"]=1
+    operations["webGetAccount"]=1
+    operations["webGetAccountTypes"]=1
+    operations["webGetAccountsForTransfer"]=1
+    operations["webGetAccountsPage"]=1
+    operations["webGetAccountsPageRecentBalance"]=1
+    operations["webGetAdvisorClientsPage"]=1
+    operations["webGetAdvisorProfilePage"]=1
+    operations["webGetBalanceHistoryParserColumns"]=1
+    operations["webGetBusinessSetupPriorTracking"]=1
+    operations["webGetCancellationReasonsWithSubreasons"]=1
+    operations["webGetCategorizationDetails"]=1
+    operations["webGetCategoryGroupDetails"]=1
+    operations["webGetCategorySelectOptions"]=1
+    operations["webGetConnectedApps"]=1
+    operations["webGetContactSupportFormData"]=1
+    operations["webGetDiscordConnectionRedirectUrl"]=1
+    operations["webGetDownloadScheduleCSession"]=1
+    operations["webGetEventPopoverTransactions"]=1
+    operations["webGetFilteredAccounts"]=1
+    operations["webGetFlexibleGroupRolloverSettings"]=1
+    operations["webGetGiftedSubscriptionsForPolling"]=1
+    operations["webGetInvestmentsAccounts"]=1
+    operations["webGetInvestmentsDashboardCard"]=1
+    operations["webGetInvestmentsHoldingDrawerHistoricalPerformance"]=1
+    operations["webGetMeCollaborationProfileStep"]=1
+    operations["webGetMerchantSelectHouseholdMerchants"]=1
+    operations["webGetMerchantSelectRecommendedMerchants"]=1
+    operations["webGetMerchantSelectTransactionDetails"]=1
+    operations["webGetMerchantSettingsPage"]=1
+    operations["webGetPlanRecommendationData"]=1
+    operations["webGetPortfolio"]=1
+    operations["webGetPortfolioWithClassification"]=1
+    operations["webGetRecommendedCategories"]=1
+    operations["webGetScheduleCLineItems"]=1
+    operations["webGetSecuritiesHistoricalPerformance"]=1
+    operations["webGetSecuritySettings"]=1
+    operations["webGetSidebarData"]=1
+    operations["webGetStatementParserColumns"]=1
+    operations["webGetSubscription"]=1
+    operations["webGetSubscriptionModal"]=1
+    operations["webGetTaxPrepCategoryTransactions"]=1
+    operations["webGetTaxPrepUnmappedCategoryTransactions"]=1
+    operations["webGetTopInstitutionGroupByType"]=1
+    operations["webGetTransactionFiltersMetadata"]=1
+    operations["webGetTransactionsPage"]=1
+    operations["webGetTransactionsSummaryCard"]=1
+    operations["webGetTrustAndWillSubscription"]=1
+    operations["webGetUserDismissedRetailSyncBanner"]=1
+    operations["webGetUserHasConfiguredExtension"]=1
+    operations["webGetUserPlatforms"]=1
+    operations["webGiveEmployeeInfinitePlusAccess"]=1
+    operations["webGiveEmployeeInfinitePremiumAccess"]=1
+    operations["webGoalDetailV2"]=1
+    operations["webGoalSelectGoals"]=1
+    operations["webGoalSelectTransaction"]=1
+    operations["webGoalsAllocateBalanceModal"]=1
+    operations["webGoalsAllocationCardAccounts"]=1
+    operations["webGoalsDashboardCardV2"]=1
+    operations["webGoalsMapAccounts"]=1
+    operations["webGoalsMapAccountsModal"]=1
+    operations["webGoalsMessageBlock"]=1
+    operations["webGoalsMonthlyBudgets"]=1
+    operations["webGoalsV2"]=1
+    operations["webImportStatementGetAccount"]=1
+    operations["webInitScheduleCDefaultMappings"]=1
+    operations["webInviteEmail"]=1
+    operations["webMigrateHouseholdToSavingGoals"]=1
+    operations["webMintTransactionsCountQuery"]=1
+    operations["webMonthlyBudgetGoalsModal"]=1
+    operations["webMoveMoneyMutation"]=1
+    operations["webOnboardingTopInstitutions"]=1
+    operations["webParseUploadStatementSession"]=1
+    operations["webPlusUpgradeTrial"]=1
+    operations["webPreTaxBudgetGoalsList"]=1
+    operations["webPreviewAccountDataTransferSnapshots"]=1
+    operations["webPreviewAccountDataTransferTransactions"]=1
+    operations["webPreviewCopySnapshots"]=1
+    operations["webRankGoalsList"]=1
+    operations["webReactivateSubscription"]=1
+    operations["webRecalculateBudgetMutation"]=1
+    operations["webRecommendedAccountDataTransferDates"]=1
+    operations["webRecommendedAccounts"]=1
+    operations["webRecurringFilterQuery"]=1
+    operations["webRecurringPausedBanner"]=1
+    operations["webRemoveEmployeeEntitlements"]=1
+    operations["webResetAndSyncAccountMutation"]=1
+    operations["webResetCategorizationMemory"]=1
+    operations["webResetEmployeeAndSubscribe"]=1
+    operations["webResetEmployeeToNoSubscription"]=1
+    operations["webResetHouseholdRecurringMerchantSearch"]=1
+    operations["webResetRolloverMutation"]=1
+    operations["webResetWeeklyRecapMutation"]=1
+    operations["webRestoreCategory"]=1
+    operations["webReviewStream"]=1
+    operations["webRevokeConnectedApp"]=1
+    operations["webRevokeSponsorshipInvite"]=1
+    operations["webSearchInstitutionsQuery"]=1
+    operations["webSearchMerchants"]=1
+    operations["webSearchSecurities"]=1
+    operations["webSetEmployeeActiveSubscription"]=1
+    operations["webSetEmployeeCancellationDiscountUsed"]=1
+    operations["webSetEmployeeExpiredTrial"]=1
+    operations["webSetEmployeePlusTrialFields"]=1
+    operations["webSetEmployeeSubscriptionEnded"]=1
+    operations["webSnapshotsForAccountCopyBalancePreview"]=1
+    operations["webStartDownloadScheduleCSession"]=1
+    operations["webSyncEmployeeSubscription"]=1
+    operations["webTargetAmountsGoalsList"]=1
+    operations["webTestCreditScoreChangedNotification"]=1
+    operations["webToggleSupportAccountAccess"]=1
+    operations["webTransactionDrawerDeleteAttachment"]=1
+    operations["webTransactionsFilterQuery"]=1
+    operations["webTransactionsMessageBlock"]=1
+    operations["webUndoSavingsGoalMigration"]=1
+    operations["webUnmatchRetailTransaction"]=1
+    operations["webUpdateAccountOrder"]=1
+    operations["webUpdateBusinessTrackingSetupIntent"]=1
+    operations["webUpdateCategory"]=1
+    operations["webUpdateCategoryFromBudgetOnboarding"]=1
+    operations["webUpdateCategoryGroupOrder"]=1
+    operations["webUpdateCategoryOrder"]=1
+    operations["webUpdateCompany"]=1
+    operations["webUpdateDismissedRetailSyncBanner"]=1
+    operations["webUpdateGoalsPriorities"]=1
+    operations["webUpdateOrCreateAdvisorStripePaymentMethod"]=1
+    operations["webUpdateOrCreateStripePaymentMethod"]=1
+    operations["webUpdateRenewalReminder"]=1
+    operations["webUpdateRuleOrderMutation"]=1
+    operations["webUpdateSubscriptionSponsor"]=1
+    operations["webUpdateTransactionOverview"]=1
+    operations["webUpdateUserFinancialProfile"]=1
+
+    # An associative array of operations to their parameters
+    # Only include path, query and header parameters
+    declare -A operation_parameters
+    operation_parameters["bulkUpdateAccounts"]=""
+    operation_parameters["createManualAccount"]=""
+    operation_parameters["deleteAccount"]="id= "
+    operation_parameters["deleteInstitution"]="id= "
+    operation_parameters["getAccountBalanceAtDate"]="id= date= "
+    operation_parameters["getAccountGroups"]=""
+    operation_parameters["getAccountHistory"]="id= "
+    operation_parameters["getAccountHoldings"]="id= "
+    operation_parameters["getAccountTypeOptions"]=""
+    operation_parameters["getBalanceHistoryStatus"]="sessionKey= "
+    operation_parameters["getCredentialInstitutions"]=""
+    operation_parameters["getInstitutionByPlaidId"]="plaidId= "
+    operation_parameters["getInstitutions"]=""
+    operation_parameters["getNetworth"]="start= end= accountType= "
+    operation_parameters["getNetworthByType"]="start= timeframe= "
+    operation_parameters["getNetworthRecent"]="start= "
+    operation_parameters["getTopInstitutionGroups"]="dataProvider= "
+    operation_parameters["listAccounts"]=""
+    operation_parameters["listLinkedCredentials"]=""
+    operation_parameters["previewAccountBalance"]="id= invertSyncedBalance= useAvailableBalance= "
+    operation_parameters["updateAccount"]="id= "
+    operation_parameters["updateAccountGroupOrder"]=""
+    operation_parameters["uploadAccountBalanceHistory"]="id= "
+    operation_parameters["advice"]=""
+    operation_parameters["adviceDashboardWidget"]=""
+    operation_parameters["adviceItemDrawer"]=""
+    operation_parameters["adviceQuestionnaire"]=""
+    operation_parameters["adviceTaskComplete"]=""
+    operation_parameters["adviceTaskDrawer"]=""
+    operation_parameters["adviceTaskIncomplete"]=""
+    operation_parameters["billsAdvisorBilling"]=""
+    operation_parameters["billsBillingSettings"]=""
+    operation_parameters["billsCancelSponsorship"]=""
+    operation_parameters["billsClaimItem"]=""
+    operation_parameters["billsDetail"]=""
+    operation_parameters["billsEmployeeBillingState"]=""
+    operation_parameters["billsHouseholdCountry"]=""
+    operation_parameters["billsMobileSignupUpdatePostalCode"]=""
+    operation_parameters["billsOnboardingGetPostalCode"]=""
+    operation_parameters["billsOnboardingUpdatePostalCode"]=""
+    operation_parameters["billsRegisterSplitParticipant"]=""
+    operation_parameters["billsSetEmployeeBillingIssue"]=""
+    operation_parameters["billsSubmitSplitInitiatorEdit"]=""
+    operation_parameters["billsToggleSyncTracking"]=""
+    operation_parameters["billsUnclaimItem"]=""
+    operation_parameters["billsUpdatePostalCode"]=""
+    operation_parameters["getBudgetMonth"]="month= "
+    operation_parameters["getBudgetStatus"]=""
+    operation_parameters["getBudgetTimeline"]="startMonth= monthCount= "
+    operation_parameters["getBudgets"]="start= end= "
+    operation_parameters["resetBudget"]=""
+    operation_parameters["setBudgetAmount"]=""
+    operation_parameters["updateBudgetSettings"]=""
+    operation_parameters["updateFlexRolloverSettings"]=""
+    operation_parameters["updateFlexibleBudget"]=""
+    operation_parameters["businessEntitiesDelete"]=""
+    operation_parameters["businessEntitiesDeleteLogo"]=""
+    operation_parameters["businessEntitiesDemoPopulate"]=""
+    operation_parameters["businessEntitiesDemoScenarios"]=""
+    operation_parameters["businessEntitiesDetail"]=""
+    operation_parameters["businessEntitiesFinancials"]=""
+    operation_parameters["businessEntitiesReportsByCategory"]=""
+    operation_parameters["businessEntitiesReportsByGroup"]=""
+    operation_parameters["businessEntitiesUpsert"]=""
+    operation_parameters["bulkDeleteCategories"]=""
+    operation_parameters["createCategory"]=""
+    operation_parameters["createCategoryGroup"]=""
+    operation_parameters["deleteCategory"]="id= moveToCategoryId= "
+    operation_parameters["deleteCategoryGroup"]="id= moveToGroupId= "
+    operation_parameters["getCategoryDeletionInfo"]="id= "
+    operation_parameters["getCategoryEdit"]="id= "
+    operation_parameters["getCategoryGroupDetails"]="id= includeDisabledSystemCategories= "
+    operation_parameters["listCategories"]=""
+    operation_parameters["listCategoryGroups"]=""
+    operation_parameters["updateCategoryGroup"]="id= "
+    operation_parameters["updateCategoryGroupBudgetVariability"]="id= "
+    operation_parameters["equityGrantsCreate"]=""
+    operation_parameters["equityGrantsDelete"]=""
+    operation_parameters["equityGrantsEditModal"]=""
+    operation_parameters["equityGrantsList"]=""
+    operation_parameters["equityGrantsManageHoldingsModal"]=""
+    operation_parameters["equityGrantsPreview"]=""
+    operation_parameters["equityGrantsUpdate"]=""
+    operation_parameters["forecastCreateScenario"]=""
+    operation_parameters["forecastDeleteScenario"]=""
+    operation_parameters["forecastDuplicateScenario"]=""
+    operation_parameters["forecastInitialize"]=""
+    operation_parameters["forecastOnboardingComplete"]=""
+    operation_parameters["forecastReplaceEvents"]=""
+    operation_parameters["forecastResetData"]=""
+    operation_parameters["forecastResetOnboarding"]=""
+    operation_parameters["forecastSaveAccounts"]=""
+    operation_parameters["forecastSaveParticipantOverrides"]=""
+    operation_parameters["forecastSavePriorityRules"]=""
+    operation_parameters["forecastSaveScenarioKpis"]=""
+    operation_parameters["forecastScenario"]=""
+    operation_parameters["forecastScenarios"]=""
+    operation_parameters["forecastUpdateScenario"]=""
+    operation_parameters["forecastUpdateScenarioOrder"]=""
+    operation_parameters["forecastUpdateUserFinancialProfile"]=""
+    operation_parameters["archiveGoal"]="id= "
+    operation_parameters["contributeToGoal"]="id= "
+    operation_parameters["createGoal"]=""
+    operation_parameters["deleteGoalV2"]="id= "
+    operation_parameters["getGoal"]="id= "
+    operation_parameters["getGoalContributionHistory"]="id= "
+    operation_parameters["getGoalProjection"]="id= "
+    operation_parameters["getGoalsCurrentMonthTotals"]="startMonth= endMonth= "
+    operation_parameters["hardDeleteGoal"]="id= "
+    operation_parameters["linkTransactionToGoal"]="id= "
+    operation_parameters["listGoalEvents"]="id= "
+    operation_parameters["listGoals"]=""
+    operation_parameters["markGoalComplete"]="id= "
+    operation_parameters["markGoalIncomplete"]="id= "
+    operation_parameters["setGoalBudgetAmount"]="id= "
+    operation_parameters["spendFromGoal"]="id= "
+    operation_parameters["unarchiveGoal"]="id= "
+    operation_parameters["unlinkTransactionGoalRecords"]="id= "
+    operation_parameters["updateGoal"]="id= "
+    operation_parameters["updateGoalsPriorities"]=""
+    operation_parameters["withdrawFromGoal"]="id= "
+    operation_parameters["bulkUpdateHoldings"]=""
+    operation_parameters["createManualHolding"]="id= "
+    operation_parameters["createManualInvestmentsAccount"]=""
+    operation_parameters["deleteHolding"]="id= "
+    operation_parameters["getHoldingHistory"]="id= start= end= "
+    operation_parameters["getHoldingTransactions"]="id= start= end= limit= offset= "
+    operation_parameters["getPortfolioAllocation"]="accountIds= classificationField= "
+    operation_parameters["getPortfolioAllocationByAccount"]="accountIds= limit= "
+    operation_parameters["getPortfolioAllocationByHoldings"]="accountIds= limit= "
+    operation_parameters["getPortfolioAllocationHoldingsDetail"]="accountIds= classificationField= classificationValue= limit= offset= "
+    operation_parameters["getSecurityDetails"]="id= "
+    operation_parameters["getSecurityDividends"]="id= start= end= "
+    operation_parameters["getSecurityHistoricalPerformance"]="id= start= end= "
+    operation_parameters["searchSecurities"]="q= limit= orderByPopularity= "
+    operation_parameters["updateHolding"]="id= "
+    operation_parameters["longTailAccountTransferResultQuery"]=""
+    operation_parameters["longTailAccountTransferStatusQuery"]=""
+    operation_parameters["longTailAccountsTransferEligibility"]=""
+    operation_parameters["longTailAllActiveInstitutionNotices"]=""
+    operation_parameters["longTailArchiveGoal"]=""
+    operation_parameters["longTailCancelMessageThread"]=""
+    operation_parameters["longTailCancelSubscriptionForHousehold"]=""
+    operation_parameters["longTailCategoryDeletionInfo"]=""
+    operation_parameters["longTailCheckActivityMutation"]=""
+    operation_parameters["longTailCompleteRetailSync"]=""
+    operation_parameters["longTailCompleteSavingsGoalsMigration"]=""
+    operation_parameters["longTailCreateAccountsFromPlaidToken"]=""
+    operation_parameters["longTailCreateBudgetForHousehold"]=""
+    operation_parameters["longTailCreateBulkRetailSync"]=""
+    operation_parameters["longTailCreateGoalAccountAllocation"]=""
+    operation_parameters["longTailCreateGoals"]=""
+    operation_parameters["longTailCreateHouseholdAccessGrant"]=""
+    operation_parameters["longTailCreateInstitutionIssueReportMutation"]=""
+    operation_parameters["longTailCreateOrUpdateGoalV2PlannedContributionMutation"]=""
+    operation_parameters["longTailCreatePromoCodeCheckoutSession"]=""
+    operation_parameters["longTailCreateRetailSync"]=""
+    operation_parameters["longTailCreateSavingsGoalAccountInitialContributions"]=""
+    operation_parameters["longTailCreateThreadMutation"]=""
+    operation_parameters["longTailDebtPaydown"]=""
+    operation_parameters["longTailDebtPaydownAccounts"]=""
+    operation_parameters["longTailDeleteAllMessageThreads"]=""
+    operation_parameters["longTailDeleteGoalAccountAllocation"]=""
+    operation_parameters["longTailDeleteHousehold"]=""
+    operation_parameters["longTailDeleteMessageThread"]=""
+    operation_parameters["longTailDeleteRetailSync"]=""
+    operation_parameters["longTailDeleteSavingsGoalEvent"]=""
+    operation_parameters["longTailDeleteSyncedSnapshotsMutation"]=""
+    operation_parameters["longTailDeleteSyncedTransactionsMutation"]=""
+    operation_parameters["longTailDeleteTransactionsMutation"]=""
+    operation_parameters["longTailDisableCredentialAndDeleteFromDataProvider"]=""
+    operation_parameters["longTailDisconnectSpinwheel"]=""
+    operation_parameters["longTailDismissBusinessEntitiesBanner"]=""
+    operation_parameters["longTailDispatchSavingsGoalMigration"]=""
+    operation_parameters["longTailFixCoinbaseCredential"]=""
+    operation_parameters["longTailForceRefreshAccountMutation"]=""
+    operation_parameters["longTailForceRefreshAccountQuery"]=""
+    operation_parameters["longTailForceRefreshOperationQuery"]=""
+    operation_parameters["longTailGetAccount"]=""
+    operation_parameters["longTailGetAccountsForEditingEntities"]=""
+    operation_parameters["longTailGetAccountsForEditingOwnership"]=""
+    operation_parameters["longTailGetActAsUserExternalId"]=""
+    operation_parameters["longTailGetAggregatesGraph"]=""
+    operation_parameters["longTailGetAggregatesGraphCategoryGroup"]=""
+    operation_parameters["longTailGetAggregatesGraphFlexExpense"]=""
+    operation_parameters["longTailGetAssistantFeedback"]=""
+    operation_parameters["longTailGetBusinessEntities"]=""
+    operation_parameters["longTailGetBusinessEntitiesBannerProfile"]=""
+    operation_parameters["longTailGetBusinessEntitiesSummary"]=""
+    operation_parameters["longTailGetCanRequestReview"]=""
+    operation_parameters["longTailGetCanSkipPremiumUpsell"]=""
+    operation_parameters["longTailGetCategoryDetails"]=""
+    operation_parameters["longTailGetCategoryEntity"]=""
+    operation_parameters["longTailGetCategoryGroup"]=""
+    operation_parameters["longTailGetCategoryGroups"]=""
+    operation_parameters["longTailGetCloudinaryUploadInfo"]=""
+    operation_parameters["longTailGetContactSupportFormRecommendedResolution"]=""
+    operation_parameters["longTailGetDashboardConfig"]=""
+    operation_parameters["longTailGetDebtAccountsForMigration"]=""
+    operation_parameters["longTailGetDecagonInstitutionsStatus"]=""
+    operation_parameters["longTailGetDecagonLinkedCredentials"]=""
+    operation_parameters["longTailGetDecagonSubscriptionStatus"]=""
+    operation_parameters["longTailGetDecagonToken"]=""
+    operation_parameters["longTailGetFeatureEntitlementParams"]=""
+    operation_parameters["longTailGetGiftedSubscriptions"]=""
+    operation_parameters["longTailGetGoalsV2"]=""
+    operation_parameters["longTailGetHasAccounts"]=""
+    operation_parameters["longTailGetHasSpinwheelUser"]=""
+    operation_parameters["longTailGetHasSyncedAccounts"]=""
+    operation_parameters["longTailGetHoldingDetailsFormSecurityDetails"]=""
+    operation_parameters["longTailGetHoldingSummarySecurityDetails"]=""
+    operation_parameters["longTailGetHouseHoldMemberSettings"]=""
+    operation_parameters["longTailGetInstitutionByProviderId"]=""
+    operation_parameters["longTailGetInstitutionLogoByPlaidId"]=""
+    operation_parameters["longTailGetMerchant"]=""
+    operation_parameters["longTailGetMerchantDetails"]=""
+    operation_parameters["longTailGetMerchantEntity"]=""
+    operation_parameters["longTailGetMessageThread"]=""
+    operation_parameters["longTailGetMessageThreads"]=""
+    operation_parameters["longTailGetMobileSubscriptionOffering"]=""
+    operation_parameters["longTailGetNotificationPreference"]=""
+    operation_parameters["longTailGetOnboardingFinancialGoals"]=""
+    operation_parameters["longTailGetPlanOnboardingState"]=""
+    operation_parameters["longTailGetPremiumUpgradePlans"]=""
+    operation_parameters["longTailGetReferralConstants"]=""
+    operation_parameters["longTailGetReferralSettings"]=""
+    operation_parameters["longTailGetReportsData"]=""
+    operation_parameters["longTailGetRetailExtensionSettings"]=""
+    operation_parameters["longTailGetReviewedAccountLastStatements"]=""
+    operation_parameters["longTailGetReviewedMerchantLastTransactions"]=""
+    operation_parameters["longTailGetSmartPrompts"]=""
+    operation_parameters["longTailGetSpinwheelCreditReport"]=""
+    operation_parameters["longTailGetSubscriptionHasEntitlementAfterSync"]=""
+    operation_parameters["longTailGetSubscriptionStatus"]=""
+    operation_parameters["longTailGetTransactionFiltersCard"]=""
+    operation_parameters["longTailGetTransactions"]=""
+    operation_parameters["longTailGetTrialStatus"]=""
+    operation_parameters["longTailGetUploadStatementSession"]=""
+    operation_parameters["longTailGetUserReportedOnboardingAttributionChannels"]=""
+    operation_parameters["longTailGetYearlyReviewStatus"]=""
+    operation_parameters["longTailGoalAccountsForInitialContribution"]=""
+    operation_parameters["longTailGoalOptions"]=""
+    operation_parameters["longTailGoalReconciliationHistory"]=""
+    operation_parameters["longTailGoalReconciliationTransactionInfo"]=""
+    operation_parameters["longTailGoalSelectAccounts"]=""
+    operation_parameters["longTailGoalsV2MigrationQuery"]=""
+    operation_parameters["longTailHasActivity"]=""
+    operation_parameters["longTailInitializeFlexBudget"]=""
+    operation_parameters["longTailLegacyGoalsMigrationQuery"]=""
+    operation_parameters["longTailMarkRecurringLiabilityStatementAsPaid"]=""
+    operation_parameters["longTailMatchRetailTransaction"]=""
+    operation_parameters["longTailMigratedToSavingsGoals"]=""
+    operation_parameters["longTailMigratedToSavingsGoalsAt"]=""
+    operation_parameters["longTailMoveMoneyScreenQuery"]=""
+    operation_parameters["longTailOldestDeletableTransactionDate"]=""
+    operation_parameters["longTailOnboardingChecklist"]=""
+    operation_parameters["longTailPreviewDeleteTransactions"]=""
+    operation_parameters["longTailQuestionnaireIntroQuery"]=""
+    operation_parameters["longTailReconcileAccountGoalSpendingForTransactions"]=""
+    operation_parameters["longTailReconcileExternalSpending"]=""
+    operation_parameters["longTailRecordBusinessEntitiesBannerImpression"]=""
+    operation_parameters["longTailRecordSmartPromptClick"]=""
+    operation_parameters["longTailRecordSmartPromptImpressions"]=""
+    operation_parameters["longTailRecurringMerchantSearch"]=""
+    operation_parameters["longTailRecurringUpdateLiabilityStatement"]=""
+    operation_parameters["longTailRecurringUpdateMerchant"]=""
+    operation_parameters["longTailRedeemTrustAndWill"]=""
+    operation_parameters["longTailRequestInstitution"]=""
+    operation_parameters["longTailResendInviteToHousehold"]=""
+    operation_parameters["longTailResendReferralRewardEmail"]=""
+    operation_parameters["longTailRetailSyncQuery"]=""
+    operation_parameters["longTailRetailSyncsQueryWithTotal"]=""
+    operation_parameters["longTailReviewQuery"]=""
+    operation_parameters["longTailReviewStream"]=""
+    operation_parameters["longTailRevokeHouseholdAccessGrant"]=""
+    operation_parameters["longTailRevokeInviteToHousehold"]=""
+    operation_parameters["longTailSaveDebtPaydownProjectionToBudget"]=""
+    operation_parameters["longTailSavingsGoalAccount"]=""
+    operation_parameters["longTailSavingsGoalAccounts"]=""
+    operation_parameters["longTailSavingsGoalAccountsAllocationSummary"]=""
+    operation_parameters["longTailSavingsGoalBudgetAmounts"]=""
+    operation_parameters["longTailSavingsGoalBudgetAmountsWithRecommendation"]=""
+    operation_parameters["longTailSavingsGoalEditAccounts"]=""
+    operation_parameters["longTailSavingsGoalMigrationStatus"]=""
+    operation_parameters["longTailSavingsGoalReconciliationAccount"]=""
+    operation_parameters["longTailSavingsGoalsAllocationAmountsByAccount"]=""
+    operation_parameters["longTailSavingsGoalsPrioritizeList"]=""
+    operation_parameters["longTailSavingsGoalsTypes"]=""
+    operation_parameters["longTailSavingsGoalsWithThisMonthBalances"]=""
+    operation_parameters["longTailSelectBudgetCategoryScreenQuery"]=""
+    operation_parameters["longTailSendMessage"]=""
+    operation_parameters["longTailSetAccountLogo"]=""
+    operation_parameters["longTailSetDebtPaydownBudgetAmount"]=""
+    operation_parameters["longTailSetFinancialInsightsEnabled"]=""
+    operation_parameters["longTailSetHasDismissedYearlyReview"]=""
+    operation_parameters["longTailSetHasSkippedPremiumUpsell"]=""
+    operation_parameters["longTailSetOnboardingCompleted"]=""
+    operation_parameters["longTailSetUserOnboardingFinancialGoals"]=""
+    operation_parameters["longTailSetUserProfilePicture"]=""
+    operation_parameters["longTailSetUserReportedAttributionChannels"]=""
+    operation_parameters["longTailStartRetailSync"]=""
+    operation_parameters["longTailStartSavingsGoalsMigration"]=""
+    operation_parameters["longTailSubmitAssistantFeedback"]=""
+    operation_parameters["longTailSyncCredentialAfterReconnect"]=""
+    operation_parameters["longTailToggleCreditScoreTracking"]=""
+    operation_parameters["longTailTopInstitutionsQuery"]=""
+    operation_parameters["longTailTransferAccountDataAsync"]=""
+    operation_parameters["longTailTriggerRecurringMerchantSearch"]=""
+    operation_parameters["longTailUnarchiveGoal"]=""
+    operation_parameters["longTailUndeleteAccount"]=""
+    operation_parameters["longTailUnreconciledSpendingEvents"]=""
+    operation_parameters["longTailUpdateAccountsForEditingEntities"]=""
+    operation_parameters["longTailUpdateAccountsForEditingOwnership"]=""
+    operation_parameters["longTailUpdateAllNotificationPreferencesForPlatform"]=""
+    operation_parameters["longTailUpdateCategoryBudgetVariability"]=""
+    operation_parameters["longTailUpdateCategoryExcludeFromBudget"]=""
+    operation_parameters["longTailUpdateCredential"]=""
+    operation_parameters["longTailUpdateDashboardConfig"]=""
+    operation_parameters["longTailUpdateDoNotSellOrShare"]=""
+    operation_parameters["longTailUpdateFinancialInsightStatus"]=""
+    operation_parameters["longTailUpdateGoalAccountAllocation"]=""
+    operation_parameters["longTailUpdateMyHousehold"]=""
+    operation_parameters["longTailUpdateRetailOrder"]=""
+    operation_parameters["longTailUpdateRetailVendorSettings"]=""
+    operation_parameters["longTailUpdateSavingsGoalAccountIncludeInGoalContributions"]=""
+    operation_parameters["longTailUpdateSavingsGoalAccountLink"]=""
+    operation_parameters["longTailUpdateSavingsGoalEvent"]=""
+    operation_parameters["longTailUpdateSponsorshipInvite"]=""
+    operation_parameters["longTailUpdateTransaction"]=""
+    operation_parameters["longTailUpdateTransactionTag"]=""
+    operation_parameters["longTailUpdateTransactionTagOrder"]=""
+    operation_parameters["longTailUpdateUserProfile"]=""
+    operation_parameters["longTailUpdateUserProfileFlags"]=""
+    operation_parameters["longTailUserDevicesUsage"]=""
+    operation_parameters["longTailUserProfileFlags"]=""
+    operation_parameters["longTailVehiclesSearch"]=""
+    operation_parameters["longTailWithdrawAllGoalContributionsFromAccount"]=""
+    operation_parameters["deleteMerchant"]="id= moveToId= "
+    operation_parameters["getMerchant"]="id= "
+    operation_parameters["getMerchantStats"]="id= start= end= "
+    operation_parameters["getMerchantTransactions"]="id= limit= offset= "
+    operation_parameters["searchMerchants"]="q= limit= offset= withLogo= includeIds= "
+    operation_parameters["setMerchantLogo"]="id= "
+    operation_parameters["mobileAccountsMessageBlock"]=""
+    operation_parameters["mobileAddCategoryGroupMutation"]=""
+    operation_parameters["mobileCategoryDetailQuery"]=""
+    operation_parameters["mobileCategoryGroupDetailChartQuery"]=""
+    operation_parameters["mobileCategoryGroupDetailContainerQuery"]=""
+    operation_parameters["mobileCategoryRecommendationForTransaction"]=""
+    operation_parameters["mobileCreateAppleCardAccount"]=""
+    operation_parameters["mobileCreateCoinbaseAccount"]=""
+    operation_parameters["mobileCreateEditRuleSettings"]=""
+    operation_parameters["mobileCreateHouseholdAccessGrant"]=""
+    operation_parameters["mobileCreateReviewCheckinMutation"]=""
+    operation_parameters["mobileCreateSyncedVehicleAccount"]=""
+    operation_parameters["mobileCreateZillowAccount"]=""
+    operation_parameters["mobileCustomizeGoalScreen"]=""
+    operation_parameters["mobileDebugGetFinancialInsightIds"]=""
+    operation_parameters["mobileDebugSoftDeleteFinancialInsight"]=""
+    operation_parameters["mobileDeleteAccountLogo"]=""
+    operation_parameters["mobileDeleteAttachment"]=""
+    operation_parameters["mobileDeleteUserFromHousehold"]=""
+    operation_parameters["mobileDeleteUserProfilePicture"]=""
+    operation_parameters["mobileDidRequestReviewMutation"]=""
+    operation_parameters["mobileDirectLinkInstitutionModal"]=""
+    operation_parameters["mobileDrawerMenu"]=""
+    operation_parameters["mobileGetAccount"]=""
+    operation_parameters["mobileGetAccountDetailScreen"]=""
+    operation_parameters["mobileGetAccountOptions"]=""
+    operation_parameters["mobileGetAccountsListBlock"]=""
+    operation_parameters["mobileGetAddTransactionScreen"]=""
+    operation_parameters["mobileGetCategoryDeletionInfo"]=""
+    operation_parameters["mobileGetCategoryGroupsWithCategories"]=""
+    operation_parameters["mobileGetDuplicateCredentials"]=""
+    operation_parameters["mobileGetEditAccountScreen"]=""
+    operation_parameters["mobileGetEventPopoverTransactions"]=""
+    operation_parameters["mobileGetInvestmentsAccounts"]=""
+    operation_parameters["mobileGetInvestmentsDashboardCard"]=""
+    operation_parameters["mobileGetInvestmentsHoldingsList"]=""
+    operation_parameters["mobileGetInvestmentsPortfolio"]=""
+    operation_parameters["mobileGetInvestmentsWidgetData"]=""
+    operation_parameters["mobileGetMerchantsListScreen"]=""
+    operation_parameters["mobileGetPastSplits"]=""
+    operation_parameters["mobileGetPortfolioBenchmarks"]=""
+    operation_parameters["mobileGetSecuritiesHistoricalChart"]=""
+    operation_parameters["mobileGetSecuritiesHistoricalPerformance"]=""
+    operation_parameters["mobileGetSelectCategoryScreen"]=""
+    operation_parameters["mobileGetSelectMerchantScreenHouseholdMerchants"]=""
+    operation_parameters["mobileGetSelectMerchantScreenRecommendedMerchants"]=""
+    operation_parameters["mobileGetSelectMerchantScreenTransactionDetails"]=""
+    operation_parameters["mobileGetTransactionDetailScreen"]=""
+    operation_parameters["mobileGetTransactionsAndCategoriesForWidget"]=""
+    operation_parameters["mobileGoalDetailScreenV2"]=""
+    operation_parameters["mobileGoalSelectGoals"]=""
+    operation_parameters["mobileGoalsAllocateBalanceScreen"]=""
+    operation_parameters["mobileGoalsDashboardCardV2"]=""
+    operation_parameters["mobileGoalsMapAccountsScreen"]=""
+    operation_parameters["mobileGoalsMessageBlock"]=""
+    operation_parameters["mobileGoalsMonthlyBudgetsScreen"]=""
+    operation_parameters["mobileGoalsPreTaxBudgetsScreen"]=""
+    operation_parameters["mobileGoalsScreenV2"]=""
+    operation_parameters["mobileGoalsTargetAmountsScreen"]=""
+    operation_parameters["mobileInitialPermissionRequestModal"]=""
+    operation_parameters["mobileInviteEmail"]=""
+    operation_parameters["mobileInvitePartner"]=""
+    operation_parameters["mobileLinkGoalOptions"]=""
+    operation_parameters["mobileLinkSearchInstitutionsQuery"]=""
+    operation_parameters["mobileMerchantChartQuery"]=""
+    operation_parameters["mobileMerchantDetailContainerQuery"]=""
+    operation_parameters["mobileMoveMoneyScreenMutation"]=""
+    operation_parameters["mobileNetWorthChartOverlyQuery"]=""
+    operation_parameters["mobileOldestDeletableSyncedSnapshotDate"]=""
+    operation_parameters["mobilePreviewDeleteSyncedSnapshots"]=""
+    operation_parameters["mobileRankGoalsScreen"]=""
+    operation_parameters["mobileRapidTransactionReviewFormContainer"]=""
+    operation_parameters["mobileRapidTransactionReviewScreen"]=""
+    operation_parameters["mobileResetHouseholdRecurringMerchantSearch"]=""
+    operation_parameters["mobileResetRolloverMutation"]=""
+    operation_parameters["mobileRestoreCategoryMutation"]=""
+    operation_parameters["mobileReviewDashboardQuery"]=""
+    operation_parameters["mobileReviewTransactionsDashboardButton"]=""
+    operation_parameters["mobileRulesSettingsScreenQuery"]=""
+    operation_parameters["mobileSavingsGoalFilterOptions"]=""
+    operation_parameters["mobileSearchInstitutionsQuery"]=""
+    operation_parameters["mobileSearchMerchants"]=""
+    operation_parameters["mobileSearchVehiclesQuery"]=""
+    operation_parameters["mobileSelectGoalsScreen"]=""
+    operation_parameters["mobileSetTransactionTagsRapidReview"]=""
+    operation_parameters["mobileToggleSupportAccountAccess"]=""
+    operation_parameters["mobileTransactionsMessageBlock"]=""
+    operation_parameters["mobileUpdateCategoryGroupOrderMutation"]=""
+    operation_parameters["mobileUpdateCategoryMutation"]=""
+    operation_parameters["mobileUpdateCategoryOrderMutation"]=""
+    operation_parameters["mobileUpdateGoalV2"]=""
+    operation_parameters["mobileUpdateGoalsPriorities"]=""
+    operation_parameters["mobileUpdateNonMonthlyCategory"]=""
+    operation_parameters["mobileUpdateReviewCheckinMutation"]=""
+    operation_parameters["mobileUpdateTransactionDetailScreen"]=""
+    operation_parameters["mobileUpdateTransactionRapidReview"]=""
+    operation_parameters["mobileUpdateUserFinancialProfile"]=""
+    operation_parameters["mobileUpsellPostalCode"]=""
+    operation_parameters["mobileUserAvatar"]=""
+    operation_parameters["createPaycheck"]=""
+    operation_parameters["createPaycheckEmployer"]=""
+    operation_parameters["deletePaycheck"]="id= "
+    operation_parameters["deletePaycheckEmployer"]="id= "
+    operation_parameters["getPaycheck"]="id= "
+    operation_parameters["getPaychecksSummary"]="start= end= ownerIds= employerId= "
+    operation_parameters["listPaycheckEmployers"]="search= limit= offset= "
+    operation_parameters["listPaychecks"]="start= end= ownerId= employerId= "
+    operation_parameters["updatePaycheck"]="id= "
+    operation_parameters["updatePaycheckEmployer"]="id= "
+    operation_parameters["getRecurringDashboard"]="start= end= includeLiabilities= "
+    operation_parameters["getRecurringForecast"]="start= end= "
+    operation_parameters["listAllRecurring"]="includeLiabilities= includePending= "
+    operation_parameters["listRecurring"]="start= end= "
+    operation_parameters["listRecurringAggregate"]="start= end= "
+    operation_parameters["listRecurringStreams"]="includeLiabilities= "
+    operation_parameters["mergeRecurringStreams"]=""
+    operation_parameters["skipRecurringInstance"]="id= "
+    operation_parameters["updateMerchantRecurrence"]="id= "
+    operation_parameters["reportConfigsCommandPalette"]=""
+    operation_parameters["reportConfigsCreate"]=""
+    operation_parameters["reportConfigsDelete"]=""
+    operation_parameters["reportConfigsList"]=""
+    operation_parameters["reportConfigsUpdate"]=""
+    operation_parameters["createTransactionRule"]=""
+    operation_parameters["deleteTransactionRule"]="id= "
+    operation_parameters["listTransactionRules"]=""
+    operation_parameters["previewTransactionRule"]="offset= "
+    operation_parameters["updateTransactionRule"]="id= "
+    operation_parameters["getAppearance"]=""
+    operation_parameters["getCookiePreferences"]=""
+    operation_parameters["getCurrency"]=""
+    operation_parameters["getEmailNotificationPrefs"]=""
+    operation_parameters["getFiscalYear"]=""
+    operation_parameters["getHouseholdMembers"]=""
+    operation_parameters["getHouseholdPreferences"]=""
+    operation_parameters["getMe"]=""
+    operation_parameters["getMyHousehold"]=""
+    operation_parameters["getNotificationPreferences"]=""
+    operation_parameters["getPushNotificationPrefs"]=""
+    operation_parameters["inviteHouseholdMember"]=""
+    operation_parameters["removeHouseholdMember"]="id= "
+    operation_parameters["setCurrency"]=""
+    operation_parameters["setEmailNotificationPrefs"]=""
+    operation_parameters["setFiscalYear"]=""
+    operation_parameters["setPushNotificationPrefs"]=""
+    operation_parameters["updateAppearance"]=""
+    operation_parameters["updateCookiePreferences"]=""
+    operation_parameters["updateHouseholdName"]=""
+    operation_parameters["updateHouseholdPreferences"]=""
+    operation_parameters["updateMe"]=""
+    operation_parameters["updateNotificationPreferences"]=""
+    operation_parameters["clearAllNotifications"]=""
+    operation_parameters["dismissNotification"]="id= "
+    operation_parameters["getAppVersion"]=""
+    operation_parameters["getAuthStatus"]=""
+    operation_parameters["getBetaFeatures"]=""
+    operation_parameters["getCalendarEvents"]="start= end= "
+    operation_parameters["getCashflowReport"]="start= end= "
+    operation_parameters["getCategoryReport"]="categoryId= start= end= "
+    operation_parameters["getCreditHistory"]=""
+    operation_parameters["getEntitlements"]=""
+    operation_parameters["getExpenseByCategory"]="start= end= "
+    operation_parameters["getExpenseByMerchant"]="start= end= "
+    operation_parameters["getExpenseByTag"]="start= end= "
+    operation_parameters["getFeatureFlags"]=""
+    operation_parameters["getFinancialInsight"]="id= "
+    operation_parameters["getHealth"]=""
+    operation_parameters["getIncomeReport"]="start= end= "
+    operation_parameters["getIncomeVsExpenseYoy"]="years= "
+    operation_parameters["getIntegrationStatus"]=""
+    operation_parameters["getLatestInsightRun"]=""
+    operation_parameters["getLatestRefreshOperation"]=""
+    operation_parameters["getLookup"]="q= "
+    operation_parameters["getMonthlyReportSummary"]="month= "
+    operation_parameters["getNetWorthReport"]="start= end= "
+    operation_parameters["getNotifications"]="first= afterCursor= "
+    operation_parameters["getPlatformConfig"]=""
+    operation_parameters["getPlusTierAccess"]=""
+    operation_parameters["getRefreshStatus"]=""
+    operation_parameters["getSavingsRateReport"]="start= end= "
+    operation_parameters["getSavingsRateTrends"]="months= "
+    operation_parameters["getSpendingReport"]="start= end= "
+    operation_parameters["getSubscription"]=""
+    operation_parameters["getSubscriptionDetails"]=""
+    operation_parameters["getSubscriptionInvoices"]=""
+    operation_parameters["getSubscriptionReceipts"]=""
+    operation_parameters["getTagReport"]="tagId= start= end= "
+    operation_parameters["getWeeklyRecap"]="start= end= "
+    operation_parameters["getZestimate"]=""
+    operation_parameters["initiatePasswordChange"]=""
+    operation_parameters["listFinancialInsights"]="status= summaryStart= summaryEnd= "
+    operation_parameters["markAllNotificationsAsRead"]="first= "
+    operation_parameters["markNotificationAsRead"]="id= "
+    operation_parameters["pauseSubscription"]=""
+    operation_parameters["previewSubscriptionPlanChange"]=""
+    operation_parameters["refreshAuth"]=""
+    operation_parameters["requestRefresh"]="accountIds= "
+    operation_parameters["requestRefreshAndWait"]="timeoutSeconds= accountIds= "
+    operation_parameters["resumeSubscription"]=""
+    operation_parameters["createTag"]=""
+    operation_parameters["deleteTag"]="id= "
+    operation_parameters["listTags"]=""
+    operation_parameters["getTaxBracketEstimates"]="taxYear= filingStatus= "
+    operation_parameters["getTaxCategories"]=""
+    operation_parameters["getTaxCategoryAggregates"]="start= end= "
+    operation_parameters["getTaxScheduleCategoryMappings"]="schedule= taxYear= "
+    operation_parameters["getTaxYearOverview"]="taxYear= "
+    operation_parameters["createManualTaxLot"]="id= "
+    operation_parameters["createManualTaxLotsBulk"]="id= "
+    operation_parameters["deleteTaxLot"]="id= "
+    operation_parameters["deleteTaxLotsBulk"]=""
+    operation_parameters["getTaxLotPerformance"]="id= "
+    operation_parameters["listTaxLots"]="id= "
+    operation_parameters["updateTaxLot"]="id= "
+    operation_parameters["bulkDeleteTransactions"]=""
+    operation_parameters["bulkUpdateTransactions"]=""
+    operation_parameters["createTransaction"]=""
+    operation_parameters["deleteTransaction"]="id= "
+    operation_parameters["explainTransaction"]="id= "
+    operation_parameters["explainTransactionByPath"]="id= "
+    operation_parameters["getAccountsForTransactionFilter"]="start= end= "
+    operation_parameters["getAttachment"]="id= "
+    operation_parameters["getCashflow"]="start= end= accountIds= categoryIds= tagIds= search= hasAttachments= hasNotes= hideFromReports= isSplit= isRecurring= importedFromMint= syncedFromInstitution= needsReview= transactionVisibility= "
+    operation_parameters["getCashflowBreakdown"]="start= end= accountIds= categoryIds= tagIds= search= hasAttachments= hasNotes= hideFromReports= isSplit= isRecurring= importedFromMint= syncedFromInstitution= needsReview= transactionVisibility= "
+    operation_parameters["getCashflowDashboard"]="start= end= "
+    operation_parameters["getCashflowEntities"]="start= end= "
+    operation_parameters["getCashflowFiltered"]="start= end= accountId= categoryId= categoryGroupId= merchantId= tagId= "
+    operation_parameters["getCashflowTimeframe"]="start= end= "
+    operation_parameters["getDownloadTransactionsSession"]="sessionKey= "
+    operation_parameters["getReviewSummaryByUser"]=""
+    operation_parameters["getSpendingDashboard"]="start= end= "
+    operation_parameters["getSpendingTrends"]="timeframe= "
+    operation_parameters["getTransactionAuditLog"]="id= "
+    operation_parameters["getTransactionDetail"]="id= "
+    operation_parameters["getTransactionNotes"]="id= "
+    operation_parameters["getTransactionSplitTemplates"]=""
+    operation_parameters["getTransactionSplits"]="id= "
+    operation_parameters["getTransactionsDashboard"]="start= end= limit= offset= "
+    operation_parameters["getTransactionsDuplicates"]="start= end= accountId= accountIds= "
+    operation_parameters["getTransactionsSummary"]="start= end= accountId= accountIds= categoryIds= tagIds= search= hasAttachments= hasNotes= hideFromReports= isSplit= isRecurring= importedFromMint= syncedFromInstitution= needsReview= transactionVisibility= "
+    operation_parameters["listTransactions"]="start= end= limit= offset= accountId= accountIds= categoryIds= tagIds= orderBy= search= hasAttachments= hasNotes= hideFromReports= isSplit= isRecurring= importedFromMint= syncedFromInstitution= needsReview= transactionVisibility= "
+    operation_parameters["markAsRecurring"]="id= "
+    operation_parameters["markTransactionAsReviewed"]="id= "
+    operation_parameters["markTransactionStreamAsNotRecurring"]="id= "
+    operation_parameters["matchSearchTransactions"]="search= limit= "
+    operation_parameters["moveTransactions"]=""
+    operation_parameters["setTransactionTags"]="id= "
+    operation_parameters["startDownloadTransactions"]=""
+    operation_parameters["updateTransaction"]="id= "
+    operation_parameters["updateTransactionSplits"]="id= "
+    operation_parameters["uploadTransactionAttachment"]="id= "
+    operation_parameters["webAccountDetailsRouterGetAccountType"]=""
+    operation_parameters["webAccountEditModal"]=""
+    operation_parameters["webAccountFilterQuery"]=""
+    operation_parameters["webAccountsMessageBlock"]=""
+    operation_parameters["webAdvisorPortalGetSubscription"]=""
+    operation_parameters["webAnswerQuestionMutation"]=""
+    operation_parameters["webAssignTaxScheduleCategoryMapping"]=""
+    operation_parameters["webBudgetOnboardingGetAccounts"]=""
+    operation_parameters["webCancelSponsorship"]=""
+    operation_parameters["webChangeSubscription"]=""
+    operation_parameters["webClearAllMutation"]=""
+    operation_parameters["webConfirmTotpDevice"]=""
+    operation_parameters["webConvertEmployeeTrial"]=""
+    operation_parameters["webCopySnapshots"]=""
+    operation_parameters["webCreateAIReport"]=""
+    operation_parameters["webCreateAdvisorSubscription"]=""
+    operation_parameters["webCreateCoinbaseAccount"]=""
+    operation_parameters["webCreateEquityAccountWithGrants"]=""
+    operation_parameters["webCreateFeedbackEvent"]=""
+    operation_parameters["webCreatePromoCodeCheckoutSession"]=""
+    operation_parameters["webCreateSpinwheelAccountMapping"]=""
+    operation_parameters["webCreateSubscription"]=""
+    operation_parameters["webCreateSubscriptionSponsorshipInvites"]=""
+    operation_parameters["webCreateUnconfirmedTotpDevice"]=""
+    operation_parameters["webCreateZillowAccount"]=""
+    operation_parameters["webDeleteAccountLogo"]=""
+    operation_parameters["webDeleteAllGoalReconciliationRecords"]=""
+    operation_parameters["webDeleteAllTransactionRulesMutation"]=""
+    operation_parameters["webDeleteTaxScheduleCategoryMapping"]=""
+    operation_parameters["webDeleteUserFromHousehold"]=""
+    operation_parameters["webDirectLinkAccountSelectDataProvider"]=""
+    operation_parameters["webDisableMfa"]=""
+    operation_parameters["webDisconnectCredentialMutation"]=""
+    operation_parameters["webDisconnectDiscord"]=""
+    operation_parameters["webDiscordOAuthCallback"]=""
+    operation_parameters["webEmployeeMenuDeleteCreditScoreSnapshots"]=""
+    operation_parameters["webEmployeeMenuGetFinancialInsightIds"]=""
+    operation_parameters["webEmployeeMenuResetAiAssistantOptIn"]=""
+    operation_parameters["webEmployeeMenuSoftDeleteFinancialInsight"]=""
+    operation_parameters["webEquityAccountDetailsGetAccount"]=""
+    operation_parameters["webEquityAccountDetailsGetLinkedAccount"]=""
+    operation_parameters["webExtendFreeTrialDuration"]=""
+    operation_parameters["webGenerateReportName"]=""
+    operation_parameters["webGetAccount"]=""
+    operation_parameters["webGetAccountTypes"]=""
+    operation_parameters["webGetAccountsForTransfer"]=""
+    operation_parameters["webGetAccountsPage"]=""
+    operation_parameters["webGetAccountsPageRecentBalance"]=""
+    operation_parameters["webGetAdvisorClientsPage"]=""
+    operation_parameters["webGetAdvisorProfilePage"]=""
+    operation_parameters["webGetBalanceHistoryParserColumns"]=""
+    operation_parameters["webGetBusinessSetupPriorTracking"]=""
+    operation_parameters["webGetCancellationReasonsWithSubreasons"]=""
+    operation_parameters["webGetCategorizationDetails"]=""
+    operation_parameters["webGetCategoryGroupDetails"]=""
+    operation_parameters["webGetCategorySelectOptions"]=""
+    operation_parameters["webGetConnectedApps"]=""
+    operation_parameters["webGetContactSupportFormData"]=""
+    operation_parameters["webGetDiscordConnectionRedirectUrl"]=""
+    operation_parameters["webGetDownloadScheduleCSession"]=""
+    operation_parameters["webGetEventPopoverTransactions"]=""
+    operation_parameters["webGetFilteredAccounts"]=""
+    operation_parameters["webGetFlexibleGroupRolloverSettings"]=""
+    operation_parameters["webGetGiftedSubscriptionsForPolling"]=""
+    operation_parameters["webGetInvestmentsAccounts"]=""
+    operation_parameters["webGetInvestmentsDashboardCard"]=""
+    operation_parameters["webGetInvestmentsHoldingDrawerHistoricalPerformance"]=""
+    operation_parameters["webGetMeCollaborationProfileStep"]=""
+    operation_parameters["webGetMerchantSelectHouseholdMerchants"]=""
+    operation_parameters["webGetMerchantSelectRecommendedMerchants"]=""
+    operation_parameters["webGetMerchantSelectTransactionDetails"]=""
+    operation_parameters["webGetMerchantSettingsPage"]=""
+    operation_parameters["webGetPlanRecommendationData"]=""
+    operation_parameters["webGetPortfolio"]=""
+    operation_parameters["webGetPortfolioWithClassification"]=""
+    operation_parameters["webGetRecommendedCategories"]=""
+    operation_parameters["webGetScheduleCLineItems"]=""
+    operation_parameters["webGetSecuritiesHistoricalPerformance"]=""
+    operation_parameters["webGetSecuritySettings"]=""
+    operation_parameters["webGetSidebarData"]=""
+    operation_parameters["webGetStatementParserColumns"]=""
+    operation_parameters["webGetSubscription"]=""
+    operation_parameters["webGetSubscriptionModal"]=""
+    operation_parameters["webGetTaxPrepCategoryTransactions"]=""
+    operation_parameters["webGetTaxPrepUnmappedCategoryTransactions"]=""
+    operation_parameters["webGetTopInstitutionGroupByType"]=""
+    operation_parameters["webGetTransactionFiltersMetadata"]=""
+    operation_parameters["webGetTransactionsPage"]=""
+    operation_parameters["webGetTransactionsSummaryCard"]=""
+    operation_parameters["webGetTrustAndWillSubscription"]=""
+    operation_parameters["webGetUserDismissedRetailSyncBanner"]=""
+    operation_parameters["webGetUserHasConfiguredExtension"]=""
+    operation_parameters["webGetUserPlatforms"]=""
+    operation_parameters["webGiveEmployeeInfinitePlusAccess"]=""
+    operation_parameters["webGiveEmployeeInfinitePremiumAccess"]=""
+    operation_parameters["webGoalDetailV2"]=""
+    operation_parameters["webGoalSelectGoals"]=""
+    operation_parameters["webGoalSelectTransaction"]=""
+    operation_parameters["webGoalsAllocateBalanceModal"]=""
+    operation_parameters["webGoalsAllocationCardAccounts"]=""
+    operation_parameters["webGoalsDashboardCardV2"]=""
+    operation_parameters["webGoalsMapAccounts"]=""
+    operation_parameters["webGoalsMapAccountsModal"]=""
+    operation_parameters["webGoalsMessageBlock"]=""
+    operation_parameters["webGoalsMonthlyBudgets"]=""
+    operation_parameters["webGoalsV2"]=""
+    operation_parameters["webImportStatementGetAccount"]=""
+    operation_parameters["webInitScheduleCDefaultMappings"]=""
+    operation_parameters["webInviteEmail"]=""
+    operation_parameters["webMigrateHouseholdToSavingGoals"]=""
+    operation_parameters["webMintTransactionsCountQuery"]=""
+    operation_parameters["webMonthlyBudgetGoalsModal"]=""
+    operation_parameters["webMoveMoneyMutation"]=""
+    operation_parameters["webOnboardingTopInstitutions"]=""
+    operation_parameters["webParseUploadStatementSession"]=""
+    operation_parameters["webPlusUpgradeTrial"]=""
+    operation_parameters["webPreTaxBudgetGoalsList"]=""
+    operation_parameters["webPreviewAccountDataTransferSnapshots"]=""
+    operation_parameters["webPreviewAccountDataTransferTransactions"]=""
+    operation_parameters["webPreviewCopySnapshots"]=""
+    operation_parameters["webRankGoalsList"]=""
+    operation_parameters["webReactivateSubscription"]=""
+    operation_parameters["webRecalculateBudgetMutation"]=""
+    operation_parameters["webRecommendedAccountDataTransferDates"]=""
+    operation_parameters["webRecommendedAccounts"]=""
+    operation_parameters["webRecurringFilterQuery"]=""
+    operation_parameters["webRecurringPausedBanner"]=""
+    operation_parameters["webRemoveEmployeeEntitlements"]=""
+    operation_parameters["webResetAndSyncAccountMutation"]=""
+    operation_parameters["webResetCategorizationMemory"]=""
+    operation_parameters["webResetEmployeeAndSubscribe"]=""
+    operation_parameters["webResetEmployeeToNoSubscription"]=""
+    operation_parameters["webResetHouseholdRecurringMerchantSearch"]=""
+    operation_parameters["webResetRolloverMutation"]=""
+    operation_parameters["webResetWeeklyRecapMutation"]=""
+    operation_parameters["webRestoreCategory"]=""
+    operation_parameters["webReviewStream"]=""
+    operation_parameters["webRevokeConnectedApp"]=""
+    operation_parameters["webRevokeSponsorshipInvite"]=""
+    operation_parameters["webSearchInstitutionsQuery"]=""
+    operation_parameters["webSearchMerchants"]=""
+    operation_parameters["webSearchSecurities"]=""
+    operation_parameters["webSetEmployeeActiveSubscription"]=""
+    operation_parameters["webSetEmployeeCancellationDiscountUsed"]=""
+    operation_parameters["webSetEmployeeExpiredTrial"]=""
+    operation_parameters["webSetEmployeePlusTrialFields"]=""
+    operation_parameters["webSetEmployeeSubscriptionEnded"]=""
+    operation_parameters["webSnapshotsForAccountCopyBalancePreview"]=""
+    operation_parameters["webStartDownloadScheduleCSession"]=""
+    operation_parameters["webSyncEmployeeSubscription"]=""
+    operation_parameters["webTargetAmountsGoalsList"]=""
+    operation_parameters["webTestCreditScoreChangedNotification"]=""
+    operation_parameters["webToggleSupportAccountAccess"]=""
+    operation_parameters["webTransactionDrawerDeleteAttachment"]=""
+    operation_parameters["webTransactionsFilterQuery"]=""
+    operation_parameters["webTransactionsMessageBlock"]=""
+    operation_parameters["webUndoSavingsGoalMigration"]=""
+    operation_parameters["webUnmatchRetailTransaction"]=""
+    operation_parameters["webUpdateAccountOrder"]=""
+    operation_parameters["webUpdateBusinessTrackingSetupIntent"]=""
+    operation_parameters["webUpdateCategory"]=""
+    operation_parameters["webUpdateCategoryFromBudgetOnboarding"]=""
+    operation_parameters["webUpdateCategoryGroupOrder"]=""
+    operation_parameters["webUpdateCategoryOrder"]=""
+    operation_parameters["webUpdateCompany"]=""
+    operation_parameters["webUpdateDismissedRetailSyncBanner"]=""
+    operation_parameters["webUpdateGoalsPriorities"]=""
+    operation_parameters["webUpdateOrCreateAdvisorStripePaymentMethod"]=""
+    operation_parameters["webUpdateOrCreateStripePaymentMethod"]=""
+    operation_parameters["webUpdateRenewalReminder"]=""
+    operation_parameters["webUpdateRuleOrderMutation"]=""
+    operation_parameters["webUpdateSubscriptionSponsor"]=""
+    operation_parameters["webUpdateTransactionOverview"]=""
+    operation_parameters["webUpdateUserFinancialProfile"]=""
+
+    # An associative array of possible values for enum parameters
+    declare -A operation_parameters_enum_values
+    operation_parameters_enum_values["previewAccountBalance::invertSyncedBalance"]="true false"
+    operation_parameters_enum_values["previewAccountBalance::useAvailableBalance"]="true false"
+    operation_parameters_enum_values["previewAccountBalance::invertSyncedBalance"]="true false"
+    operation_parameters_enum_values["previewAccountBalance::useAvailableBalance"]="true false"
+    operation_parameters_enum_values["previewAccountBalance::invertSyncedBalance"]="true false"
+    operation_parameters_enum_values["previewAccountBalance::useAvailableBalance"]="true false"
+    operation_parameters_enum_values["getCategoryGroupDetails::includeDisabledSystemCategories"]="true false"
+    operation_parameters_enum_values["getCategoryGroupDetails::includeDisabledSystemCategories"]="true false"
+    operation_parameters_enum_values["searchSecurities::orderByPopularity"]="true false"
+    operation_parameters_enum_values["searchSecurities::orderByPopularity"]="true false"
+    operation_parameters_enum_values["searchSecurities::orderByPopularity"]="true false"
+    operation_parameters_enum_values["searchMerchants::withLogo"]="true false"
+    operation_parameters_enum_values["searchMerchants::withLogo"]="true false"
+    operation_parameters_enum_values["searchMerchants::withLogo"]="true false"
+    operation_parameters_enum_values["searchMerchants::withLogo"]="true false"
+    operation_parameters_enum_values["searchMerchants::withLogo"]="true false"
+    operation_parameters_enum_values["getRecurringDashboard::includeLiabilities"]="true false"
+    operation_parameters_enum_values["getRecurringDashboard::includeLiabilities"]="true false"
+    operation_parameters_enum_values["getRecurringDashboard::includeLiabilities"]="true false"
+    operation_parameters_enum_values["listAllRecurring::includeLiabilities"]="true false"
+    operation_parameters_enum_values["listAllRecurring::includePending"]="true false"
+    operation_parameters_enum_values["listAllRecurring::includeLiabilities"]="true false"
+    operation_parameters_enum_values["listAllRecurring::includePending"]="true false"
+    operation_parameters_enum_values["listRecurringStreams::includeLiabilities"]="true false"
+    operation_parameters_enum_values["getCashflow::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflow::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflow::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflow::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflow::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflow::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflow::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflow::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflow::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflow::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflow::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflow::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflow::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflow::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflow::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflow::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflow::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflow::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflow::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflow::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflow::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflow::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflow::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflow::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflow::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflow::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflow::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflow::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflow::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflow::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflow::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflow::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflow::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflow::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflow::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflow::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflow::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflow::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflow::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflow::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflow::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflow::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflow::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflow::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflow::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflow::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflow::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflow::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflow::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflow::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflow::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflow::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflow::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflow::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflow::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflow::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflow::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflow::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflow::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflow::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflow::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflow::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflow::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflow::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflow::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflow::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflow::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflow::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflow::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflow::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflow::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflow::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflow::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflow::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflow::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflow::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflow::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflow::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflow::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflow::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflow::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflow::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflow::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflow::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflow::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflow::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflow::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflow::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflow::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflow::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflow::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflow::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflow::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflow::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflow::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflow::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflow::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflow::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflow::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflow::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflow::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflow::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflow::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflow::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflow::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflow::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflow::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflow::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflow::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflow::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflow::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflow::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflow::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflow::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflow::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflow::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflow::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflow::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflow::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflow::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::needsReview"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasAttachments"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hasNotes"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::hideFromReports"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isSplit"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::isRecurring"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::importedFromMint"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getCashflowBreakdown::needsReview"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasAttachments"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasNotes"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hideFromReports"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isSplit"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isRecurring"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::importedFromMint"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::needsReview"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasAttachments"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasNotes"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hideFromReports"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isSplit"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isRecurring"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::importedFromMint"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::needsReview"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasAttachments"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasNotes"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hideFromReports"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isSplit"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isRecurring"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::importedFromMint"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::needsReview"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasAttachments"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasNotes"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hideFromReports"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isSplit"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isRecurring"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::importedFromMint"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::needsReview"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasAttachments"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasNotes"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hideFromReports"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isSplit"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isRecurring"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::importedFromMint"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::needsReview"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasAttachments"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasNotes"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hideFromReports"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isSplit"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isRecurring"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::importedFromMint"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::needsReview"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasAttachments"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasNotes"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hideFromReports"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isSplit"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isRecurring"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::importedFromMint"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::needsReview"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasAttachments"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasNotes"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hideFromReports"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isSplit"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isRecurring"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::importedFromMint"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::needsReview"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasAttachments"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasNotes"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hideFromReports"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isSplit"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isRecurring"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::importedFromMint"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::needsReview"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasAttachments"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasNotes"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hideFromReports"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isSplit"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isRecurring"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::importedFromMint"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::needsReview"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasAttachments"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasNotes"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hideFromReports"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isSplit"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isRecurring"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::importedFromMint"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::needsReview"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasAttachments"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasNotes"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hideFromReports"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isSplit"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isRecurring"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::importedFromMint"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::needsReview"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasAttachments"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasNotes"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hideFromReports"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isSplit"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isRecurring"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::importedFromMint"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::needsReview"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasAttachments"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasNotes"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hideFromReports"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isSplit"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isRecurring"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::importedFromMint"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::needsReview"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasAttachments"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasNotes"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hideFromReports"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isSplit"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isRecurring"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::importedFromMint"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::needsReview"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasAttachments"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hasNotes"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::hideFromReports"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isSplit"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::isRecurring"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::importedFromMint"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["getTransactionsSummary::needsReview"]="true false"
+    operation_parameters_enum_values["listTransactions::hasAttachments"]="true false"
+    operation_parameters_enum_values["listTransactions::hasNotes"]="true false"
+    operation_parameters_enum_values["listTransactions::hideFromReports"]="true false"
+    operation_parameters_enum_values["listTransactions::isSplit"]="true false"
+    operation_parameters_enum_values["listTransactions::isRecurring"]="true false"
+    operation_parameters_enum_values["listTransactions::importedFromMint"]="true false"
+    operation_parameters_enum_values["listTransactions::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["listTransactions::needsReview"]="true false"
+    operation_parameters_enum_values["listTransactions::hasAttachments"]="true false"
+    operation_parameters_enum_values["listTransactions::hasNotes"]="true false"
+    operation_parameters_enum_values["listTransactions::hideFromReports"]="true false"
+    operation_parameters_enum_values["listTransactions::isSplit"]="true false"
+    operation_parameters_enum_values["listTransactions::isRecurring"]="true false"
+    operation_parameters_enum_values["listTransactions::importedFromMint"]="true false"
+    operation_parameters_enum_values["listTransactions::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["listTransactions::needsReview"]="true false"
+    operation_parameters_enum_values["listTransactions::hasAttachments"]="true false"
+    operation_parameters_enum_values["listTransactions::hasNotes"]="true false"
+    operation_parameters_enum_values["listTransactions::hideFromReports"]="true false"
+    operation_parameters_enum_values["listTransactions::isSplit"]="true false"
+    operation_parameters_enum_values["listTransactions::isRecurring"]="true false"
+    operation_parameters_enum_values["listTransactions::importedFromMint"]="true false"
+    operation_parameters_enum_values["listTransactions::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["listTransactions::needsReview"]="true false"
+    operation_parameters_enum_values["listTransactions::hasAttachments"]="true false"
+    operation_parameters_enum_values["listTransactions::hasNotes"]="true false"
+    operation_parameters_enum_values["listTransactions::hideFromReports"]="true false"
+    operation_parameters_enum_values["listTransactions::isSplit"]="true false"
+    operation_parameters_enum_values["listTransactions::isRecurring"]="true false"
+    operation_parameters_enum_values["listTransactions::importedFromMint"]="true false"
+    operation_parameters_enum_values["listTransactions::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["listTransactions::needsReview"]="true false"
+    operation_parameters_enum_values["listTransactions::hasAttachments"]="true false"
+    operation_parameters_enum_values["listTransactions::hasNotes"]="true false"
+    operation_parameters_enum_values["listTransactions::hideFromReports"]="true false"
+    operation_parameters_enum_values["listTransactions::isSplit"]="true false"
+    operation_parameters_enum_values["listTransactions::isRecurring"]="true false"
+    operation_parameters_enum_values["listTransactions::importedFromMint"]="true false"
+    operation_parameters_enum_values["listTransactions::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["listTransactions::needsReview"]="true false"
+    operation_parameters_enum_values["listTransactions::hasAttachments"]="true false"
+    operation_parameters_enum_values["listTransactions::hasNotes"]="true false"
+    operation_parameters_enum_values["listTransactions::hideFromReports"]="true false"
+    operation_parameters_enum_values["listTransactions::isSplit"]="true false"
+    operation_parameters_enum_values["listTransactions::isRecurring"]="true false"
+    operation_parameters_enum_values["listTransactions::importedFromMint"]="true false"
+    operation_parameters_enum_values["listTransactions::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["listTransactions::needsReview"]="true false"
+    operation_parameters_enum_values["listTransactions::hasAttachments"]="true false"
+    operation_parameters_enum_values["listTransactions::hasNotes"]="true false"
+    operation_parameters_enum_values["listTransactions::hideFromReports"]="true false"
+    operation_parameters_enum_values["listTransactions::isSplit"]="true false"
+    operation_parameters_enum_values["listTransactions::isRecurring"]="true false"
+    operation_parameters_enum_values["listTransactions::importedFromMint"]="true false"
+    operation_parameters_enum_values["listTransactions::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["listTransactions::needsReview"]="true false"
+    operation_parameters_enum_values["listTransactions::hasAttachments"]="true false"
+    operation_parameters_enum_values["listTransactions::hasNotes"]="true false"
+    operation_parameters_enum_values["listTransactions::hideFromReports"]="true false"
+    operation_parameters_enum_values["listTransactions::isSplit"]="true false"
+    operation_parameters_enum_values["listTransactions::isRecurring"]="true false"
+    operation_parameters_enum_values["listTransactions::importedFromMint"]="true false"
+    operation_parameters_enum_values["listTransactions::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["listTransactions::needsReview"]="true false"
+    operation_parameters_enum_values["listTransactions::hasAttachments"]="true false"
+    operation_parameters_enum_values["listTransactions::hasNotes"]="true false"
+    operation_parameters_enum_values["listTransactions::hideFromReports"]="true false"
+    operation_parameters_enum_values["listTransactions::isSplit"]="true false"
+    operation_parameters_enum_values["listTransactions::isRecurring"]="true false"
+    operation_parameters_enum_values["listTransactions::importedFromMint"]="true false"
+    operation_parameters_enum_values["listTransactions::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["listTransactions::needsReview"]="true false"
+    operation_parameters_enum_values["listTransactions::hasAttachments"]="true false"
+    operation_parameters_enum_values["listTransactions::hasNotes"]="true false"
+    operation_parameters_enum_values["listTransactions::hideFromReports"]="true false"
+    operation_parameters_enum_values["listTransactions::isSplit"]="true false"
+    operation_parameters_enum_values["listTransactions::isRecurring"]="true false"
+    operation_parameters_enum_values["listTransactions::importedFromMint"]="true false"
+    operation_parameters_enum_values["listTransactions::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["listTransactions::needsReview"]="true false"
+    operation_parameters_enum_values["listTransactions::hasAttachments"]="true false"
+    operation_parameters_enum_values["listTransactions::hasNotes"]="true false"
+    operation_parameters_enum_values["listTransactions::hideFromReports"]="true false"
+    operation_parameters_enum_values["listTransactions::isSplit"]="true false"
+    operation_parameters_enum_values["listTransactions::isRecurring"]="true false"
+    operation_parameters_enum_values["listTransactions::importedFromMint"]="true false"
+    operation_parameters_enum_values["listTransactions::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["listTransactions::needsReview"]="true false"
+    operation_parameters_enum_values["listTransactions::hasAttachments"]="true false"
+    operation_parameters_enum_values["listTransactions::hasNotes"]="true false"
+    operation_parameters_enum_values["listTransactions::hideFromReports"]="true false"
+    operation_parameters_enum_values["listTransactions::isSplit"]="true false"
+    operation_parameters_enum_values["listTransactions::isRecurring"]="true false"
+    operation_parameters_enum_values["listTransactions::importedFromMint"]="true false"
+    operation_parameters_enum_values["listTransactions::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["listTransactions::needsReview"]="true false"
+    operation_parameters_enum_values["listTransactions::hasAttachments"]="true false"
+    operation_parameters_enum_values["listTransactions::hasNotes"]="true false"
+    operation_parameters_enum_values["listTransactions::hideFromReports"]="true false"
+    operation_parameters_enum_values["listTransactions::isSplit"]="true false"
+    operation_parameters_enum_values["listTransactions::isRecurring"]="true false"
+    operation_parameters_enum_values["listTransactions::importedFromMint"]="true false"
+    operation_parameters_enum_values["listTransactions::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["listTransactions::needsReview"]="true false"
+    operation_parameters_enum_values["listTransactions::hasAttachments"]="true false"
+    operation_parameters_enum_values["listTransactions::hasNotes"]="true false"
+    operation_parameters_enum_values["listTransactions::hideFromReports"]="true false"
+    operation_parameters_enum_values["listTransactions::isSplit"]="true false"
+    operation_parameters_enum_values["listTransactions::isRecurring"]="true false"
+    operation_parameters_enum_values["listTransactions::importedFromMint"]="true false"
+    operation_parameters_enum_values["listTransactions::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["listTransactions::needsReview"]="true false"
+    operation_parameters_enum_values["listTransactions::hasAttachments"]="true false"
+    operation_parameters_enum_values["listTransactions::hasNotes"]="true false"
+    operation_parameters_enum_values["listTransactions::hideFromReports"]="true false"
+    operation_parameters_enum_values["listTransactions::isSplit"]="true false"
+    operation_parameters_enum_values["listTransactions::isRecurring"]="true false"
+    operation_parameters_enum_values["listTransactions::importedFromMint"]="true false"
+    operation_parameters_enum_values["listTransactions::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["listTransactions::needsReview"]="true false"
+    operation_parameters_enum_values["listTransactions::hasAttachments"]="true false"
+    operation_parameters_enum_values["listTransactions::hasNotes"]="true false"
+    operation_parameters_enum_values["listTransactions::hideFromReports"]="true false"
+    operation_parameters_enum_values["listTransactions::isSplit"]="true false"
+    operation_parameters_enum_values["listTransactions::isRecurring"]="true false"
+    operation_parameters_enum_values["listTransactions::importedFromMint"]="true false"
+    operation_parameters_enum_values["listTransactions::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["listTransactions::needsReview"]="true false"
+    operation_parameters_enum_values["listTransactions::hasAttachments"]="true false"
+    operation_parameters_enum_values["listTransactions::hasNotes"]="true false"
+    operation_parameters_enum_values["listTransactions::hideFromReports"]="true false"
+    operation_parameters_enum_values["listTransactions::isSplit"]="true false"
+    operation_parameters_enum_values["listTransactions::isRecurring"]="true false"
+    operation_parameters_enum_values["listTransactions::importedFromMint"]="true false"
+    operation_parameters_enum_values["listTransactions::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["listTransactions::needsReview"]="true false"
+    operation_parameters_enum_values["listTransactions::hasAttachments"]="true false"
+    operation_parameters_enum_values["listTransactions::hasNotes"]="true false"
+    operation_parameters_enum_values["listTransactions::hideFromReports"]="true false"
+    operation_parameters_enum_values["listTransactions::isSplit"]="true false"
+    operation_parameters_enum_values["listTransactions::isRecurring"]="true false"
+    operation_parameters_enum_values["listTransactions::importedFromMint"]="true false"
+    operation_parameters_enum_values["listTransactions::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["listTransactions::needsReview"]="true false"
+    operation_parameters_enum_values["listTransactions::hasAttachments"]="true false"
+    operation_parameters_enum_values["listTransactions::hasNotes"]="true false"
+    operation_parameters_enum_values["listTransactions::hideFromReports"]="true false"
+    operation_parameters_enum_values["listTransactions::isSplit"]="true false"
+    operation_parameters_enum_values["listTransactions::isRecurring"]="true false"
+    operation_parameters_enum_values["listTransactions::importedFromMint"]="true false"
+    operation_parameters_enum_values["listTransactions::syncedFromInstitution"]="true false"
+    operation_parameters_enum_values["listTransactions::needsReview"]="true false"
+
+    #
+    # Check if this is OSX and use special __osx_init_completion function
+    #
+    if [[ `uname` =~ "Darwin" ]]; then
+        __osx_init_completion || return
+    else
+        _init_completion -s || return
+    fi
+
+
+    # Check if operation is already in the command line provided
+    for word in "${words[@]}"; do
+        if [[ -n $word && ${operations[$word]} ]]; then
+            operation="${word}"
+        fi
+    done
+
+    if [[ -z $operation ]]; then
+        case $prev in
+            --ciphers|--connect-timeout|-C|--continue-at|-F|--form|--form-string|\
+            --ftp-account|--ftp-alternative-to-user|-P|--ftp-port|-H|--header|-h|\
+            --help|--hostpubmd5|--keepalive-time|--krb|--limit-rate|--local-port|\
+            --mail-from|--mail-rcpt|--max-filesize|--max-redirs|-m|--max-time|\
+            --pass|--proto|--proto-redir|--proxy-user|--proxy1.0|-Q|--quote|-r|\
+            --range|-X|--request|--retry|--retry-delay|--retry-max-time|\
+            --socks5-gssapi-service|-t|--telnet-option|--tftp-blksize|-z|\
+            --time-cond|--url|-u|--user|-A|--user-agent|-V|--version|-w|\
+            --write-out|--resolve|--tlsuser|--tlspassword|--about)
+                return
+                ;;
+            -K|--config|-b|--cookie|-c|--cookie-jar|-D|--dump-header|--egd-file|\
+            --key|--libcurl|-o|--output|--random-file|-T|--upload-file|--trace|\
+            --trace-ascii|--netrc-file)
+                _filedir
+                return
+                ;;
+            --cacert|-E|--cert)
+                _filedir '@(c?(e)rt|cer|pem|der)'
+                return
+                ;;
+            --capath)
+                _filedir -d
+                return
+                ;;
+            --cert-type|--key-type)
+                COMPREPLY=( $( compgen -W 'DER PEM ENG' -- "$cur" ) )
+                return
+                ;;
+            --crlfile)
+                _filedir crl
+                return
+                ;;
+            -d|--data|--data-ascii|--data-binary|--data-urlencode)
+                if [[ $cur == \@* ]]; then
+                    cur=${cur:1}
+                    _filedir
+                    COMPREPLY=( "${COMPREPLY[@]/#/@}" )
+                fi
+                return
+                ;;
+            --delegation)
+                COMPREPLY=( $( compgen -W 'none policy always' -- "$cur" ) )
+                return
+                ;;
+            --engine)
+                COMPREPLY=( $( compgen -W 'list' -- "$cur" ) )
+                return
+                ;;
+            --ftp-method)
+                COMPREPLY=( $( compgen -W 'multicwd nocwd singlecwd' -- "$cur" ) )
+                return
+                ;;
+            --ftp-ssl-ccc-mode)
+                COMPREPLY=( $( compgen -W 'active passive' -- "$cur" ) )
+                return
+                ;;
+            --interface)
+                _available_interfaces -a
+                return
+                ;;
+            -x|--proxy|--socks4|--socks4a|--socks5|--socks5-hostname)
+                _known_hosts_real
+                return
+                ;;
+            --pubkey)
+                _filedir pub
+                return
+                ;;
+            --stderr)
+                COMPREPLY=( $( compgen -W '-' -- "$cur" ) )
+                _filedir
+                return
+                ;;
+            --tlsauthtype)
+                COMPREPLY=( $( compgen -W 'SRP' -- "$cur" ) )
+                return
+                ;;
+            --host)
+                COMPREPLY=( $( compgen -W 'http:// https://' -- "$cur" ) )
+                return
+                ;;
+            -ct|--content-type|-ac|--accept)
+                COMPREPLY=( $( compgen -W '${!mime_type_abbreviations[*]}' -- "$cur" ) )
+                return
+                ;;
+        esac
+    fi
+
+    #
+    # Complete the server address based on ~/.ssh/known_hosts
+    # and ~/.ssh/config
+    #
+    local prefix=${COMP_WORDS[COMP_CWORD-2]}
+    local colon=${COMP_WORDS[COMP_CWORD-1]}
+    if [[ "$colon" == ":" && ( $prefix == "https" || $prefix == "http" ) ]]; then
+        COMPREPLY=()
+        local comp_ssh_hosts=`[[ -f ~/.ssh/known_hosts ]] && \
+                              ( cat ~/.ssh/known_hosts | \
+                              grep '^[a-zA-Z0-9]' | \
+                              cut -f 1 -d ' ' | \
+                              sed -e s/,.*//g | \
+                              grep -v ^# | \
+                              uniq | \
+                              grep -v "\[" ) ;
+                              [[ -f ~/.ssh/config ]] && \
+                              ( cat ~/.ssh/config | \
+                              grep "^Host " | \
+                              awk '{print $2}' )`
+        COMPREPLY=( $( compgen -P '//' -W '${comp_ssh_hosts}' -- "${cur:2}") )
+        return
+    fi
+
+    #
+    # Complete the monarch-api and cURL's arguments
+    #
+    if [[ $cur == -* ]]; then
+        COMPREPLY=( $( compgen -W '$(_parse_help curl) $(_parse_help $1)' -- "$cur" ) )
+        return
+    fi
+
+    #
+    # If the argument starts with a letter this could be either an operation
+    # or an operation parameter
+    # When $cur is empty, suggest the list of operations by default
+    #
+    if [[ $cur =~ ^[A-Za-z_0-9]* ]]; then
+        # If operation has not been yet selected, suggest the list of operations
+        # otherwise suggest arguments of this operation as declared in the
+        # OpenAPI specification
+        if [[ -z $operation ]]; then
+            COMPREPLY=( $(compgen -W '${!operations[*]}' -- ${cur}) )
+        else
+            COMPREPLY=( $(compgen -W '${operation_parameters[$operation]}' -- ${cur}) )
+            compopt -o nospace
+        fi
+        return
+    fi
+
+} &&
+complete -F _monarch-api monarch-api
+
+# ex: ts=4 sw=4 et filetype=sh

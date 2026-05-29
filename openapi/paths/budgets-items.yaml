@@ -1,0 +1,34 @@
+post:
+  tags: [Budgets]
+  summary: Set the planned amount for one category OR category-group for a month
+  description: |
+    Writes a single budget cell: the planned spend for one category (or one
+    category group) for one month. Used to fill out the budget grid one
+    line item at a time.
+
+    Pass exactly one of `categoryId` or `categoryGroupId`. `amount: 0`
+    clears the line. `applyToFuture: true` cascades the same amount to
+    every subsequent month (useful for fixed line items like rent).
+
+    For wider edits use the dedicated Flex endpoints or
+    `POST /v1/budgets/reset` to wipe a month back to defaults.
+  operationId: setBudgetAmount
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/SetBudgetAmountRequest"
+  responses:
+    "200":
+      description: Created/updated budget item.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/SetBudgetAmountResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

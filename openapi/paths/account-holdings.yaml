@@ -1,0 +1,57 @@
+get:
+  tags: [Accounts]
+  summary: Investment positions in one account
+  description: |
+    Returns every security position Monarch tracks inside the account:
+    quantity, value, cost basis, security metadata (ticker, name, type),
+    and last-updated timestamp.
+
+    Brokerage/retirement accounts only. Returns an empty list for
+    depository, credit, and loan accounts (no error). For the full security
+    catalog lookup use `GET /v1/securities/search`; to mutate a single
+    holding use `PATCH /v1/holdings/{id}` or `DELETE /v1/holdings/{id}`.
+  operationId: getAccountHoldings
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/AccountIdPath"
+  responses:
+    "200":
+      description: Holdings list (may be empty).
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/AccountHoldingsResponse"
+post:
+  tags: [Holdings]
+  summary: Add a manual holding to an account
+  description: |
+    Tracks a security position inside a brokerage account that Monarch can't auto-sync
+    (e.g. employer 401k, private fund). `securityId` must be a real Monarch security id;
+    use `GET /v1/securities/search` to look one up by ticker or name.
+  operationId: createManualHolding
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/AccountIdPath"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/CreateManualHoldingRequest"
+  responses:
+    "200":
+      description: New holding id.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CreateManualHoldingResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+    "422":
+      description: Monarch PayloadError.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

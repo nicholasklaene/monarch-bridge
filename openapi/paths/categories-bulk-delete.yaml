@@ -1,0 +1,29 @@
+post:
+  tags: [Categories]
+  summary: Bulk-delete categories
+  description: |
+    Server-side composite over `DELETE /v1/categories/{id}`. Runs the delete for each
+    id in the request. Always returns 200; per-item failures are surfaced in `failed[]`
+    with the upstream exception message as `reason`. Optional `moveToCategoryId` is
+    applied to each per-id delete (transactions assigned to a deleted category are
+    remapped; omit to leave them uncategorized).
+  operationId: bulkDeleteCategories
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/BulkDeleteCategoriesRequest"
+  responses:
+    "200":
+      description: Partitioned result of the per-id deletes.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/BulkDeleteCategoriesResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

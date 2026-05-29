@@ -1,0 +1,19 @@
+mutation Web_CreateZillowAccount($input: CreateSyncedRealEstateAccountInput!) {
+    createSyncedRealEstateAccount(input: $input) {
+      account {
+        id
+      }
+      errors {
+        ...PayloadErrorFields
+      }
+    }
+  }
+
+fragment PayloadErrorFields on PayloadError {
+    fieldErrors {
+      field
+      messages
+    }
+    message
+    code
+  }

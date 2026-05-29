@@ -1,0 +1,15 @@
+query Web_GetRecommendedCategories($transactionId: ID!) {
+    recommendedCategories(id: $transactionId) {
+      occurrences
+      category {
+        id
+        name
+        order
+        icon
+        group {
+          id
+          type
+        }
+      }
+    }
+  }

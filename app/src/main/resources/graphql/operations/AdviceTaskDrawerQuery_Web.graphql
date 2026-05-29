@@ -1,0 +1,3 @@
+query AdviceTaskDrawerQuery_Web {
+  __typename
+}

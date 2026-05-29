@@ -1,0 +1,23 @@
+get:
+  tags: [System]
+  summary: Expense breakdown grouped by tag
+  description: |
+    Expense rollup with one row per transaction tag over the given
+    window. Only transactions that carry at least one tag contribute.
+  operationId: getExpenseByTag
+  parameters:
+    - in: query
+      name: start
+      required: false
+      schema: { type: string, format: date }
+    - in: query
+      name: end
+      required: false
+      schema: { type: string, format: date }
+  responses:
+    "200":
+      description: Per-tag expense rows.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetExpenseByTagResponse"

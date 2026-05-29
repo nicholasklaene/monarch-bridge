@@ -1,0 +1,22 @@
+get:
+  tags: [System]
+  summary: Expense breakdown grouped by merchant
+  description: |
+    Expense rollup with one row per merchant over the given window.
+  operationId: getExpenseByMerchant
+  parameters:
+    - in: query
+      name: start
+      required: false
+      schema: { type: string, format: date }
+    - in: query
+      name: end
+      required: false
+      schema: { type: string, format: date }
+  responses:
+    "200":
+      description: Per-merchant expense rows.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetExpenseByMerchantResponse"

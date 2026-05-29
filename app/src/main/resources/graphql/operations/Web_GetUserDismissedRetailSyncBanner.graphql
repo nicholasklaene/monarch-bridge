@@ -1,0 +1,12 @@
+query Web_GetUserDismissedRetailSyncBanner {
+    userHasConfiguredRetailSyncExtension
+
+    me {
+      id
+      profile {
+        id
+        dismissedRetailSyncBanner
+        dismissedRetailSyncTargetBannerAt
+      }
+    }
+  }

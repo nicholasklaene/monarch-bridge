@@ -1,0 +1,10 @@
+mutation Common_DeleteHolding($id: ID!) {
+  deleteHolding(id: $id) {
+    deleted
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

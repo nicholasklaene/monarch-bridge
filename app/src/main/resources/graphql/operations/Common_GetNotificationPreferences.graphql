@@ -1,0 +1,13 @@
+query Common_GetNotificationPreferences {
+  notificationPreferences {
+    id
+    group
+    type
+    title
+    description
+    emailEnabled
+    pushEnabled
+    inAppEnabled
+    __typename
+  }
+}

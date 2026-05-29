@@ -1,0 +1,10 @@
+query Web_GetMerchantSelectTransactionDetails($transactionId: UUID!) {
+    getTransaction(id: $transactionId) {
+      id
+      dataProviderDescription
+      merchant {
+        id
+        name
+      }
+    }
+  }

@@ -1,0 +1,45 @@
+query Common_GetTransactionsListDashboard(
+  $offset: Int
+  $limit: Int
+  $filters: TransactionFilterInput
+) {
+  allTransactions(filters: $filters) {
+    totalCount
+    totalSelectableCount
+    results(offset: $offset, limit: $limit) {
+      id
+      date
+      amount
+      notes
+      plaidName
+      account {
+        id
+        displayName
+        __typename
+      }
+      merchant {
+        id
+        name
+        __typename
+      }
+      category {
+        id
+        name
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+  transactionRules {
+    id
+    __typename
+  }
+  aggregates(filters: $filters) {
+    summary {
+      count
+      __typename
+    }
+    __typename
+  }
+}

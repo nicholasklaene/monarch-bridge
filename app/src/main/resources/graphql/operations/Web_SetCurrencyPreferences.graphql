@@ -1,0 +1,15 @@
+mutation Web_SetCurrencyPreferences($input: SetCurrencyPreferencesInput!) {
+  setCurrencyPreferences(input: $input) {
+    currency {
+      currency
+      symbol
+      position
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

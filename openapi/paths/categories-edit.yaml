@@ -1,0 +1,17 @@
+get:
+  tags: [Categories]
+  summary: Category with full edit-form fields
+  description: |
+    Returns the category enriched with edit-form fields: budget
+    variability, rollover period, group metadata, system-category flag.
+    Use as the source of truth before constructing an update payload.
+  operationId: getCategoryEdit
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/CategoryIdPath"
+  responses:
+    "200":
+      description: Category with edit-form fields.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetCategoryEditResponse"

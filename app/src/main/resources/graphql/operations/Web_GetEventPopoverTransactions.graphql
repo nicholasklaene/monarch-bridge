@@ -1,0 +1,16 @@
+query Web_GetEventPopoverTransactions($merchantId: UUID!, $endDate: Date!) {
+    allTransactions(filters: { merchants: [$merchantId], endDate: $endDate }) {
+      totalCount
+      results(limit: 3) {
+        id
+        date
+        amount
+        isRecurring
+        category {
+          id
+          name
+          icon
+        }
+      }
+    }
+  }

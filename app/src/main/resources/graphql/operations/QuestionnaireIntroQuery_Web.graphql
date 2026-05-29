@@ -1,0 +1,3 @@
+query QuestionnaireIntroQuery_Web {
+  __typename
+}

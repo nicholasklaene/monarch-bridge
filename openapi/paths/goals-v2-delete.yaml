@@ -1,0 +1,27 @@
+delete:
+  tags: [Goals]
+  summary: Delete a goal (v2 mutation)
+  description: |
+    Permanently delete a savings goal via the v2 `deleteGoalV2` mutation.
+    Distinct from `DELETE /v1/goals/{id}/hard` (which uses the legacy
+    `deleteSavingsGoal` path); the v2 path is preferred for goals
+    created through the v2 flow.
+
+    Returns a flat `success` boolean and any payload errors.
+  operationId: deleteGoalV2
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/GoalIdPath"
+  responses:
+    "200":
+      description: Deletion result.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [success]
+                properties:
+                  success: { type: boolean }

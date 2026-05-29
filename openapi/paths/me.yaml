@@ -1,0 +1,70 @@
+get:
+  tags: [Settings]
+  summary: Current authenticated user
+  description: |
+    Returns the Monarch user the bridge is authenticated as. Includes
+    `email`, `name`, `displayName`, `timezone`, `birthday`, `householdRole`,
+    plus auth-state flags (`hasPassword`, `hasMfaOn`).
+
+    Use for "who am I" checks and for profile-form pre-population.
+  operationId: getMe
+  responses:
+    "200":
+      description: The current user profile.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [id]
+                properties:
+                  id: { type: string }
+                  email: { type: string, nullable: true }
+                  name: { type: string, nullable: true }
+                  displayName: { type: string, nullable: true }
+                  timezone: { type: string, nullable: true }
+                  birthday: { type: string, nullable: true }
+                  hasPassword: { type: boolean, nullable: true }
+                  hasMfaOn: { type: boolean, nullable: true }
+                  householdRole: { type: string, nullable: true }
+                  createdAt: { type: string, nullable: true }
+patch:
+  tags: [Settings]
+  summary: Update current user profile
+  description: |
+    Patch the current user's profile fields. All fields optional; omit to
+    leave unchanged. Updates `email`, `name`, `birthday`, or `timezone`.
+  operationId: updateMe
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            email: { type: string, nullable: true }
+            name: { type: string, nullable: true }
+            birthday: { type: string, format: date, nullable: true }
+            timezone: { type: string, nullable: true }
+  responses:
+    "200":
+      description: Updated user profile.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [id]
+                properties:
+                  id: { type: string }
+                  email: { type: string, nullable: true }
+                  name: { type: string, nullable: true }
+                  displayName: { type: string, nullable: true }
+                  timezone: { type: string, nullable: true }
+                  birthday: { type: string, nullable: true }

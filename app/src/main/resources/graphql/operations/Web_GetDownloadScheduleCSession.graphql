@@ -1,0 +1,8 @@
+query Web_GetDownloadScheduleCSession($sessionKey: String!) {
+    downloadScheduleCSession(sessionKey: $sessionKey) {
+      sessionKey
+      status
+      errorMessage
+      url
+    }
+  }

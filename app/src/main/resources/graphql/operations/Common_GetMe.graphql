@@ -1,0 +1,20 @@
+query Common_GetMe {
+  me {
+    id
+    email
+    name
+    displayName
+    timezone
+    birthday
+    hasPassword
+    hasMfaOn
+    householdRole
+    createdAt
+    profile {
+      id
+      hasSeenCategoriesManagementTour
+      __typename
+    }
+    __typename
+  }
+}

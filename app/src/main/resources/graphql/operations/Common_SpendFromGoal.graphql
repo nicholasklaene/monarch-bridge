@@ -1,0 +1,13 @@
+mutation Common_SpendFromGoal($input: SpendFromGoalInput!) {
+  spendFromGoal(input: $input) {
+    goalEvent {
+      id
+      __typename
+    }
+    errors {
+      message
+      __typename
+    }
+    __typename
+  }
+}

@@ -1,0 +1,39 @@
+query Common_GetFinancialInsight($id: ID!) {
+  financialInsight(id: $id) {
+    id
+    merchantNameDisplay
+    merchantLogoUrl
+    productNameDisplay
+    description
+    reasoning
+    effort
+    status
+    suggestedActionType
+    executionMethod
+    canUseBrowserAutomation
+    savingsEstimateLow
+    savingsEstimateHigh
+    capturedSavingsLow
+    currentAnnualCost
+    recurringStreamSnapshot
+    nextChargeDate
+    score
+    opportunityType
+    paymentAccount {
+      label
+      __typename
+    }
+    playbook {
+      id
+      diySteps
+      __typename
+    }
+    relatedMerchants {
+      name
+      logoUrl
+      merchantId
+      __typename
+    }
+    __typename
+  }
+}

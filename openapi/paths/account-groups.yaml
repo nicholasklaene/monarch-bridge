@@ -1,0 +1,17 @@
+get:
+  tags: [Accounts]
+  summary: Account groups
+  description: |
+    Visual groupings of accounts under the Accounts tab. Each group has a
+    display order, an optional collapsed flag, and the ids of accounts it
+    contains. Pure read - the web tab fires this on mount.
+
+    Pair with `PUT /v1/account-groups/order` to persist a new ordering.
+  operationId: getAccountGroups
+  responses:
+    "200":
+      description: All account groups for the household.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetAccountGroupsResponse"

@@ -1,0 +1,15 @@
+get:
+  tags: [System]
+  summary: Feature flags for this account
+  description: |
+    The feature-flag matrix this account currently sees. Each entry
+    carries the flag name, on/off, and an optional variant string for
+    A/B experiments.
+  operationId: getFeatureFlags
+  responses:
+    "200":
+      description: All active feature flags.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetFeatureFlagsResponse"

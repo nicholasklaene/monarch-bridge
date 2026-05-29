@@ -1,0 +1,16 @@
+mutation Common_PauseSubscription($input: PauseSubscriptionInput!) {
+  pauseSubscription(input: $input) {
+    subscription {
+      id
+      status
+      pausedAt
+      resumeAt
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

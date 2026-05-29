@@ -1,0 +1,57 @@
+get:
+  tags: [Transactions]
+  summary: Splits of one transaction
+  description: |
+    Returns the child split rows of a parent transaction (e.g. a
+    $120 grocery run split into $90 groceries + $30 household). Each
+    split has its own amount, category, notes, and tags but inherits
+    the parent's date and account.
+
+    Returns an empty `splits` array when the transaction isn't split
+    (no error). The parent transaction summary is included on the
+    response for convenience.
+  operationId: getTransactionSplits
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TransactionIdPath"
+  responses:
+    "200":
+      description: Splits + parent transaction summary.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/TransactionSplitsResponse"
+post:
+  tags: [Transactions]
+  summary: Replace the splits on a transaction
+  description: |
+    Wholesale-replaces the split set on a transaction. Send the
+    complete new list - this is NOT a delta operation. Each split needs
+    `amount` (signed, same sign as the parent) plus `categoryId` and
+    optional `notes` / `merchantName`.
+
+    Sum of split amounts must equal the parent transaction's amount
+    exactly - Monarch rejects with 422 PayloadError on any mismatch.
+    Send an empty list to remove all splits and revert the transaction
+    to a single-row entry.
+  operationId: updateTransactionSplits
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TransactionIdPath"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/SplitsRequest"
+  responses:
+    "200":
+      description: New split set.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/UpdateTransactionSplitsResponse"
+    "422":
+      description: Sum mismatch or other PayloadError.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

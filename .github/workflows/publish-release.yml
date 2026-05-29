@@ -1,0 +1,88 @@
+name: Publish GitHub Release
+
+# Triggers on a semver tag push (v1.2.3). Bundles the bash CLI + (if it
+# exists) the generated bash client + a tiny install.sh into a tarball and
+# attaches it to a GitHub Release. End users who want "just the scripts"
+# without docker still have a one-liner curl path.
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build tarball + attach to Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Derive version
+        id: version
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          version="${tag#v}"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+
+      - name: Assemble release payload
+        id: assemble
+        run: |
+          set -euo pipefail
+          stage="monarch-bridge-${{ steps.version.outputs.version }}"
+          mkdir -p "${stage}/cli"
+          cp cli/monarch "${stage}/cli/monarch"
+          chmod +x "${stage}/cli/monarch"
+
+          if [ -f cli/README.md ]; then
+            cp cli/README.md "${stage}/cli/README.md"
+          fi
+
+          # Optional companion library extracted by the parity agent.
+          if [ -f cli/monarch-lib.sh ]; then
+            cp cli/monarch-lib.sh "${stage}/cli/monarch-lib.sh"
+          fi
+
+          # Optional generated bash client (parity agent ships this from the spec).
+          if [ -d clients/bash ]; then
+            mkdir -p "${stage}/clients"
+            cp -R clients/bash "${stage}/clients/bash"
+          fi
+
+          # Tiny install.sh tailored to the tarball layout.
+          cat > "${stage}/install.sh" <<'INSTALL'
+          #!/usr/bin/env bash
+          # Drop the bundled `monarch` CLI on PATH. Override location via PREFIX.
+          set -euo pipefail
+          PREFIX="${PREFIX:-/usr/local/bin}"
+          here="$(cd "$(dirname "$0")" && pwd)"
+          install -m 0755 "${here}/cli/monarch" "${PREFIX}/monarch"
+          # The CLI sources monarch-lib.sh from its own dir; install it alongside
+          # or `monarch` dies on first run.
+          install -m 0644 "${here}/cli/monarch-lib.sh" "${PREFIX}/monarch-lib.sh"
+          echo "Installed monarch CLI to ${PREFIX}/monarch"
+          echo "Next: ensure monarch-bridge is running on :9084 (see README)."
+          INSTALL
+          chmod +x "${stage}/install.sh"
+
+          tar -czf "${stage}.tar.gz" "${stage}"
+          sha256sum "${stage}.tar.gz" > "${stage}.tar.gz.sha256"
+          echo "tarball=${stage}.tar.gz" >> "$GITHUB_OUTPUT"
+          echo "checksum=${stage}.tar.gz.sha256" >> "$GITHUB_OUTPUT"
+
+      - name: Create / update GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.tag }}
+          generate_release_notes: true
+          files: |
+            ${{ steps.assemble.outputs.tarball }}
+            ${{ steps.assemble.outputs.checksum }}

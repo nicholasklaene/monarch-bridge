@@ -1,0 +1,64 @@
+patch:
+  tags: [Holdings]
+  summary: Update a holding
+  description: |
+    Partial-update a holding. Fields are independent: pass only what changed.
+    `userCostBasis` is stored separately from any data-provider basis, so setting it
+    overrides for display only.
+  operationId: updateHolding
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { type: string }
+      description: Monarch holding id.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/UpdateHoldingRequest"
+  responses:
+    "200":
+      description: Updated holding id.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/UpdateHoldingResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+    "422":
+      description: Monarch PayloadError.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+delete:
+  tags: [Holdings]
+  summary: Delete a holding
+  description: |
+    Removes one security position from its account. **Destructive** -
+    no soft-delete. Use to clean up a stale manual holding or one
+    Monarch double-imported.
+
+    On Plaid-synced brokerage accounts the holding may re-appear on
+    next sync if the position still exists at the data provider. For
+    manual investments accounts the delete sticks.
+  operationId: deleteHolding
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { type: string }
+      description: Monarch holding id.
+  responses:
+    "200":
+      description: Confirmation.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/DeleteHoldingResponse"

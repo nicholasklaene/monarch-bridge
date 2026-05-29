@@ -1,0 +1,11 @@
+query Common_GetSpinwheelCreditScoreSnapshots {
+  creditScoreSnapshots {
+    reportedDate
+    score
+    user {
+      id
+      __typename
+    }
+    __typename
+  }
+}

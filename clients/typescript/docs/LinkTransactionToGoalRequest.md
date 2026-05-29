@@ -1,0 +1,20 @@
+# LinkTransactionToGoalRequest
+
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**goalId** | **string** | Target Monarch goal id. | [default to undefined]
+
+## Example
+
+```typescript
+import { LinkTransactionToGoalRequest } from 'monarch-bridge-client';
+
+const instance: LinkTransactionToGoalRequest = {
+    goalId,
+};
+```
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

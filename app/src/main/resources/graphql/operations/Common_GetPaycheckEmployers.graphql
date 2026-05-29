@@ -1,0 +1,10 @@
+query Common_GetPaycheckEmployers($search: String, $limit: Int, $offset: Int) {
+  paycheckEmployers(search: $search, limit: $limit, offset: $offset) {
+    id
+    name
+    paycheckCount
+    createdAt
+    __typename
+  }
+  paycheckEmployerCount
+}

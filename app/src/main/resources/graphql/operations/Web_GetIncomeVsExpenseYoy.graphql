@@ -1,0 +1,8 @@
+query Web_GetIncomeVsExpenseYoy($years: Int!) {
+  incomeVsExpenseYoy(years: $years) {
+    period
+    income
+    expense
+    __typename
+  }
+}

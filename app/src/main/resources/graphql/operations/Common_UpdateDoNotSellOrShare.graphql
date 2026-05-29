@@ -1,0 +1,3 @@
+query Common_UpdateDoNotSellOrShare {
+  __typename
+}

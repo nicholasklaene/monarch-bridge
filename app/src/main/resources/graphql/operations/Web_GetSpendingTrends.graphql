@@ -1,0 +1,22 @@
+query Web_GetSpendingTrends($timeframe: String) {
+  spendingTrends(timeframe: $timeframe) {
+    timeframe
+    currentPeriodTotal
+    previousPeriodTotal
+    deltaAmount
+    deltaPercent
+    risingCategories {
+      categoryId
+      name
+      deltaPercent
+      __typename
+    }
+    fallingCategories {
+      categoryId
+      name
+      deltaPercent
+      __typename
+    }
+    __typename
+  }
+}

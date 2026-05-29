@@ -1,0 +1,11 @@
+mutation Common_UpdateCategoryGroupBudgetVariability($input: UpdateCategoryGroupInput!) {
+  updateCategoryGroup(input: $input) {
+    categoryGroup {
+      id
+      budgetVariability
+      updatedAt
+      __typename
+    }
+    __typename
+  }
+}

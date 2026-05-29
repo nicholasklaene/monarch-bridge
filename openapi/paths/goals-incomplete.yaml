@@ -1,0 +1,25 @@
+post:
+  tags: [Goals]
+  summary: Mark a goal incomplete
+  description: |
+    Clear a savings goal's `completedAt`, reverting it back to "in
+    progress". Used to undo a `POST /v1/goals/{id}/complete` performed
+    in error.
+  operationId: markGoalIncomplete
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/GoalIdPath"
+  responses:
+    "200":
+      description: Updated completion state.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [id]
+                properties:
+                  id: { type: string }
+                  completedAt: { type: string, nullable: true }

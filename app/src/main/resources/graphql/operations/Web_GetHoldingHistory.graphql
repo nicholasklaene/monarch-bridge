@@ -1,0 +1,12 @@
+query Web_GetHoldingHistory($holdingId: ID!, $startDate: Date, $endDate: Date) {
+  holdingHistory(holdingId: $holdingId, startDate: $startDate, endDate: $endDate) {
+    history {
+      date
+      quantity
+      value
+      price
+      __typename
+    }
+    __typename
+  }
+}

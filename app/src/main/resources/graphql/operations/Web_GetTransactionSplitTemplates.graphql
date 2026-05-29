@@ -1,0 +1,13 @@
+query Web_GetTransactionSplitTemplates {
+  transactionSplitTemplates {
+    id
+    name
+    splits {
+      categoryId
+      categoryName
+      percent
+      __typename
+    }
+    __typename
+  }
+}

@@ -1,0 +1,5 @@
+mutation Web_ResetHouseholdRecurringMerchantSearch($deleteStreams: Boolean) {
+    resetRecurringMerchantSearch(deleteStreams: $deleteStreams) {
+      success
+    }
+  }

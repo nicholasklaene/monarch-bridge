@@ -1,0 +1,15 @@
+query Web_GetInvestmentsDashboardCard {
+    portfolio {
+      performance {
+        totalValue
+        oneDayChangeDollars
+        topMovers {
+          id
+          name
+          ticker
+          oneDayChangePercent
+          currentPrice
+        }
+      }
+    }
+  }

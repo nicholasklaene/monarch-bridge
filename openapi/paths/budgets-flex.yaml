@@ -1,0 +1,27 @@
+put:
+  tags: [Budgets]
+  summary: Update the Flex bucket total for a month
+  description: |
+    Sets the household's total Flex-bucket budget for a single month.
+    Flex is Monarch's variable-spending pool (anything tagged as
+    flexible-variability) that's tracked as one combined cap rather than
+    per category.
+
+    Required: `startDate` (first-of-month) and `amount` in dollars. Pass
+    `applyToFuture: true` to cascade the new amount to every subsequent
+    month. To configure how Flex rolls over month-to-month use
+    `PUT /v1/budgets/flex-rollover` instead.
+  operationId: updateFlexibleBudget
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/UpdateFlexibleBudgetRequest"
+  responses:
+    "200":
+      description: Updated flex item.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/UpdateFlexibleBudgetResponse"

@@ -1,0 +1,20 @@
+mutation Web_UpdateUserFinancialProfile($input: UpdateUserFinancialProfileInput!) {
+    updateUserFinancialProfile(input: $input) {
+      financialProfile {
+        ...FinancialProfileFields
+      }
+      errors {
+        message
+      }
+    }
+  }
+
+fragment FinancialProfileFields on UserFinancialProfile {
+    id
+    birthday
+    grossAnnualIncome
+    employmentStatus
+    taxFilingStatus
+    relationshipToOwner
+    numberOfDependents
+  }

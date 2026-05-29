@@ -1,0 +1,19 @@
+query Web_GetAllocation(
+  $porfolioInput: PortfolioInput
+  $classificationField: PortfolioAllocationClassificationField
+) {
+  portfolio(input: $porfolioInput) {
+    allocationSimple(classificationField: $classificationField) {
+      type
+      typeDisplay
+      allocationPercent
+      totalValue
+      __typename
+    }
+    performance {
+      totalValue
+      __typename
+    }
+    __typename
+  }
+}

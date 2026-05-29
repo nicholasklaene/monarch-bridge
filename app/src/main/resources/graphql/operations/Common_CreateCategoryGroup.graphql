@@ -1,0 +1,9 @@
+mutation Common_CreateCategoryGroup($input: CreateCategoryGroupInput!) {
+  createCategoryGroup(input: $input) {
+    categoryGroup {
+      ...CategoryGroupFields
+      __typename
+    }
+    __typename
+  }
+}

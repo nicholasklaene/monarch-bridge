@@ -1,0 +1,11 @@
+query Web_GetConnectedApps {
+    connectedApps {
+      id
+      name
+      scopes
+      authorizedAt
+      lastUsedAt
+      expiresAt
+      revokedAt
+    }
+  }

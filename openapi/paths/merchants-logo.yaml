@@ -1,0 +1,43 @@
+patch:
+  tags: [Merchants]
+  summary: Set a merchant's logo
+  description: |
+    Points the merchant at an existing Cloudinary asset by public id.
+
+    **Gotcha**: Monarch's `setMerchantLogo` mutation does NOT accept a
+    binary upload. The asset must already exist on Cloudinary
+    (typically uploaded via Monarch's web UI). Pass the asset's
+    `cloudinaryPublicId`; send `null` or omit to clear the logo.
+
+    To upload a fresh logo you'd need to upload to Cloudinary
+    out-of-band first and then call this endpoint with the resulting
+    public id (Monarch does not expose its Cloudinary signing for this
+    use-case).
+  operationId: setMerchantLogo
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/MerchantIdPath"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/SetMerchantLogoRequest"
+  responses:
+    "200":
+      description: Updated merchant (id, name, logoUrl).
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/SetMerchantLogoResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+    "422":
+      description: Monarch PayloadError.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

@@ -1,0 +1,19 @@
+query Web_GetTaxPrepCategoryAggregates($filters: TransactionFilterInput) {
+  aggregates(groupBy: ["category"], filters: $filters) {
+    groupBy {
+      category {
+        id
+        name
+        icon
+        systemCategory
+        __typename
+      }
+    }
+    summary {
+      sum
+      count
+      __typename
+    }
+    __typename
+  }
+}

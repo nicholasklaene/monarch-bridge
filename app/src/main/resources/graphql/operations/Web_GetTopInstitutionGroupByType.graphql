@@ -1,0 +1,52 @@
+query Web_GetTopInstitutionGroupByType(
+    $dataProviders: [String]!
+    $topInstitutionGroupType: String!
+  ) {
+    credentials {
+      id
+    }
+    topInstitutionGroupByType(
+      dataProviders: $dataProviders
+      topInstitutionGroupType: $topInstitutionGroupType
+    ) {
+      type
+      title
+      shortTitle
+      accountsConnectedCount
+      institutions {
+        id
+        ...InstitutionRowFields
+      }
+      manualAccountShortcuts {
+        title
+        accountType {
+          name
+        }
+        accountSubtype {
+          name
+        }
+      }
+    }
+  }
+
+fragment InstitutionRowFields on Institution {
+      id
+      name
+      logo
+      largeLogo {
+        url
+      }
+      url
+      status
+      newConnectionsDisabled
+      hasIssuesReported
+      hasIssuesReportedMessage
+      linkFlowWarnBeforeConnecting
+      linkFlowWarningMessage
+      linkFlowWarningTitle
+      preferredDataProvider
+      firstBackupDataProvider
+      plaidInstitutionId
+      finicityInstitutionId
+      mxInstitutionId
+    }

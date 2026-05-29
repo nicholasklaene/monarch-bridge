@@ -1,0 +1,22 @@
+query Common_SavingsGoal($id: ID!) {
+  savingsGoal(id: $id) {
+    id
+    name
+    type
+    status
+    progress
+    currentBalance
+    targetAmount
+    targetDate
+    archivedAt
+    createdAt
+    priority
+    isSinkingFund
+    plannedMonthlyContribution
+    estimatedMonthsUntilCompletion
+    forecastedCompletionDate
+    imageStorageProvider
+    imageStorageProviderId
+    __typename
+  }
+}

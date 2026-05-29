@@ -1,0 +1,15 @@
+mutation Web_ResetEmployeeToNoSubscription {
+    resetEmployeeToNoSubscription {
+      subscription {
+        id
+        isOnFreeTrial
+        entitlements
+        billingPeriod
+        hasBillingIssue
+        willCancelAtPeriodEnd
+      }
+      errors {
+        message
+      }
+    }
+  }

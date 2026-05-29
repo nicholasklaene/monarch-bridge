@@ -1,0 +1,11 @@
+mutation Common_UpdateAppearance($input: UpdateAppearanceInput!) {
+  updateAppearance(input: $input) {
+    appearance {
+      theme
+      accentColor
+      compactMode
+      __typename
+    }
+    __typename
+  }
+}

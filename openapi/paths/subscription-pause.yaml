@@ -1,0 +1,21 @@
+post:
+  tags: [System]
+  summary: Pause the subscription
+  description: |
+    Suspends billing without canceling. Provide `resumeAt` to auto-resume
+    on a date; omit for indefinite pause. Read-only data access remains
+    during a pause.
+  operationId: pauseSubscription
+  requestBody:
+    required: false
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/PauseSubscriptionRequest"
+  responses:
+    "200":
+      description: Pause confirmation.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/PauseSubscriptionResponse"

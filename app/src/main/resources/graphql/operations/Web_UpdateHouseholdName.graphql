@@ -1,0 +1,10 @@
+mutation Web_UpdateHouseholdName($input: UpdateHouseholdNameInput!) {
+  updateHouseholdName(input: $input) {
+    name
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

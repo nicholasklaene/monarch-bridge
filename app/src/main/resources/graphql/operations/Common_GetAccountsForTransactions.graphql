@@ -1,0 +1,37 @@
+query Common_GetAccountsForTransactions(
+  $selectedTransactionIds: [ID!]
+  $excludedTransactionIds: [ID!]
+  $isAllSelected: Boolean!
+  $filters: TransactionFilterInput
+) {
+  getAccountsForTransactions(
+    params: {
+      selectedTransactionIds: $selectedTransactionIds
+      excludedTransactionIds: $excludedTransactionIds
+      isAllSelected: $isAllSelected
+      filters: $filters
+    }
+  ) {
+    id
+    displayName
+    dataProvider
+    icon
+    logoUrl
+    type {
+      name
+      display
+      __typename
+    }
+    subtype {
+      name
+      __typename
+    }
+    institution {
+      id
+      logo
+      primaryColor
+      __typename
+    }
+    __typename
+  }
+}

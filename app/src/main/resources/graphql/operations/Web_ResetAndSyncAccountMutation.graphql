@@ -1,0 +1,8 @@
+mutation Web_ResetAndSyncAccountMutation($accountId: ID!) {
+    resetAndSyncAccount(accountId: $accountId) {
+      success
+      errors {
+        message
+      }
+    }
+  }

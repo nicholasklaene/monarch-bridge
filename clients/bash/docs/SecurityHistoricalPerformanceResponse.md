@@ -1,0 +1,10 @@
+# SecurityHistoricalPerformanceResponse
+
+## Properties
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**data** | [**GetSecurityHistoricalPerformance200ResponseData**](GetSecurityHistoricalPerformance200ResponseData.md) |  | [default to null]
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
+

@@ -1,0 +1,12 @@
+query Web_GetGoalProjection($id: ID!) {
+  savingsGoalProjection(goalId: $id) {
+    projectedCompletionDate
+    monthsToTarget
+    series {
+      date
+      projectedBalance
+      __typename
+    }
+    __typename
+  }
+}

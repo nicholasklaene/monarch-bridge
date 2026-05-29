@@ -1,0 +1,39 @@
+get:
+  tags: [Transactions]
+  summary: Aggregate stats across a transaction window
+  description: |
+    Returns one summary row over the filtered transaction set:
+    `count`, `sum`, `avg`, `min`, `max`, `first`, `last`. Useful for
+    one-shot questions like "how many Whole Foods runs this year" or
+    "what's my average dining check" without pulling the full
+    transaction list.
+
+    All standard transaction filters apply (`search`, `categoryIds`,
+    `accountIds`, `tagIds`, bool flags). For per-category breakdowns
+    use `GET /v1/cashflow/breakdown`. For row-level data use
+    `GET /v1/transactions`.
+  operationId: getTransactionsSummary
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/AccountIdQuery"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/AccountIdsQuery"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/CategoryIdsQuery"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TagIdsQuery"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Search"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/HasAttachments"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/HasNotes"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/HideFromReports"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/IsSplit"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/IsRecurring"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/ImportedFromMint"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/SyncedFromInstitution"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/NeedsReview"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TransactionVisibility"
+  responses:
+    "200":
+      description: count / sum / avg / min-max / first-last.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/TransactionsSummaryResponse"

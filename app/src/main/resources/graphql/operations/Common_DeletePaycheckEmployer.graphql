@@ -1,0 +1,10 @@
+mutation Common_DeletePaycheckEmployer($id: ID!) {
+  deletePaycheckEmployer(id: $id) {
+    success
+    errors {
+      message
+      __typename
+    }
+    __typename
+  }
+}

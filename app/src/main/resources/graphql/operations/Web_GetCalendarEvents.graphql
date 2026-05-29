@@ -1,0 +1,13 @@
+query Web_GetCalendarEvents($startDate: Date, $endDate: Date) {
+  calendarEvents(startDate: $startDate, endDate: $endDate) {
+    events {
+      date
+      type
+      title
+      amount
+      referenceId
+      __typename
+    }
+    __typename
+  }
+}

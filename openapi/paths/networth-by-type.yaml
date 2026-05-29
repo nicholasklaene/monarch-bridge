@@ -1,0 +1,24 @@
+get:
+  tags: [Accounts]
+  summary: Balance history grouped by account-type
+  description: |
+    Returns balance snapshots aggregated per account type (depository,
+    credit, brokerage, loan, real_estate, etc.) instead of one combined
+    total. Each type gets its own series plus the catalog of account
+    types is included for convenience.
+
+    Use for stacked-area net-worth charts that show how the composition
+    of net worth has shifted over time (e.g. "cash share is shrinking as
+    brokerage grows"). `timeframe` controls bucketing (`day` / `week` /
+    `month` / `year`).
+  operationId: getNetworthByType
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Timeframe"
+  responses:
+    "200":
+      description: Grouped snapshots + the account-type list.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/NetworthByTypeResponse"

@@ -1,0 +1,34 @@
+get:
+  tags: [Tax]
+  summary: Tax bracket estimates
+  description: |
+    Per-bracket estimated federal tax for a given filing status and
+    projected AGI. Backs the "what bracket am I in" widget on the web
+    Tax tab.
+
+    `filingStatus` is one of `single`, `married_jointly`,
+    `married_separately`, `head_of_household`. Omit to use the
+    household's saved filing status.
+  operationId: getTaxBracketEstimates
+  parameters:
+    - in: query
+      name: taxYear
+      required: true
+      schema:
+        type: integer
+      description: Tax year (e.g. 2025).
+    - in: query
+      name: filingStatus
+      required: false
+      schema:
+        type: string
+        enum: [single, married_jointly, married_separately, head_of_household]
+        pattern: "^(single|married_jointly|married_separately|head_of_household)$"
+      description: Federal filing status; omit to use the household default.
+  responses:
+    "200":
+      description: Marginal / effective rates + per-bracket breakdown.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetTaxBracketEstimatesResponse"

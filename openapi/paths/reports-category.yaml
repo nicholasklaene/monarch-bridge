@@ -1,0 +1,23 @@
+get:
+  tags: [System]
+  summary: Per-category historical report
+  description: |
+    Per-month sum series for one category across a window. Backs the
+    "click category → drill down" view in the web Reports tab. Returns
+    `totalAmount` and `averagePerMonth` for convenience.
+  operationId: getCategoryReport
+  parameters:
+    - in: query
+      name: categoryId
+      required: true
+      schema: { type: string }
+      description: Monarch category id.
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: Per-month sums for the category.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetCategoryReportResponse"

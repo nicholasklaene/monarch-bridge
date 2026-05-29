@@ -1,0 +1,9 @@
+query GetMerchantsSearchWithLogo($search: String, $limit: Int, $offset: Int) {
+  merchants(search: $search, limit: $limit, offset: $offset, orderBy: TRANSACTION_COUNT) {
+    id
+    name
+    transactionCount
+    logoUrl
+    __typename
+  }
+}

@@ -1,0 +1,3 @@
+query Mobile_CategoryRecommendationForTransaction {
+  __typename
+}

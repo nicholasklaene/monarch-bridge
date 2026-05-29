@@ -1,0 +1,8 @@
+query Web_GetTransactionNotes($id: ID!) {
+  getTransaction(id: $id) {
+    id
+    notes
+    updatedAt
+    __typename
+  }
+}

@@ -1,0 +1,44 @@
+patch:
+  tags: [Categories]
+  summary: Set a category group's budget-variability (fixed vs flex)
+  description: |
+    Targeted single-field update for `budgetVariability` on a category
+    group. Values: `fixed` (predictable monthly amount like rent),
+    `flexible` (variable spend like groceries, rolls into the Flex
+    bucket), `non_monthly` (irregular like holiday gifts).
+
+    The wider `PATCH /v1/category-groups/{id}` can do the same thing;
+    this endpoint exists as a narrower, intent-revealing call when all
+    you want to change is the variability classification.
+  operationId: updateCategoryGroupBudgetVariability
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { type: string }
+      description: Category group id.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/UpdateCategoryGroupBudgetVariabilityRequest"
+  responses:
+    "200":
+      description: Updated group (id + new budgetVariability + updatedAt).
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/UpdateCategoryGroupBudgetVariabilityResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+    "422":
+      description: Monarch PayloadError.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

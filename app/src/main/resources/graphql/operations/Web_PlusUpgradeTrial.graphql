@@ -1,0 +1,16 @@
+query Web_PlusUpgradeTrial($promoCode: String, $stripePriceId: String!) {
+    plusUpgradeTrial(promoCode: $promoCode) {
+      trialDays
+      isEligible
+    }
+    subscription {
+      hasPremiumEntitlement
+      isEligibleForCoreToPlusPromo
+      willCancelAtPeriodEnd
+      paymentMethod {
+        brand
+        lastFour
+      }
+      plusUpgradeProratedAmount(stripePriceId: $stripePriceId, promoCode: $promoCode)
+    }
+  }

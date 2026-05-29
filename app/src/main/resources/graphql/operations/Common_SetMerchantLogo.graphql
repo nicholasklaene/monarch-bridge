@@ -1,0 +1,15 @@
+mutation Common_SetMerchantLogo($input: SetMerchantLogoInput!) {
+  setMerchantLogo(input: $input) {
+    merchant {
+      id
+      name
+      logoUrl
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

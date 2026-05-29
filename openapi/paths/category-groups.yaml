@@ -1,0 +1,60 @@
+get:
+  tags: [Categories]
+  summary: Parent groups (one tier above individual categories)
+  description: |
+    Returns the top-level grouping that categories roll up into:
+    Income, Housing, Food, Transportation, etc. Each group carries its
+    `type` (`income`, `expense`, `transfer`), `budgetVariability`
+    (`fixed`, `flexible`, `non_monthly`), and display order.
+
+    Use to build a two-tier category picker, to look up a group id
+    before creating a child category via `POST /v1/categories`, or to
+    aggregate per-group spend in client code (the cashflow endpoint
+    already does this server-side).
+  operationId: listCategoryGroups
+  responses:
+    "200":
+      description: All category groups.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ListCategoryGroupsResponse"
+post:
+  tags: [Categories]
+  summary: Create a category group
+  description: |
+    Adds a new parent group to organize categories under. Required:
+    `name`, `type` (`income` / `expense` / `transfer`).
+
+    Optional: `orderBefore` is the UUID of an existing group; the new
+    group is inserted before it. Omit to append at the end.
+    `budgetVariability` defaults to `flexible` if omitted.
+
+    Once created, attach child categories via `POST /v1/categories`
+    with the new group's id as `groupId`.
+  operationId: createCategoryGroup
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/CreateCategoryGroupRequest"
+  responses:
+    "200":
+      description: New category group.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CreateCategoryGroupResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+    "422":
+      description: Monarch PayloadError.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

@@ -1,0 +1,11 @@
+query Common_GetIncomeVsExpenseYoy($years: Int) {
+  incomeVsExpenseYoy(years: $years) {
+    points {
+      period
+      income
+      expense
+      __typename
+    }
+    __typename
+  }
+}

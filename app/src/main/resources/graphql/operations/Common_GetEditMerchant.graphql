@@ -1,0 +1,20 @@
+query Common_GetEditMerchant($merchantId: ID!) {
+  merchant(id: $merchantId) {
+    id
+    name
+    logoUrl
+    transactionCount
+    ruleCount
+    canBeDeleted
+    hasActiveRecurringStreams
+    recurringTransactionStream {
+      id
+      frequency
+      amount
+      baseDate
+      isActive
+      __typename
+    }
+    __typename
+  }
+}

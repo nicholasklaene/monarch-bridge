@@ -1,0 +1,17 @@
+mutation Web_confirmTotpDevice($input: ConfirmTOTPDeviceInput!) {
+    confirmTotpDevice(input: $input) {
+      isTokenValid
+      errors {
+        ...PayloadErrorFields
+      }
+    }
+  }
+
+fragment PayloadErrorFields on PayloadError {
+    fieldErrors {
+      field
+      messages
+    }
+    message
+    code
+  }

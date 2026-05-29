@@ -1,0 +1,14 @@
+mutation Common_MarkGoalIncomplete($input: MarkGoalIncompleteInput!) {
+  markGoalIncomplete(input: $input) {
+    goal {
+      id
+      completedAt
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

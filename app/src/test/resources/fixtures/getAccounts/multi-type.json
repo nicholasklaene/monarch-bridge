@@ -1,0 +1,35 @@
+{
+  "accounts": [
+    {
+      "id": "a-1",
+      "displayName": "Checking",
+      "type": {"name": "depository", "display": "Depository"},
+      "subtype": {"name": "checking", "display": "Checking"},
+      "mask": "1234",
+      "currentBalance": 1234.56,
+      "displayBalance": 1200.00,
+      "isHidden": false,
+      "hideFromList": false,
+      "includeInNetWorth": true,
+      "isAsset": true,
+      "isManual": false,
+      "institution": {
+        "id": "i-1",
+        "name": "Chase",
+        "primaryColor": "#0F0",
+        "url": "chase.com",
+        "plaidInstitutionId": "ins_56"
+      }
+    },
+    {
+      "id": "a-2",
+      "displayName": "Visa",
+      "type": {"name": "credit"},
+      "subtype": {"name": "credit_card"},
+      "currentBalance": -842.10,
+      "isAsset": false,
+      "isManual": true,
+      "institution": null
+    }
+  ]
+}

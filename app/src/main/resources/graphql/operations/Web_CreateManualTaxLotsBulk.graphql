@@ -1,0 +1,18 @@
+mutation Web_CreateManualTaxLotsBulk($input: CreateManualTaxLotsBulkInput!) {
+  createManualTaxLotsBulk(input: $input) {
+    taxLots {
+      id
+      createdAt
+      acquisitionDate
+      acquisitionQuantity
+      costBasisPerUnit
+      __typename
+    }
+    errors {
+      index
+      error
+      __typename
+    }
+    __typename
+  }
+}

@@ -1,0 +1,39 @@
+post:
+  tags: [Transactions]
+  summary: Bulk-delete transactions
+  description: |
+    Forwards Monarch's `bulkDeleteTransactions` mutation. Same two-mode selection as
+    bulk-update:
+
+    - `allSelected: false` + `selectedTransactionIds: [a,b,c]` to delete exactly N.
+    - `allSelected: true` + `filters: {...}` + optional `excludedTransactionIds: [...]`
+      to delete everything matching minus a hand-picked exclusion list.
+
+    `expectedAffectedTransactionCount` is the same race-prevention guard as bulk-update.
+    Destructive: prefer `tx duplicates` first to scope the selection.
+  operationId: bulkDeleteTransactions
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/BulkDeleteTransactionsRequest"
+  responses:
+    "200":
+      description: Monarch reports success plus the affected-row count.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/BulkDeleteTransactionsResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+    "422":
+      description: Monarch rejected the mutation (e.g. expected-count mismatch).
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

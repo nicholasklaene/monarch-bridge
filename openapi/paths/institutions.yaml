@@ -1,0 +1,24 @@
+get:
+  tags: [Accounts]
+  summary: Linked institution credentials (Plaid connection pipes)
+  description: |
+    Returns every Plaid credential the user has linked, plus the
+    accounts behind each one and Monarch's subscription summary.
+    Credentials are the "pipes" - one per institution per Plaid item -
+    that supply accounts on the other side.
+
+    Use to surface connection health: each credential carries
+    `updateRequired`, `disconnectedFromDataProviderAt`, and last-sync
+    timestamps so you can detect dead Plaid links. Includes
+    soft-deleted accounts under `accounts[]` (filter by `deletedAt`).
+
+    To unlink an institution use `DELETE /v1/institutions/{id}` where
+    `{id}` is the credential id from `credentials[].id` here.
+  operationId: getInstitutions
+  responses:
+    "200":
+      description: Credentials + their accounts + subscription summary.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/InstitutionsResponse"

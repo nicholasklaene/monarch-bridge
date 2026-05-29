@@ -1,0 +1,13 @@
+query Web_GetCommandPaletteEntities($query: String!) {
+  semanticSearch(query: $query) {
+    results {
+      id
+      type
+      name
+      icon
+      logoUrl
+      __typename
+    }
+    __typename
+  }
+}

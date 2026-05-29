@@ -1,0 +1,14 @@
+query Common_GetDisplayBalancePreview(
+  $accountId: UUID!
+  $invertSyncedBalance: Boolean
+  $useAvailableBalance: Boolean
+) {
+  account(id: $accountId) {
+    id
+    displayBalancePreview(
+      invertSyncedBalance: $invertSyncedBalance
+      useAvailableBalance: $useAvailableBalance
+    )
+    __typename
+  }
+}

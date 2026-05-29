@@ -1,0 +1,19 @@
+get:
+  tags: [System]
+  summary: Poll per-account sync status
+  description: |
+    Snapshot of Monarch's per-account sync state. Use after firing
+    `POST /v1/refresh` to know when the re-poll is done: keep calling until
+    `data.allComplete` is true (typically 5-60s depending on institution).
+
+    Returns each account's `hasSyncInProgress` flag plus an aggregate
+    `allComplete` rollup. For the synchronous "fire-and-wait" version
+    that blocks until done, use `POST /v1/refresh/wait` instead.
+  operationId: getRefreshStatus
+  responses:
+    "200":
+      description: Per-account sync flags.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/RefreshStatusResponse"

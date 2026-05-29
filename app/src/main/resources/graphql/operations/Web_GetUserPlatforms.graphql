@@ -1,0 +1,12 @@
+query Web_GetUserPlatforms {
+    me {
+      userDevicesUsage {
+        hasSignedUpOnDesktop
+        hasSignedUpOnMobileWeb
+        hasLoggedInOnMobileWeb
+        hasLoggedInOnMobileApp
+        hasLoggedInOnDesktop
+        hasLoggedInOnlyOnePlatform
+      }
+    }
+  }

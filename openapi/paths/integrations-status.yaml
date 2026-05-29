@@ -1,0 +1,19 @@
+get:
+  tags: [System]
+  summary: Per-credential integration health
+  description: |
+    Per-credential health for each linked provider (Plaid / MX /
+    Finicity / manual). The web app's "Connection issues" banner walks
+    this list and surfaces any row with `needsReauth=true` or a non-null
+    `errorCode`.
+
+    `status` values: `connected`, `syncing`, `error`, `disconnected`.
+    `provider` values: `plaid`, `mx`, `finicity`, `manual`.
+  operationId: getIntegrationStatus
+  responses:
+    "200":
+      description: Per-credential health rows.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetIntegrationStatusResponse"

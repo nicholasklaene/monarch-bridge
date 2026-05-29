@@ -1,0 +1,11 @@
+query Web_GetSecuritiesHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {
+    securityHistoricalPerformance(input: $input) {
+      security {
+        id
+      }
+      historicalChart {
+        date
+        returnPercent
+      }
+    }
+  }

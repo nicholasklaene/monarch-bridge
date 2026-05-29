@@ -1,0 +1,12 @@
+mutation Common_UpdateCookiePreferences($input: UpdateCookiePreferencesInput!) {
+  updateCookiePreferences(input: $input) {
+    cookiePreferences {
+      analytics
+      marketing
+      functional
+      updatedAt
+      __typename
+    }
+    __typename
+  }
+}

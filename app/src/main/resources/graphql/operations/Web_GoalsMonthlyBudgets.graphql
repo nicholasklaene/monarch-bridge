@@ -1,0 +1,21 @@
+query Web_GoalsMonthlyBudgets($startDate: Date!, $endDate: Date!) {
+    goalsV2 {
+      id
+      plannedMonthlyContribution
+      objective
+      ...Web_GoalInfoRowFields
+    }
+    aggregates(filters: { startDate: $startDate, endDate: $endDate }) {
+      summary {
+        savings
+      }
+    }
+  }
+
+fragment Web_GoalInfoRowFields on GoalV2 {
+      id
+      name
+      priority
+      imageStorageProvider
+      imageStorageProviderId
+    }

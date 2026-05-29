@@ -1,0 +1,23 @@
+query Web_RankGoalsList {
+    goalsV2 {
+      id
+      archivedAt
+      ...GoalRankCardFields
+      ...GoalCustomizeModalFields
+    }
+  }
+
+fragment GoalRankCardFields on GoalV2 {
+      id
+      name
+      priority
+      imageStorageProvider
+      imageStorageProviderId
+    }
+
+fragment GoalCustomizeModalFields on GoalV2 {
+      id
+      name
+      imageStorageProvider
+      imageStorageProviderId
+    }

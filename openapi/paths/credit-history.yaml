@@ -1,0 +1,20 @@
+get:
+  tags: [System]
+  summary: Credit-score snapshots over time
+  description: |
+    Returns the user's credit-score history series from Monarch's
+    Spinwheel integration. Each entry has a date, score, and the
+    reporting bureau (typically TransUnion).
+
+    Use for credit-trend charts or to surface the most recent score.
+    Empty list when Spinwheel is not enabled on the user's account
+    (no error, just zero entries). Premium-tier feature on Monarch's
+    side - tier check via `GET /v1/subscription` if needed.
+  operationId: getCreditHistory
+  responses:
+    "200":
+      description: Snapshots (may be empty).
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CreditHistoryResponse"

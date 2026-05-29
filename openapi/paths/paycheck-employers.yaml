@@ -1,0 +1,57 @@
+get:
+  tags: [Paychecks]
+  summary: List paycheck employers
+  description: |
+    Returns the named-employer registry. Each entry is a reusable
+    employer id that paycheck records reference via `employerId`.
+
+    Optional free-text `search` matches by name (case-insensitive).
+    `limit` / `offset` paginate. Use to populate an employer picker
+    or to resolve a name before creating a paycheck via
+    `POST /v1/paychecks`.
+
+    To add a new employer use `POST /v1/paycheck-employers`; to rename
+    use `PATCH /v1/paycheck-employers/{id}`.
+  operationId: listPaycheckEmployers
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Search"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Limit"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Offset"
+  responses:
+    "200":
+      description: All matching employers.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ListPaycheckEmployersResponse"
+post:
+  tags: [Paychecks]
+  summary: Register a new employer
+  description: |
+    Adds an employer to the registry so it can be attached to
+    paycheck records. Required: `name`. The returned id is the
+    `employerId` to pass when creating a paycheck via
+    `POST /v1/paychecks`.
+
+    Use once per employer per household member - subsequent paychecks
+    reference the same id.
+  operationId: createPaycheckEmployer
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/CreatePaycheckEmployerRequest"
+  responses:
+    "200":
+      description: New employer.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CreatePaycheckEmployerResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

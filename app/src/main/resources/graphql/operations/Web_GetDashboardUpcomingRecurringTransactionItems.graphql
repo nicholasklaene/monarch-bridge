@@ -1,0 +1,41 @@
+query Web_GetDashboardUpcomingRecurringTransactionItems(
+  $startDate: Date!
+  $endDate: Date!
+  $includeLiabilities: Boolean
+) {
+  recurringRemainingDue(
+    startDate: $startDate
+    endDate: $endDate
+    includeLiabilities: $includeLiabilities
+  ) {
+    amount
+    __typename
+  }
+  recurringTransactionItems(
+    startDate: $startDate
+    endDate: $endDate
+    includeLiabilities: $includeLiabilities
+  ) {
+    stream {
+      id
+      frequency
+      name
+      logoUrl
+      merchant {
+        id
+        __typename
+      }
+      __typename
+    }
+    isPast
+    date
+    amount
+    account {
+      id
+      logoUrl
+      icon
+      __typename
+    }
+    __typename
+  }
+}

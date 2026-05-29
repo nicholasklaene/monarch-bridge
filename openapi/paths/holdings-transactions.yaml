@@ -1,0 +1,29 @@
+get:
+  tags: [Holdings]
+  summary: Holding transactions (buys, sells, dividends)
+  description: |
+    Discrete cost-basis events for one holding across a window.
+    Different from `GET /v1/holdings/{id}/history` which returns the
+    per-day price / value series - this returns the buys, sells,
+    dividends, and transfers that actually moved the position.
+
+    `type` is one of `buy`, `sell`, `dividend`, `transfer_in`,
+    `transfer_out`.
+  operationId: getHoldingTransactions
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { type: string }
+      description: Monarch holding id.
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Limit"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Offset"
+  responses:
+    "200":
+      description: Holding transactions in the window.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetHoldingTransactionsResponse"

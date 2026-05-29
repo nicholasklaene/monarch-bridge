@@ -1,0 +1,7 @@
+mutation Web_DownloadTransactions($filters: TransactionFilterInput!, $orderBy: String) {
+  startDownloadTransactionsSession(filters: $filters, orderBy: $orderBy) {
+    sessionKey
+    status
+    __typename
+  }
+}

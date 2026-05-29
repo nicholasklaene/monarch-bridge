@@ -1,0 +1,20 @@
+mutation Web_CreateSubscriptionSponsorshipInvites($input: CreateSponsorshipInvitesInput!) {
+    createSubscriptionSponsorshipInvites(input: $input) {
+      errors {
+        ...PayloadErrorFields
+      }
+      invites {
+        id
+        code
+      }
+    }
+  }
+
+fragment PayloadErrorFields on PayloadError {
+    fieldErrors {
+      field
+      messages
+    }
+    message
+    code
+  }

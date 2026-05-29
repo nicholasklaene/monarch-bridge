@@ -1,0 +1,10 @@
+mutation Web_DeleteTaxLotsBulk($input: DeleteTaxLotsBulkInput!) {
+  deleteTaxLotsBulk(input: $input) {
+    deletedCount
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

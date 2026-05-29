@@ -1,0 +1,12 @@
+query Web_GetAllocationByHoldings($porfolioInput: PortfolioInput, $limit: Int) {
+  portfolio(input: $porfolioInput) {
+    allocationSimple: allocationByHoldings(limit: $limit) {
+      type
+      typeDisplay
+      allocationPercent
+      totalValue
+      __typename
+    }
+    __typename
+  }
+}

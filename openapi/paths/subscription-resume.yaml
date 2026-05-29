@@ -1,0 +1,14 @@
+post:
+  tags: [System]
+  summary: Resume a paused subscription
+  description: |
+    Lifts a pause and resumes billing immediately. No-op if the
+    subscription is already active.
+  operationId: resumeSubscription
+  responses:
+    "200":
+      description: Resume confirmation.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ResumeSubscriptionResponse"

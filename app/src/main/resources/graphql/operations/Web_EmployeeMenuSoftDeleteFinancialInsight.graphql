@@ -1,0 +1,5 @@
+mutation Web_EmployeeMenuSoftDeleteFinancialInsight($id: ID!) {
+    softDeleteFinancialInsight(id: $id) {
+      success
+    }
+  }

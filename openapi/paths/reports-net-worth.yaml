@@ -1,0 +1,18 @@
+get:
+  tags: [System]
+  summary: Net-worth report
+  description: |
+    Net-worth chart series for the requested window plus starting and
+    current totals and absolute / percent change. Backs the web Reports
+    page Net Worth tab.
+  operationId: getNetWorthReport
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: Net-worth totals plus per-date series.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetNetWorthReportResponse"

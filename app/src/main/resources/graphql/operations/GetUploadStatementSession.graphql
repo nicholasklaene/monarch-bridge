@@ -1,0 +1,3 @@
+query GetUploadStatementSession {
+  __typename
+}

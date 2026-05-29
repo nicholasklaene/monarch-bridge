@@ -1,0 +1,8 @@
+query GetTransactionRules {
+  transactionRules {
+    id
+    order
+    ...TransactionRuleFields
+    __typename
+  }
+}

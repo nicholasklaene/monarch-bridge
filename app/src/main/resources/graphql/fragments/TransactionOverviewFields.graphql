@@ -1,0 +1,48 @@
+fragment TransactionOverviewFields on Transaction {
+  id
+  amount
+  pending
+  date
+  hideFromReports
+  plaidName
+  notes
+  isRecurring
+  reviewStatus
+  needsReview
+  attachments {
+    id
+    extension
+    filename
+    originalAssetUrl
+    publicId
+    sizeBytes
+    __typename
+  }
+  isSplitTransaction
+  createdAt
+  updatedAt
+  category {
+    id
+    name
+    __typename
+  }
+  merchant {
+    name
+    id
+    transactionsCount
+    __typename
+  }
+  account {
+    id
+    displayName
+    __typename
+  }
+  tags {
+    id
+    name
+    color
+    order
+    __typename
+  }
+  __typename
+}

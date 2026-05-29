@@ -1,0 +1,10 @@
+mutation Web_UpdateAccountGroupOrder($input: UpdateAccountGroupOrderInput!) {
+  updateAccountGroupOrder(input: $input) {
+    accountGroups {
+      id
+      order
+      __typename
+    }
+    __typename
+  }
+}

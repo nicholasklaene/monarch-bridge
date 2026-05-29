@@ -1,0 +1,39 @@
+patch:
+  tags: [Budgets]
+  summary: Update household budget settings
+  description: |
+    Change household-wide budget configuration: which budget system is
+    active (`category` vs `category_group`) and whether budget edits
+    cascade to future months by default.
+  operationId: updateBudgetSettings
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            budgetSystem:
+              type: string
+              nullable: true
+              description: One of `category`, `category_group`. Omit to leave unchanged.
+            budgetApplyToFutureMonthsDefault:
+              type: boolean
+              nullable: true
+              description: When true, budget-amount edits cascade to future months by default. Omit to leave unchanged.
+  responses:
+    "200":
+      description: Effective budget settings after update.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                properties:
+                  budgetSystem: { type: string, nullable: true }
+                  budgetApplyToFutureMonthsDefault: { type: boolean, nullable: true }
+                  budgetRolloverPeriodId: { type: string, nullable: true }
+                  budgetRolloverPeriodStartMonth: { type: string, nullable: true }

@@ -1,0 +1,31 @@
+query Web_GetCategoryGroupModal($id: UUID!, $includeDisabledSystemCategories: Boolean) {
+  categoryGroup(id: $id) {
+    id
+    name
+    order
+    type
+    color
+    groupLevelBudgetingEnabled
+    budgetVariability
+    rolloverPeriod {
+      id
+      startMonth
+      endMonth
+      startingBalance
+      __typename
+    }
+    categories(includeDisabledSystemCategories: $includeDisabledSystemCategories) {
+      id
+      name
+      icon
+      rolloverPeriod {
+        id
+        startMonth
+        startingBalance
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}

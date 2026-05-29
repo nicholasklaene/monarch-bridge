@@ -1,0 +1,9 @@
+query Common_PreviewSubscriptionPlanChange($targetTier: String!, $billingFrequency: String) {
+  previewSubscriptionPlanChange(targetTier: $targetTier, billingFrequency: $billingFrequency) {
+    proratedCharge
+    newRenewalDate
+    currency
+    summary
+    __typename
+  }
+}

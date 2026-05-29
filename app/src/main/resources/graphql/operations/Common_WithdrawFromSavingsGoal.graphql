@@ -1,0 +1,22 @@
+mutation Common_WithdrawFromSavingsGoal($input: CreateSavingsGoalWithdrawalInput!) {
+  createSavingsGoalWithdrawal(input: $input) {
+    goalEvent {
+      id
+      goal {
+        id
+        currentBalance
+        progress
+        status
+        __typename
+      }
+      account {
+        id
+        availableBalanceForGoalsUnmemoized
+        includeInGoalContributions
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}

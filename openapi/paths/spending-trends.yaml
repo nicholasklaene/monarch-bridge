@@ -1,0 +1,27 @@
+get:
+  tags: [Transactions]
+  summary: Spending trends (period-over-period)
+  description: |
+    Period-over-period spend trend: current vs. previous total plus
+    the top rising / falling categories by percent delta. Backs the
+    "Spending Trends" widget under Insights and the dashboard.
+
+    `timeframe` is `week`, `month`, or `quarter`. Each compares the
+    current period to the matching previous one.
+  operationId: getSpendingTrends
+  parameters:
+    - in: query
+      name: timeframe
+      required: false
+      schema:
+        type: string
+        enum: [week, month, quarter]
+        default: month
+        pattern: "^(week|month|quarter)$"
+  responses:
+    "200":
+      description: Current / previous totals + rising / falling categories.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetSpendingTrendsResponse"

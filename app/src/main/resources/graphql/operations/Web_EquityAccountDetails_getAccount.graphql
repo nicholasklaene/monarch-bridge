@@ -1,0 +1,278 @@
+query Web_EquityAccountDetails_getAccount($id: UUID!) {
+    account(id: $id) {
+      id
+      ...AccountFields
+      ...EditAccountFormFields
+      isLiability
+      name
+      ownedByUser {
+        id
+        name
+      }
+      company {
+        id
+        name
+        isPublic
+        employmentStatus
+        ownerStartDate
+        ownerEndDate
+        fullyDilutedShares
+        latestFundingRound
+        latestPreferredPrice
+        fmv409aPrice
+        sharePrice
+        valuationMethod
+        priceHistory {
+          date
+          price
+          priceType
+        }
+        linkedAccountId
+        securityId
+        security {
+          id
+          name
+          ticker
+          currentPrice
+          closingPrice
+        }
+      }
+      credential {
+        id
+        hasSyncOrRecentRefreshRequest
+        canBeForceRefreshed
+        disconnectedFromDataProviderAt
+        syncDisabledAt
+        syncDisabledReason
+        dataProvider
+        institution {
+          id
+          plaidInstitutionId
+          url
+          ...InstitutionStatusFields
+        }
+      }
+      connectionStatus {
+        connectionStatusCode
+        copyTitle
+        inAppSmallCopy
+        inAppCopy
+        helpCenterUrl
+      }
+      institution {
+        id
+        plaidInstitutionId
+        url
+        ...InstitutionStatusFields
+      }
+      equityGrants {
+        id
+        grantType
+        grantNickname
+        grantDate
+        quantityGranted
+        vestingSchedule
+        vestingEndDate
+        exerciseEvents
+        strikePrice
+        postTerminationExerciseWindow
+        vestedQuantity
+        unvestedQuantity
+        exercisedQuantity
+        forfeitedQuantity
+        currentValue
+        vestingTimeline {
+          date
+          exercised
+          earlyExercised
+          vested
+          unvested
+          forfeited
+          sold
+          total
+          exercisedValue
+          earlyExercisedValue
+          vestedValue
+          unvestedValue
+          forfeitedValue
+          soldValue
+          totalValue
+        }
+      }
+    }
+  }
+
+fragment AccountFields on Account {
+    id
+    displayName
+    syncDisabled
+    deactivatedAt
+    dataProviderDeactivatedAt
+    isHidden
+    isAsset
+    mask
+    createdAt
+    updatedAt
+    displayLastUpdatedAt
+    currentBalance
+    displayBalance
+    includeInNetWorth
+    hideFromList
+    hideInBudget
+    hideTransactionsFromReports
+    includeBalanceInNetWorth
+    includeInGoalBalance
+    excludeFromDebtPaydown
+    dataProvider
+    dataProviderAccountId
+    isManual
+    transactionsCount
+    holdingsCount
+    manualInvestmentsTrackingMethod
+    order
+    icon
+    logoUrl
+    deactivatedAt
+    limit
+    apr
+    minimumPayment
+    plannedPayment
+    interestRate
+
+    type {
+      name
+      display
+      group
+    }
+
+    subtype {
+      name
+      display
+    }
+
+    credential {
+      id
+      updateRequired
+      syncDisabledAt
+      syncDisabledReason
+      dataProvider
+      institution {
+        id
+        newConnectionsDisabled
+        plaidInstitutionId
+        name
+        status
+        logo
+      }
+    }
+    institution {
+      id
+      name
+      logo
+      primaryColor
+      url
+    }
+
+    ownedByUser {
+      id
+      displayName
+      profilePictureUrl
+    }
+
+    businessEntity {
+      id
+      name
+      logoUrl
+      color
+    }
+
+    connectionStatus {
+      connectionStatusCode
+    }
+  }
+
+fragment EditAccountFormFields on Account {
+      id
+      displayName
+      deactivatedAt
+      displayBalance
+      logoUrl
+      hasCustomizedLogo
+      includeInNetWorth
+      hideFromList
+      hideInBudget
+      hideTransactionsFromReports
+      dataProvider
+      dataProviderAccountId
+      isManual
+      manualInvestmentsTrackingMethod
+      isAsset
+      invertSyncedBalance
+      canInvertBalance
+      useAvailableBalance
+      canUseAvailableBalance
+      limit
+      dataProviderCreditLimit
+      apr
+      interestRate
+      minimumPayment
+      plannedPayment
+      excludeFromDebtPaydown
+
+      originalProviderData {
+        apr
+        interestRate
+        minimumPayment
+      }
+
+      type {
+        name
+        display
+      }
+
+      subtype {
+        name
+        display
+      }
+
+      creditReportLiabilityAccount {
+        id
+        lastStatement {
+          id
+          dueDate
+        }
+        recurringTransactionStream {
+          id
+          isActive
+          dayOfTheMonth
+          frequency
+          defaultPaymentAccount {
+            id
+            name
+          }
+          defaultPaymentCategory {
+            id
+            name
+          }
+        }
+      }
+
+      ownedByUser {
+        id
+      }
+
+      businessEntity {
+        id
+      }
+    }
+
+fragment InstitutionStatusFields on Institution {
+    id
+    newConnectionsDisabled
+    hasIssuesReported
+    hasIssuesReportedMessage
+    plaidStatus
+    status
+    balanceStatus
+    transactionsStatus
+  }

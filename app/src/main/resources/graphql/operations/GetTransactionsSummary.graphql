@@ -1,0 +1,17 @@
+query GetTransactionsPage($filters: TransactionFilterInput) {
+  aggregates(filters: $filters) {
+    summary {
+      avg
+      count
+      max
+      maxExpense
+      sum
+      sumIncome
+      sumExpense
+      first
+      last
+      __typename
+    }
+    __typename
+  }
+}

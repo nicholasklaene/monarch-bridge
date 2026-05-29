@@ -1,0 +1,18 @@
+get:
+  tags: [Transactions]
+  summary: Cashflow by category / category-group / merchant
+  description: |
+    Three breakdowns over the same date window: by category, by category
+    group, by merchant. Plus a totals summary (income, expense, savings,
+    savings rate). Great for "where did my money go" prompts.
+  operationId: getCashflowEntities
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: Three breakdowns plus summary.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CashflowEntitiesResponse"

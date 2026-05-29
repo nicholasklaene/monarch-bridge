@@ -1,0 +1,12 @@
+query Web_GetAccountTypes {
+    accountTypes {
+      name
+      display
+      group
+      showForSyncedAccounts
+      possibleSubtypes {
+        display
+        name
+      }
+    }
+  }

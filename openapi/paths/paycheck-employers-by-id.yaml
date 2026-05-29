@@ -1,0 +1,53 @@
+patch:
+  tags: [Paychecks]
+  summary: Rename an employer
+  description: |
+    Updates the display name on a registered employer. The new name
+    propagates to every paycheck record attributed to this employer
+    (since paychecks reference employer by id, not by name).
+
+    Required: `name` in the request body. Use when a company rebrands
+    or when normalizing names imported from payroll data.
+  operationId: updatePaycheckEmployer
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/PaycheckEmployerIdPath"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/UpdatePaycheckEmployerRequest"
+  responses:
+    "200":
+      description: Updated employer.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/UpdatePaycheckEmployerResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+delete:
+  tags: [Paychecks]
+  summary: Delete an employer
+  description: |
+    Removes an employer from the registry. **Refuses with 422** if
+    any paycheck records are still attributed to this employer -
+    reassign or delete those first.
+
+    Use to clean up stale employer entries (e.g. after switching
+    jobs and deleting the old paychecks). For renames use
+    `PATCH /v1/paycheck-employers/{id}` instead.
+  operationId: deletePaycheckEmployer
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/PaycheckEmployerIdPath"
+  responses:
+    "200":
+      description: Confirmation.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/DeletePaycheckEmployerResponse"

@@ -1,0 +1,6 @@
+query Web_PreviewCopySnapshots($input: PreviewCopySnapshotsInput!) {
+    previewCopySnapshots(input: $input) {
+      date
+      signedBalance
+    }
+  }

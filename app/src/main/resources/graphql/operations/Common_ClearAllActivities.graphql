@@ -1,0 +1,6 @@
+mutation Common_ClearAllActivities {
+  clearAllActivities {
+    success
+    __typename
+  }
+}

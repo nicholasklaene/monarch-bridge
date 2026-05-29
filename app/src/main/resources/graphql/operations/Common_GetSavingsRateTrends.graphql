@@ -1,0 +1,12 @@
+query Common_GetSavingsRateTrends($months: Int) {
+  savingsRateTrends(months: $months) {
+    points {
+      period
+      savingsRate
+      income
+      expense
+      __typename
+    }
+    __typename
+  }
+}

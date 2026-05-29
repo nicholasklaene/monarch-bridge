@@ -1,0 +1,58 @@
+get:
+  tags: [System]
+  summary: Notification center (activity events)
+  description: |
+    Paginated activity-event stream backing the in-app bell. Each event
+    has a title/body, an action link (`action`, `actionLabel`,
+    `secondaryUrl`), a priority bucket, read state (`readAt`), and a
+    pinned/dismissed flag pair. Returns `pageInfo.endCursor` for the next
+    page via `?afterCursor=`.
+  operationId: getNotifications
+  parameters:
+    - in: query
+      name: first
+      required: false
+      schema:
+        type: integer
+        default: 20
+      description: Max number of events to return.
+    - in: query
+      name: afterCursor
+      required: false
+      schema:
+        type: string
+      description: Pagination cursor from previous response's `pageInfo.endCursor`.
+  responses:
+    "200":
+      description: A page of activity events.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [edges]
+                properties:
+                  hasNextPage: { type: boolean }
+                  endCursor: { type: string, nullable: true }
+                  edges:
+                    type: array
+                    items:
+                      type: object
+                      required: [id]
+                      properties:
+                        id: { type: string }
+                        createdAt: { type: string, nullable: true }
+                        readAt: { type: string, nullable: true }
+                        title: { type: string, nullable: true }
+                        body: { type: string, nullable: true }
+                        action: { type: string, nullable: true }
+                        actionLabel: { type: string, nullable: true }
+                        eventPriority: { type: string, nullable: true }
+                        isPinned: { type: boolean, nullable: true }
+                        logo: { type: string, nullable: true }
+                        dismissedAt: { type: string, nullable: true }
+                        eventType: { type: string, nullable: true }
+                        secondaryUrl: { type: string, nullable: true }

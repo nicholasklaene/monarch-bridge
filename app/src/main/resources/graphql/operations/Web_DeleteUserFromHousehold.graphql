@@ -1,0 +1,8 @@
+mutation Web_DeleteUserFromHousehold($input: DeleteUserFromHouseholdMutationInput!) {
+    deleteUserFromHousehold(input: $input) {
+      deleted
+      errors {
+        message
+      }
+    }
+  }

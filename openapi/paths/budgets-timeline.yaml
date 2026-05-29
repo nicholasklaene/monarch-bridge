@@ -1,0 +1,33 @@
+get:
+  tags: [Budgets]
+  summary: Multi-month budget vs. actual timeline
+  description: |
+    Forward-looking budget vs. actual series for `monthCount` months
+    starting at `startMonth`. Backs the "12-month timeline" toggle on
+    the web Budgets tab.
+
+    Each month carries variance amount + percent so the UI can render
+    either an under / over indicator or a heatmap from one response.
+  operationId: getBudgetTimeline
+  parameters:
+    - in: query
+      name: startMonth
+      required: true
+      schema:
+        type: string
+        format: date
+      description: First month in the window, `YYYY-MM-01`.
+    - in: query
+      name: monthCount
+      required: false
+      schema:
+        type: integer
+        default: 12
+      description: Number of months to project; defaults to 12.
+  responses:
+    "200":
+      description: Per-month budget / actual / variance rows.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetBudgetTimelineResponse"

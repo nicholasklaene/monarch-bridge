@@ -1,0 +1,7 @@
+query Web_GetBalanceHistoryParserColumns($parserName: String!) {
+    balanceHistoryParserColumns(parserName: $parserName) {
+      parserName
+      requiredColumns
+      optionalColumns
+    }
+  }

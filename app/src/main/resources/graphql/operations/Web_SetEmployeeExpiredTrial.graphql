@@ -1,0 +1,12 @@
+mutation Web_SetEmployeeExpiredTrial {
+    setEmployeeExpiredTrial {
+      subscription {
+        id
+        isOnFreeTrial
+        entitlements
+      }
+      errors {
+        message
+      }
+    }
+  }

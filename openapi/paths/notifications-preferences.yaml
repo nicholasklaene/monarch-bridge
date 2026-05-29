@@ -1,0 +1,40 @@
+get:
+  tags: [Settings]
+  summary: Notification preferences
+  description: |
+    Per-channel notification preferences (email, push, in-app) grouped
+    by notification type.
+  operationId: getNotificationPreferences
+  responses:
+    "200":
+      description: Preferences list.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetNotificationPreferencesResponse"
+patch:
+  tags: [Settings]
+  summary: Update notification preferences
+  description: |
+    Toggle email / push / in-app delivery for one notification
+    preference by id.
+  operationId: updateNotificationPreferences
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/UpdateNotificationPreferencesRequest"
+  responses:
+    "200":
+      description: Updated preference.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/UpdateNotificationPreferencesResponse"
+    "422":
+      description: Monarch PayloadError.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

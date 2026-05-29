@@ -1,0 +1,28 @@
+query Web_GetSecuritySettings {
+    me {
+      id
+      email
+      hasMfaOn
+      isVerified
+      hasPassword
+      externalAuthProviders {
+        provider
+        email
+      }
+      pendingEmailUpdateVerification {
+        email
+      }
+      activeSupportAccountAccessGrant {
+        id
+        createdAt
+        expiresAt
+      }
+    }
+
+    userDiscordData {
+      id
+      discordId
+      username
+      roles
+    }
+  }

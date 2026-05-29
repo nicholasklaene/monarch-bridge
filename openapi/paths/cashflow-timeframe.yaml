@@ -1,0 +1,18 @@
+get:
+  tags: [Transactions]
+  summary: Year / month / quarter cashflow summaries for a date window
+  description: |
+    Returns income, expense, savings, and savings-rate aggregated three
+    ways: by year, by month, by quarter. Good for "how does this year
+    compare to last" prompts.
+  operationId: getCashflowTimeframe
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: Timeframe summaries.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CashflowTimeframeResponse"

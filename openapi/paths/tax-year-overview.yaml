@@ -1,0 +1,25 @@
+get:
+  tags: [Tax]
+  summary: Tax year overview
+  description: |
+    Top-level tax overview for one calendar year: total income / deductions
+    / estimated tax plus per-schedule (`SCHEDULE_C`, `SCHEDULE_E`, etc.)
+    summaries. The landing card on the web Tax tab fires this on mount.
+
+    Pairs with `GET /v1/tax/category-aggregates` for the per-category
+    drill-in.
+  operationId: getTaxYearOverview
+  parameters:
+    - in: query
+      name: taxYear
+      required: true
+      schema:
+        type: integer
+      description: Tax year (e.g. 2025).
+  responses:
+    "200":
+      description: Overview totals + per-schedule summaries.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetTaxYearOverviewResponse"

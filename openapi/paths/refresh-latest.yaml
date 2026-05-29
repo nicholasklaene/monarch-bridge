@@ -1,0 +1,18 @@
+get:
+  tags: [System]
+  summary: Latest force-refresh operation
+  description: |
+    Single global force-refresh request from this user (id + state). Useful as a
+    lightweight alternative to `/v1/refresh/status` when you only need to know
+    "is a refresh currently running" rather than per-account breakdown.
+
+    States observed in the wild: `IN_PROGRESS`, `COMPLETED`, `FAILED`. May return
+    null when the user has never triggered a force refresh.
+  operationId: getLatestRefreshOperation
+  responses:
+    "200":
+      description: Latest operation snapshot (may be null).
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/LatestRefreshOperationResponse"

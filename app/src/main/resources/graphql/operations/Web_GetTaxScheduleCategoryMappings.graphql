@@ -1,0 +1,23 @@
+query Web_GetTaxScheduleCategoryMappings($schedule: TaxSchedule!, $taxYear: Int!) {
+  taxScheduleCategoryMappings(schedule: $schedule, taxYear: $taxYear) {
+    id
+    lineItem
+    schedule
+    taxYear
+    category {
+      id
+      name
+      icon
+      __typename
+    }
+    lineItemInfo {
+      key
+      lineNumber
+      description
+      lineType
+      sortOrder
+      __typename
+    }
+    __typename
+  }
+}

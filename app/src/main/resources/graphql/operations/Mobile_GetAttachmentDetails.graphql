@@ -1,0 +1,7 @@
+query Mobile_GetAttachmentDetails($attachmentId: UUID!) {
+  transactionAttachment(id: $attachmentId) {
+    id
+    originalAssetUrl
+    __typename
+  }
+}

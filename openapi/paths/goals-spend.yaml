@@ -1,0 +1,48 @@
+post:
+  tags: [Goals]
+  summary: Spend from a savings goal
+  description: |
+    Record a spend event against a savings goal - i.e. "I used some of my
+    `Vacation` goal balance to pay for the flight". Pair with
+    `POST /v1/goals/{id}/contributions` (contributions) and
+    `POST /v1/goals/{id}/withdraw` (withdrawals back to source account).
+
+    Returns the created goal-event id.
+  operationId: spendFromGoal
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/GoalIdPath"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required: [amount]
+          properties:
+            amount:
+              type: number
+              format: double
+              description: Dollar amount spent (positive).
+            date:
+              type: string
+              format: date
+              nullable: true
+              description: Spend date. Defaults to today.
+            notes:
+              type: string
+              nullable: true
+              description: Optional caller-supplied note for the event.
+  responses:
+    "200":
+      description: Created spend event.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [goalEventId]
+                properties:
+                  goalEventId: { type: string }

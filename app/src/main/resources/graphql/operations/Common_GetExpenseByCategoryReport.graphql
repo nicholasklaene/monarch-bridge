@@ -1,0 +1,12 @@
+query Common_GetExpenseByCategoryReport($startDate: Date, $endDate: Date) {
+  expenseByCategoryReport(startDate: $startDate, endDate: $endDate) {
+    rows {
+      categoryId
+      categoryName
+      amount
+      transactionCount
+      __typename
+    }
+    __typename
+  }
+}

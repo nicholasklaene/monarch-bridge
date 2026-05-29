@@ -1,0 +1,25 @@
+delete:
+  tags: [Categories]
+  summary: Delete a category
+  description: |
+    Removes a custom category. **Destructive** for transaction
+    assignments unless you remap.
+
+    Pass `moveToCategoryId` to reassign every transaction (and every
+    auto-categorization rule) that pointed at this category to a
+    different category before deletion. Omit to leave the affected
+    transactions uncategorized.
+
+    System categories cannot be deleted (Monarch will reject with 422).
+    For bulk deletes use `POST /v1/categories/bulk-delete`.
+  operationId: deleteCategory
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/CategoryIdPath"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/MoveToCategoryId"
+  responses:
+    "200":
+      description: Confirmation.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/DeleteCategoryResponse"

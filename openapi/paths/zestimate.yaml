@@ -1,0 +1,47 @@
+post:
+  tags: [System]
+  summary: Zillow Zestimate lookup
+  description: |
+    Resolve a free-form street address to one or more Zillow `Zestimate`
+    rows (Zillow property id + parsed address + dollar estimate). Used by
+    the real-estate account creation flow to pre-fill home value.
+
+    Returns an empty array if Zillow has no match. A free-form address
+    can return multiple Zestimates when the property has been split or
+    Zillow has near-duplicate records.
+  operationId: getZestimate
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required: [address]
+          properties:
+            address:
+              type: string
+              description: Free-form street address (single line).
+  responses:
+    "200":
+      description: Zero or more Zestimate matches.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [zestimates]
+                properties:
+                  zestimates:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        zpid: { type: string, nullable: true }
+                        addressStreet: { type: string, nullable: true }
+                        addressCity: { type: string, nullable: true }
+                        addressStateAbbr: { type: string, nullable: true }
+                        addressPostalCode: { type: string, nullable: true }
+                        zestimate: { type: number, format: double, nullable: true }

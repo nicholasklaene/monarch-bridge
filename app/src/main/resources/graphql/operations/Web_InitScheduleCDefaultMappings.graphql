@@ -1,0 +1,25 @@
+mutation Web_InitScheduleCDefaultMappings($input: InitScheduleCDefaultMappingsInput!) {
+    initScheduleCDefaultMappings(input: $input) {
+      taxScheduleCategoryMappings {
+        id
+        lineItem
+        schedule
+        taxYear
+        category {
+          id
+          name
+          icon
+        }
+        lineItemInfo {
+          key
+          lineNumber
+          description
+          lineType
+          sortOrder
+        }
+      }
+      errors {
+        message
+      }
+    }
+  }

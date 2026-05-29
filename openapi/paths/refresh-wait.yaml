@@ -1,0 +1,42 @@
+post:
+  tags: [System]
+  summary: Force Monarch to re-poll Plaid and wait until every account has finished
+  description: |
+    Synchronous version of `POST /v1/refresh` + polling `GET /v1/refresh/status`.
+    Fires the refresh and blocks until every account reports `hasSyncInProgress: false`
+    or the timeout elapses (default 60s, max 300s; cap via `timeoutSeconds`).
+    Without `accountIds`, refreshes **every** linked account. Pass one or more
+    `accountIds` to scope the refresh.
+  operationId: requestRefreshAndWait
+  parameters:
+    - in: query
+      name: timeoutSeconds
+      required: false
+      schema:
+        type: integer
+        default: 60
+        minimum: 5
+        maximum: 300
+      description: Max time to poll before returning the last-seen status.
+    - in: query
+      name: accountIds
+      required: false
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+      description: Optional list of Monarch account ids. Omit to refresh all accounts.
+  responses:
+    "200":
+      description: Final per-account sync flags after the wait.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/RefreshStatusResponse"
+    "503":
+      description: No session loaded.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

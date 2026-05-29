@@ -1,0 +1,10 @@
+mutation Web_SetEmployeeCancellationDiscountUsed($input: EmployeeCancellationDiscountInput!) {
+    setEmployeeCancellationDiscountUsed(input: $input) {
+      subscription {
+        id
+      }
+      errors {
+        message
+      }
+    }
+  }

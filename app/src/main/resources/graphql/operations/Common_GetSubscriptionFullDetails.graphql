@@ -1,0 +1,14 @@
+query Common_GetSubscriptionFullDetails {
+  subscription {
+    id
+    tier
+    status
+    renewalDate
+    billingFrequency
+    amount
+    currency
+    paymentMethod
+    trialEndsAt
+    __typename
+  }
+}

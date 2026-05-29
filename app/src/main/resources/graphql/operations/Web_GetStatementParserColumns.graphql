@@ -1,0 +1,7 @@
+query Web_GetStatementParserColumns($parserName: String!) {
+    statementParserColumns(parserName: $parserName) {
+      parserName
+      requiredColumns
+      optionalColumns
+    }
+  }

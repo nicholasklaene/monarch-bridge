@@ -1,0 +1,19 @@
+mutation Web_CreateEquityAccountWithGrants($input: CreateEquityAccountWithGrantsMutationInput!) {
+    createEquityAccountWithGrants(input: $input) {
+      account {
+        id
+      }
+      errors {
+        ...PayloadErrorFields
+      }
+    }
+  }
+
+fragment PayloadErrorFields on PayloadError {
+    fieldErrors {
+      field
+      messages
+    }
+    message
+    code
+  }

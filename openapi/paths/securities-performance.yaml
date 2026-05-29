@@ -1,0 +1,36 @@
+get:
+  tags: [Holdings]
+  summary: Historical performance for one security
+  description: |
+    Per-day price history for one security plus its current and closing price.
+    `historicalChart` is a list of `(date, returnPercent, value)` points where
+    `returnPercent` is the cumulative return from the window start.
+  operationId: getSecurityHistoricalPerformance
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: Monarch security id.
+    - in: query
+      name: start
+      required: false
+      schema:
+        type: string
+        format: date
+      description: Window start (inclusive).
+    - in: query
+      name: end
+      required: false
+      schema:
+        type: string
+        format: date
+      description: Window end (inclusive).
+  responses:
+    "200":
+      description: Historical price + return chart.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/SecurityHistoricalPerformanceResponse"

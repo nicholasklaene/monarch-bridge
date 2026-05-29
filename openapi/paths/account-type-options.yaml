@@ -1,0 +1,20 @@
+get:
+  tags: [Accounts]
+  summary: Valid (type, subtype) combinations for manual accounts
+  description: |
+    Enumerates the `(type, subtype)` pairs Monarch accepts when creating a
+    manual account. Use before calling `POST /v1/accounts` to confirm the
+    pair is supported (e.g. `(depository, checking)`, `(loan, auto)`,
+    `(real_estate, residential)`).
+
+    Static catalog: the response shape is stable across users and rarely
+    changes, so it's safe to cache for the session. Returns each type
+    bundled with its supported subtypes plus display names.
+  operationId: getAccountTypeOptions
+  responses:
+    "200":
+      description: Account type catalog. Use to populate the type/subtype dropdowns.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetAccountTypeOptionsResponse"

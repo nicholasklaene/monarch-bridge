@@ -1,0 +1,5 @@
+mutation Web_DiscordOAuthCallback($code: String!, $state: String!) {
+    discordOauthCallback(code: $code, state: $state) {
+      success
+    }
+  }

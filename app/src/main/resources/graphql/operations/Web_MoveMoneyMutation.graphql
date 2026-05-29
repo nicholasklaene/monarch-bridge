@@ -1,0 +1,12 @@
+mutation Web_MoveMoneyMutation($input: MoveMoneyMutationInput!) {
+    moveMoneyBetweenCategories(input: $input) {
+      fromBudgetItem {
+        id
+        budgetAmount
+      }
+      toBudgetItem {
+        id
+        budgetAmount
+      }
+    }
+  }

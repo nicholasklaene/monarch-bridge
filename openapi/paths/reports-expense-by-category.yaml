@@ -1,0 +1,23 @@
+get:
+  tags: [System]
+  summary: Expense breakdown grouped by category
+  description: |
+    Expense rollup with one row per category over the given window.
+    Drives the "Top categories" report card and the legacy CSV export.
+  operationId: getExpenseByCategory
+  parameters:
+    - in: query
+      name: start
+      required: false
+      schema: { type: string, format: date }
+    - in: query
+      name: end
+      required: false
+      schema: { type: string, format: date }
+  responses:
+    "200":
+      description: Per-category expense rows.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetExpenseByCategoryResponse"

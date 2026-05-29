@@ -1,0 +1,44 @@
+query Web_GoalsMapAccounts {
+    goalsV2 {
+      id
+      ...GoalAccountsMapRowFields
+    }
+  }
+
+fragment GoalAccountsMapRowFields on GoalV2 {
+    id
+    name
+    priority
+    imageStorageProvider
+    imageStorageProviderId
+    targetAmount
+    startingAmount
+    currentAmount
+    completionPercent
+    type
+    defaultName
+    accountAllocations {
+      id
+      account {
+        id
+        logoUrl
+        icon
+        dataProvider
+
+        type {
+          name
+          display
+        }
+
+        subtype {
+          name
+        }
+
+        institution {
+          id
+          logo
+          primaryColor
+        }
+      }
+    }
+  }

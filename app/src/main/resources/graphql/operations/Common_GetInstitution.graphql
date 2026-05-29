@@ -1,0 +1,15 @@
+query Common_GetInstitution($plaidId: String!) {
+  institution(plaidId: $plaidId) {
+    id
+    name
+    logo
+    newConnectionsDisabled
+    hasIssuesReported
+    hasIssuesReportedMessage
+    plaidStatus
+    status
+    balanceStatus
+    transactionsStatus
+    __typename
+  }
+}

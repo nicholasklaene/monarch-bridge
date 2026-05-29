@@ -1,0 +1,10 @@
+mutation Common_ForceRefreshAccountsMutation($input: ForceRefreshAccountsInput!) {
+  forceRefreshAccounts(input: $input) {
+    success
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

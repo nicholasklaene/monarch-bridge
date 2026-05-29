@@ -1,0 +1,51 @@
+get:
+  tags: [Tags]
+  summary: List all transaction tags
+  description: |
+    Returns every user-created transaction tag with id, name, color,
+    and order. Tags are a free-form labeling layer orthogonal to
+    categories (a transaction can have many tags but exactly one
+    category).
+
+    Use to populate a tag picker, resolve `tagIds` for the transaction
+    filter params, or before assigning tags to a transaction via
+    `PUT /v1/transactions/{id}/tags`.
+  operationId: listTags
+  responses:
+    "200":
+      description: All tags.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ListTagsResponse"
+post:
+  tags: [Tags]
+  summary: Create a tag
+  description: |
+    Adds a new transaction tag. Required: `name` and `color` (hex
+    string like `#7F3F98`).
+
+    Use to spin up a labeling dimension Monarch's built-in categories
+    don't cover (e.g. `#reimbursable`, `#vacation-2026`, `#tax-deductible`).
+    Returns the new tag with its id - pass that id into
+    `PUT /v1/transactions/{id}/tags` to apply.
+  operationId: createTag
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/CreateTagRequest"
+  responses:
+    "200":
+      description: New tag.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CreateTransactionTagResponse"
+    "400":
+      description: Validation failed (bad name or bad color).
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

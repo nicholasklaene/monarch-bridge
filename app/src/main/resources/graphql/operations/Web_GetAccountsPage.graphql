@@ -1,0 +1,123 @@
+query Web_GetAccountsPage($filters: AccountFilters) {
+    hasAccounts
+    accountTypeSummaries(filters: $filters) {
+      type {
+        name
+        display
+        group
+      }
+      accounts {
+        id
+        credential {
+          id
+          institution {
+            id
+            name
+          }
+        }
+        connectionStatus {
+          connectionStatusCode
+          copyTitle
+          inAppSmallCopy
+          inAppCopy
+          helpCenterUrl
+        }
+        ...AccountsListFields
+      }
+      isAsset
+      totalDisplayBalance
+    }
+    householdPreferences {
+      id
+      accountGroupOrder
+      collaborationToolsEnabled
+    }
+  }
+
+fragment AccountsListFields on Account {
+      id
+      syncDisabled
+      isHidden
+      isAsset
+      includeInNetWorth
+      order
+      type {
+        name
+        display
+      }
+      ...AccountListItemFields
+    }
+
+fragment AccountListItemFields on Account {
+      id
+      displayName
+      displayBalance
+      signedBalance
+      updatedAt
+      syncDisabled
+      dataProviderDeactivatedAt
+      icon
+      logoUrl
+      isHidden
+      isAsset
+      includeInNetWorth
+      includeBalanceInNetWorth
+      displayLastUpdatedAt
+      limit
+      type {
+        name
+      }
+      ...AccountMaskFields
+      credential {
+        id
+        updateRequired
+        dataProvider
+        disconnectedFromDataProviderAt
+        syncDisabledAt
+        syncDisabledReason
+      }
+      connectionStatus {
+        connectionStatusCode
+        copyTitle
+        inAppSmallCopy
+        inAppCopy
+        helpCenterUrl
+      }
+      institution {
+        id
+        ...InstitutionStatusTooltipFields
+      }
+      ownedByUser {
+        id
+        displayName
+        profilePictureUrl
+      }
+      businessEntity {
+        id
+        name
+        logoUrl
+        color
+      }
+    }
+
+fragment AccountMaskFields on Account {
+    id
+    mask
+    subtype {
+      display
+    }
+  }
+
+fragment InstitutionStatusTooltipFields on Institution {
+    id
+    logo
+    name
+    status
+    plaidStatus
+    newConnectionsDisabled
+    hasIssuesReported
+    url
+    hasIssuesReportedMessage
+    transactionsStatus
+    balanceStatus
+  }

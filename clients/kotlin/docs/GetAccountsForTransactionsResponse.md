@@ -1,0 +1,10 @@
+
+# GetAccountsForTransactionsResponse
+
+## Properties
+| Name | Type | Description | Notes |
+| ------------ | ------------- | ------------- | ------------- |
+| **&#x60;data&#x60;** | [**GetAccountsForTransactionFilterResponseData**](GetAccountsForTransactionFilterResponseData.md) |  |  |
+
+
+

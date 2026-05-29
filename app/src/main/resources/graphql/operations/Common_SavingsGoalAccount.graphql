@@ -1,0 +1,3 @@
+query Common_SavingsGoalAccount {
+  __typename
+}

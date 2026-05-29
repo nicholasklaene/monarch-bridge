@@ -1,0 +1,10 @@
+query Common_GetPushNotificationPrefs {
+  pushNotificationPreferences {
+    weeklyRecap
+    budgetAlerts
+    billReminders
+    goalUpdates
+    marketingTips
+    __typename
+  }
+}

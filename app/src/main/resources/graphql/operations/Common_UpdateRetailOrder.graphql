@@ -1,0 +1,3 @@
+query Common_UpdateRetailOrder {
+  __typename
+}

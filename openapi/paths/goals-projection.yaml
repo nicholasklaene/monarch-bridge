@@ -1,0 +1,17 @@
+get:
+  tags: [Goals]
+  summary: Goal projection chart
+  description: |
+    Forward projection of a goal's balance at the current planned
+    contribution rate. Returns the projected completion date, months
+    to target, and a per-month projected-balance series.
+  operationId: getGoalProjection
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/GoalIdPath"
+  responses:
+    "200":
+      description: Projection data.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetGoalProjectionResponse"

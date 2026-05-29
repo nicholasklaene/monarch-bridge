@@ -1,0 +1,76 @@
+query Web_GetPortfolioWithClassification($portfolioInput: PortfolioInput) {
+    portfolio(input: $portfolioInput) {
+      aggregateHoldings {
+        edges {
+          node {
+            id
+            quantity
+            costBasis
+            totalValue
+            securityPriceChangeDollars
+            securityPriceChangePercent
+            lastSyncedAt
+            holdings {
+              id
+              type
+              typeDisplay
+              name
+              ticker
+              isFund
+              closingPrice
+              closingPriceUpdatedAt
+              quantity
+              value
+              costBasis
+              userCostBasis
+              account {
+                id
+                mask
+                icon
+                logoUrl
+                institution {
+                  id
+                  name
+                }
+                type {
+                  name
+                  display
+                }
+                subtype {
+                  name
+                  display
+                }
+                displayName
+                order
+                currentBalance
+              }
+              taxLots {
+                id
+                createdAt
+                acquisitionDate
+                acquisitionQuantity
+                costBasisPerUnit
+              }
+            }
+            security {
+              id
+              name
+              ticker
+              currentPrice
+              currentPriceUpdatedAt
+              closingPrice
+              type
+              typeDisplay
+              morningstarCategory
+              globalCategory
+              broadAssetClass
+              legalStructure
+              prospectusObjective
+              aggregatedCategory
+              indexStrategy
+            }
+          }
+        }
+      }
+    }
+  }

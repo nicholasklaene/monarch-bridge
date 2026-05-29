@@ -1,0 +1,28 @@
+get:
+  tags: [Tax]
+  summary: Tax-schedule line-item to category mappings
+  description: |
+    Returns Monarch's mappings from tax-schedule line items (e.g. Schedule C)
+    to user categories for a given `taxYear`. Use as the lookup layer when
+    preparing Schedule C from transaction aggregates.
+  operationId: getTaxScheduleCategoryMappings
+  parameters:
+    - in: query
+      name: schedule
+      required: true
+      schema:
+        type: string
+      description: Tax schedule, e.g. `SCHEDULE_C`.
+    - in: query
+      name: taxYear
+      required: true
+      schema:
+        type: integer
+      description: Four-digit tax year.
+  responses:
+    "200":
+      description: List of mappings.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetTaxScheduleCategoryMappingsResponse"

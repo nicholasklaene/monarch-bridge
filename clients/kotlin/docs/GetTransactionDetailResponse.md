@@ -1,0 +1,10 @@
+
+# GetTransactionDetailResponse
+
+## Properties
+| Name | Type | Description | Notes |
+| ------------ | ------------- | ------------- | ------------- |
+| **&#x60;data&#x60;** | [**GetTransactionDetailResponseData**](GetTransactionDetailResponseData.md) |  |  |
+
+
+

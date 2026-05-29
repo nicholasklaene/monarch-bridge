@@ -1,0 +1,36 @@
+get:
+  tags: [Settings]
+  summary: Cookie preferences
+  description: |
+    Per-category cookie consent (analytics, marketing, functional).
+    The web app fires this on first paint to decide what to gate behind
+    the consent banner.
+  operationId: getCookiePreferences
+  responses:
+    "200":
+      description: Current cookie consents.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetCookiePreferencesResponse"
+patch:
+  tags: [Settings]
+  summary: Update cookie preferences
+  description: |
+    Patch any subset of cookie consents. Omit a field to leave it
+    untouched. The web app calls this from the "Accept selected" button
+    on the cookie banner and from the Settings → Privacy → Cookies page.
+  operationId: updateCookiePreferences
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/UpdateCookiePreferencesRequest"
+  responses:
+    "200":
+      description: Updated cookie consents.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/UpdateCookiePreferencesResponse"

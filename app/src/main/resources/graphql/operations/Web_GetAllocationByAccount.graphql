@@ -1,0 +1,12 @@
+query Web_GetAllocationByAccount($porfolioInput: PortfolioInput, $limit: Int) {
+  portfolio(input: $porfolioInput) {
+    allocationSimple: allocationByAccount(limit: $limit) {
+      type
+      typeDisplay
+      allocationPercent
+      totalValue
+      __typename
+    }
+    __typename
+  }
+}

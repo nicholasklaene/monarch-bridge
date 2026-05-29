@@ -1,0 +1,59 @@
+mutation Web_CreateAIReport($reportDescription: String!) {
+    createAiReport(reportDescription: $reportDescription) {
+      filters {
+        ...TransactionFilterOutputFields
+      }
+      reportType
+      errors {
+        ...PayloadErrorFields
+      }
+    }
+  }
+
+fragment TransactionFilterOutputFields on TransactionFilterOutput {
+    accounts
+    categories
+    categoryGroups
+    uploadedStatement
+    isUncategorized
+    merchants
+    householdMerchants
+    startDate
+    endDate
+    timeframePeriod {
+      unit
+      value
+      includeCurrent
+    }
+    hideFromReports
+    absAmountGte
+    absAmountLte
+    isSplit
+    hasNotes
+    isRecurring
+    hasAttachments
+    isInvestmentAccount
+    tags
+    isUntagged
+    importedFromMint
+    syncedFromInstitution
+    needsReview
+    needsReviewUnassigned
+    needsReviewByUser
+    ids
+    excludeIds
+    isFlexSpending
+    categoryType
+    creditsOnly
+    debitsOnly
+    isPending
+  }
+
+fragment PayloadErrorFields on PayloadError {
+    fieldErrors {
+      field
+      messages
+    }
+    message
+    code
+  }

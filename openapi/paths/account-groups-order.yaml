@@ -1,0 +1,24 @@
+put:
+  tags: [Accounts]
+  summary: Reorder account groups
+  description: |
+    Persist a new ordering for account groups. Send the FULL ordered list of
+    group ids; Monarch assigns sequential `order` values from the array index
+    and returns the resulting `(id, order)` pairs.
+
+    Whole-set replace: omitting an id from the list does not delete the group
+    but leaves its `order` undefined relative to the rest.
+  operationId: updateAccountGroupOrder
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/UpdateAccountGroupOrderRequest"
+  responses:
+    "200":
+      description: Updated `(id, order)` pairs.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/UpdateAccountGroupOrderResponse"

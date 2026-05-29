@@ -1,0 +1,90 @@
+query AccountDetails_getAccount($id: UUID!, $filters: TransactionFilterInput) {
+  account(id: $id) {
+    id
+    ...AccountFields
+    ...EditAccountFormFields
+    isLiability
+    credential {
+      id
+      hasSyncInProgress
+      canBeForceRefreshed
+      disconnectedFromDataProviderAt
+      dataProvider
+      institution {
+        id
+        plaidInstitutionId
+        url
+        ...InstitutionStatusFields
+        __typename
+      }
+      __typename
+    }
+    institution {
+      id
+      plaidInstitutionId
+      url
+      ...InstitutionStatusFields
+      __typename
+    }
+    __typename
+  }
+  transactions: allTransactions(filters: $filters) {
+    totalCount
+    results(limit: 20) {
+      id
+      ...TransactionsListFields
+      __typename
+    }
+    __typename
+  }
+  snapshots: snapshotsForAccount(accountId: $id) {
+    date
+    signedBalance
+    __typename
+  }
+}
+
+fragment EditAccountFormFields on Account {
+  id
+  displayName
+  deactivatedAt
+  displayBalance
+  includeInNetWorth
+  hideFromList
+  hideTransactionsFromReports
+  dataProvider
+  dataProviderAccountId
+  isManual
+  manualInvestmentsTrackingMethod
+  isAsset
+  invertSyncedBalance
+  canInvertBalance
+  type {
+    name
+    display
+    __typename
+  }
+  subtype {
+    name
+    display
+    __typename
+  }
+  __typename
+}
+
+fragment InstitutionStatusFields on Institution {
+  id
+  hasIssuesReported
+  hasIssuesReportedMessage
+  plaidStatus
+  status
+  balanceStatus
+  transactionsStatus
+  __typename
+}
+
+fragment TransactionsListFields on Transaction {
+  id
+  ...TransactionOverviewFields
+  __typename
+}

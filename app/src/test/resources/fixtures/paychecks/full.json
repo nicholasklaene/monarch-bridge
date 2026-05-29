@@ -1,0 +1,33 @@
+{
+  "paychecks": [
+    {
+      "id": "pc-1",
+      "employer": { "id": "emp-1", "name": "Acme Inc." },
+      "employerName": "Acme Inc.",
+      "payrollProvider": "gusto",
+      "payDate": "2026-05-15",
+      "payPeriodStart": "2026-05-01",
+      "payPeriodEnd": "2026-05-15",
+      "grossAmount": 5000.0,
+      "createdAt": "2026-05-16T10:00:00Z",
+      "isMagicImported": false,
+      "owner": { "id": "u-1", "name": "Sam", "profilePictureUrl": null },
+      "createdBy": { "id": "u-1", "name": "Sam" },
+      "deductions": [
+        {"id": "d-1", "deductionType": "federal_income_tax", "amount": 800.0, "customDeductionName": null, "createdAt": "2026-05-16T10:00:00Z"},
+        {"id": "d-2", "deductionType": "custom", "amount": 50.0, "customDeductionName": "Gym", "createdAt": "2026-05-16T10:00:00Z"}
+      ],
+      "deposits": [
+        {
+          "id": "dep-1",
+          "transaction": {
+            "id": "txn-1", "amount": 4150.0, "date": "2026-05-15",
+            "merchant": {"id": "m-1", "name": "Direct Deposit"},
+            "account": {"id": "a-1", "displayName": "Checking"}
+          },
+          "createdAt": "2026-05-16T10:00:00Z"
+        }
+      ]
+    }
+  ]
+}

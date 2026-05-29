@@ -1,0 +1,8 @@
+query Common_GetAppearance {
+  appearance {
+    theme
+    accentColor
+    compactMode
+    __typename
+  }
+}

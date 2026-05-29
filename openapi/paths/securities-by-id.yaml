@@ -1,0 +1,20 @@
+get:
+  tags: [Holdings]
+  summary: Security details
+  description: |
+    Full security metadata: ticker, name, type, sector, industry, market
+    cap, P/E ratio, dividend yield, current and closing price.
+  operationId: getSecurityDetails
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { type: string }
+      description: Monarch security id.
+  responses:
+    "200":
+      description: Security details.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetSecurityDetailsResponse"

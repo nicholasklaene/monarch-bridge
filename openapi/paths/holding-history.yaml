@@ -1,0 +1,22 @@
+get:
+  tags: [Holdings]
+  summary: Holding value history
+  description: |
+    Per-day value, quantity, and price series for one holding. Backs
+    the holding drawer chart in the web Investments tab.
+  operationId: getHoldingHistory
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { type: string }
+      description: Monarch holding id.
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: Per-day points.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetHoldingHistoryResponse"

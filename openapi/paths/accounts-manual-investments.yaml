@@ -1,0 +1,38 @@
+post:
+  tags: [Holdings]
+  summary: Create a manual investments account
+  description: |
+    Creates a brokerage-style account Monarch cannot auto-sync (e.g. employer 401k where
+    Plaid lacks coverage). Two tracking methods:
+
+      - `balances`: single account-level balance, no per-security detail.
+      - `holdings`: per-security positions (seed via `initialHoldings`).
+
+    Defaults: `trackingMethod` is omitted (Monarch chooses based on whether `initialHoldings`
+    is present). Use the dedicated holdings endpoints later to add or update positions.
+  operationId: createManualInvestmentsAccount
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/CreateManualInvestmentsAccountRequest"
+  responses:
+    "200":
+      description: New account id.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CreateManualInvestmentsAccountResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+    "422":
+      description: Monarch PayloadError.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

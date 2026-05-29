@@ -1,0 +1,35 @@
+get:
+  tags: [Transactions]
+  summary: Poll a transaction download session
+  description: |
+    Poll the async CSV download job started by `POST /v1/transactions/download`.
+    Returns the current `status` (running / completed / failed) and, when
+    completed, the signed `url` to fetch the CSV file from.
+
+    Poll cadence is up to the caller; typical clients re-check every
+    1-2 seconds until `url` is non-null.
+  operationId: getDownloadTransactionsSession
+  parameters:
+    - in: path
+      name: sessionKey
+      required: true
+      schema:
+        type: string
+      description: Session key returned by `POST /v1/transactions/download`.
+  responses:
+    "200":
+      description: Current session state.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [sessionKey]
+                properties:
+                  sessionKey: { type: string }
+                  status: { type: string, nullable: true }
+                  errorMessage: { type: string, nullable: true }
+                  url: { type: string, nullable: true }

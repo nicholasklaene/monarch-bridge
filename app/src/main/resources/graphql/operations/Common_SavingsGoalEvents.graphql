@@ -1,0 +1,31 @@
+query Common_SavingsGoalEvents($id: ID!) {
+  savingsGoal(id: $id) {
+    id
+    name
+    imageStorageProvider
+    imageStorageProviderId
+    goalEvents {
+      id
+      date
+      amount
+      type
+      createdAt
+      canDelete
+      includeInBudget
+      notes
+      account {
+        id
+        displayName
+        __typename
+      }
+      transaction {
+        id
+        amount
+        date
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}

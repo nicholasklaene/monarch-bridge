@@ -1,0 +1,2494 @@
+#!/usr/bin/env bash
+# monarch - thin CLI over monarch-bridge HTTP service.
+# Default gateway: http://localhost:9084 (override with MONARCH_GATEWAY env var).
+# Bash 3.2 compatible (macOS default).
+#
+# Shared helpers (call, emit, fmt_table, parse_flags, etc.) live in
+# `monarch-lib.sh` next to this script. Other bash scripts can source that file
+# directly to talk to the bridge without re-implementing the HTTP plumbing.
+set -euo pipefail
+
+# Strip --raw flag (anywhere); set RAW=1 if present.
+RAW=0
+args=()
+for a in "$@"; do
+  if [[ "$a" == "--raw" ]]; then RAW=1; else args+=("$a"); fi
+done
+set -- "${args[@]+"${args[@]}"}"
+
+# shellcheck source=monarch-lib.sh
+# Resolve symlinks so monarch-lib.sh is found next to the REAL script even when
+# this CLI is invoked through a symlink (e.g. ~/bin/monarch -> .../cli/monarch).
+__src="${BASH_SOURCE[0]}"
+while [ -h "$__src" ]; do
+  __dir="$(cd -P "$(dirname "$__src")" && pwd)"
+  __src="$(readlink "$__src")"
+  case "$__src" in /*) ;; *) __src="$__dir/$__src" ;; esac
+done
+__dir="$(cd -P "$(dirname "$__src")" && pwd)"
+source "$__dir/monarch-lib.sh"
+
+usage() {
+  cat <<'USAGE'
+Usage: monarch <command> [--raw] [args...]
+
+Read commands:
+  health                                          Service + auth status
+  auth [refresh]                                  Auth status (or refresh from disk)
+  bootstrap                                       Interactive Monarch login inside the Docker
+                                                  container (set MONARCH_CONTAINER to override
+                                                  the container name; default 'monarch-bridge').
+                                                  For repo installs use ./gradlew :app:bootstrapMonarch
+  accounts                                        Linked accounts
+  history <account-id>                            Per-account daily balance history
+  holdings <account-id>                           Per-account investment positions
+  transactions [--start --end --account-id --limit --offset --order-by FIELD]
+               [--search TEXT] [--account ID]... [--category ID]... [--tag ID]...
+               [--has-attachments T|F] [--has-notes T|F] [--hide-from-reports T|F]
+               [--is-split T|F] [--is-recurring T|F] [--imported-from-mint T|F]
+               [--synced-from-institution T|F] [--needs-review T|F]
+               [--visibility hidden|all]
+                                                  Transactions within a date window.
+                                                  Results come NEWEST-FIRST. --start sets the
+                                                  oldest-allowed date; pair with --end to bound
+                                                  the upper side, or use --offset to page back
+                                                  from the most recent. --order-by accepts
+                                                  Monarch's TransactionOrdering values: 'date'
+                                                  (default, by date desc) or 'amount' (largest
+                                                  amount desc). Direction is fixed per field.
+                                                  --account/--category/--tag are repeatable.
+                                                  Bool flags accept T|F (also true/false/y/n/1/0).
+                                                  --visibility: 'hidden' (only hidden) or 'all'
+                                                  (hidden+visible); default is non-hidden only.
+  cashflow [--start --end] [--search ...] [--account ID]... [--category ID]...
+           [--tag ID]... [--has-attachments T|F] [--has-notes T|F]
+           [--hide-from-reports T|F] [--is-split T|F] [--is-recurring T|F]
+           [--imported-from-mint T|F] [--synced-from-institution T|F]
+           [--needs-review T|F] [--visibility hidden|all]
+                                                  Income/expense/savings aggregate
+  networth [--start --end --account-type]         Aggregate balance history (all accounts)
+  networth recent [--start]                       Recent per-account balance fluctuations
+  networth by-type [--start --timeframe]          Balance history grouped by account type
+  categories                                      Transaction categories
+  category-groups                                 Top-level groups categories belong to
+  tags                                            Transaction tags
+  institutions                                    Linked institution credentials (Plaid pipes)
+  account-types                                   Valid (type, subtype) combos for manual accounts
+  subscription                                    Monarch subscription tier + payment source
+  credit history                                  Credit-score snapshots (Spinwheel; empty if disabled)
+  budgets [--start --end]                         Monthly budget + actuals for a window
+  recurring [--start --end]                       Upcoming recurring transactions
+  recurring all [--include-liabilities] [--include-pending]
+                                                  All recurring streams with next-occurrence detail
+  recurring streams [--include-liabilities]       Underlying recurring stream definitions
+  recurring aggregate [--start --end]             Month-by-month aggregate recurring view
+  paychecks [--start --end] [--owner ID] [--employer ID]
+                                                  List paychecks within a window
+  paycheck <id>                                   Single paycheck full detail
+  paycheck summary [--start --end] [--employer ID] [--owner ID]...
+                                                  Aggregate paycheck stats over a window
+  paycheck-employers [--search Q] [--limit N] [--offset N]
+                                                  List registered paycheck employers
+  goals                                           List savings goals
+  goal <id>                                       Single goal detail
+  goal events <id>                                Event log for one savings goal
+  goals totals [--start-month D] [--end-month D]  Current-month planned-contribution totals per goal
+  merchants search [--q Q] [--limit N] [--offset N] [--with-logo] [--include-id ID]...
+                                                  Search merchants by name (most-used first)
+  merchant <id>                                   Merchant detail
+  securities search <query> [--limit N] [--popularity]
+                                                  Search Monarch's security catalog
+  rules                                           List all transaction rules
+  tx detail <id>                                  Full single-transaction detail
+  tx splits <id>                                  Just the splits for one transaction
+  tx summary [--start --end --account-id] [...TransactionFilterInput flags]
+                                                  Aggregate count/sum/avg/min-max.
+                                                  Accepts the same filter flags as `transactions`.
+  tx duplicates --start D [--end D] [--account A] Groups of likely-duplicate transactions
+  tx dashboard [--start --end --limit --offset] Lightweight transactions list with totals
+                                                  + rule-count sidecar (dashboard widget shape).
+  tx filter-accounts [--start --end]              Accounts that a transaction filter would touch
+  tx review-summary                               Per-household-user review-queue counts
+  tx explain <id>                                 AI rationale for one transaction (may be null)
+  cashflow breakdown [--start --end] [...TransactionFilterInput flags]
+                                                  Cashflow split by category / group / merchant.
+                                                  Accepts the same filter flags as `cashflow`.
+  cashflow dashboard --start --end                Day-by-day expense series
+  cashflow entities --start --end                 Cashflow by category / category-group / merchant
+                                                  plus a summary (sparser than `cashflow breakdown`)
+  cashflow timeframe --start --end                Year / month / quarter cashflow summaries
+  cashflow filtered --start --end [--account ID]... [--category ID]...
+                    [--category-group ID]... [--merchant ID]... [--tag ID]...
+                                                  Filterable cashflow: summary + 3 timeframe buckets
+                                                  + category / group / merchant breakdowns
+  recurring dashboard [--start --end] [--include-liabilities]
+                                                  Upcoming items + remaining-due total ("next 30
+                                                  days bills" widget shape)
+  budgets month --month YYYY-MM-DD                Single-month per-category amounts (slim shape)
+  budgets status                                  Has-budget / has-transactions status flags
+  budget-status                                   Alias of `budgets status` for symmetry
+  category edit <id>                              Category with full edit-form fields
+  category deletion-info <id>                     Slim snapshot for the delete-confirm dialog
+  category-group details <id> [--include-disabled-system]
+                                                  Category group with its child categories
+  portfolio allocation [--account ID]... [--classification F]
+                                                  Allocation by classification (security type etc.)
+  portfolio allocation by-account [--account ID]... [--limit N]
+                                                  Allocation grouped per investments account
+  portfolio allocation by-holdings [--account ID]... [--limit N]
+                                                  Allocation grouped per holding (ticker)
+  portfolio allocation holdings-detail --classification F --value V
+                                                 [--account ID]... [--limit N] [--offset N]
+                                                  Holdings inside one classification bucket
+  security performance <id> [--start --end]       Per-day price history + cumulative return
+  institution by-plaid <plaid-id>                 Institution lookup by Plaid id (e.g. ins_3)
+  institutions top-groups [--provider P]...       Top institutions grouped by category
+                                                  (providers: PLAID, FINICITY, MX)
+  credentials                                     Lightweight linked-credentials list
+  credentials with-institutions                   Credentials with full institution + provider data
+  attachment <id>                                 Attachment detail (pre-signed download URL)
+  insights [--status S]... [--start --end]        List AI savings insights (filter by status)
+  insight <id>                                    Single insight detail (with playbook DIY steps)
+  insights latest-run                             Latest insight-run metadata + total count
+  recap weekly --start YYYY-MM-DD --end YYYY-MM-DD
+                                                  Weekly AI recap (start=Monday, end=Sunday)
+  refresh latest                                  Latest force-refresh request state
+  refresh status                                  Per-account hasSyncInProgress flags
+  balance-at <account-id> --date YYYY-MM-DD       Account display balance on a specific date
+  balance-history status <session-key>            Poll parse status of a CSV upload session
+  lookup <query>                                  Cross-entity fuzzy lookup (accounts, categories,
+                                                  tags, merchants in one call)
+  tax categories                                  All categories with systemCategory (tax-prep)
+  tax aggregates [--start D] [--end D]            Sum + count by category for a date window
+  tax mappings --schedule S --tax-year YYYY       Tax schedule line-item -> category mappings
+  reports spending|income|net-worth|savings-rate|monthly-summary [--start D] [--end D]
+                                                  Pre-aggregated reports family
+  holding history <id> [--start --end]            Per-day value + quantity series for a holding
+  security details <id>                           Security metadata (ticker, name, type, price)
+  security dividends <id>                         Dividend history for one security
+  merchant transactions <id> [--start --end]      All transactions for one merchant
+  calendar events [--start --end]                 Bills + recurring + paychecks in calendar shape
+
+Write commands (mutating; destructive ones require --yes):
+  refresh [--wait [--timeout N]]                  Trigger Monarch to re-poll Plaid;
+                                                  --wait blocks until every account finishes
+                                                  (default 60s, max 300s)
+  tx create --account A --date D --amount X --merchant M --category C [--notes N] [--update-balance]
+                                                  Create a new transaction
+  tx update <id> [--category C] [--merchant M] [--amount X] [--date D]
+                 [--notes N] [--hide T|F] [--needs-review T|F] [--reviewed T|F] [--goal G]
+                                                  Patch fields on a transaction
+  tx delete <id> [--yes]                          Delete a transaction
+  tx reviewed <id>                                Mark a transaction as reviewed (single-shot helper)
+  tx tags <id> <tag-id>[,<tag-id>...]             Overwrite tag set on a transaction (empty = remove all)
+  tx split <id> '<json-array>'                    Replace split allocations (sum must equal txn amount)
+  tx attach <txn-id> <file-path>                  Upload a receipt photo or PDF as an attachment
+  account create --type T --subtype S --name N [--balance B] [--no-net-worth]
+                                                  Create a manual (non-Plaid) account
+  account update <id> [--name N] [--balance B] [--type T] [--subtype S]
+                      [--hide-from-list T|F] [--include-net-worth T|F] [--hide-from-reports T|F]
+                                                  Patch account fields
+  account delete <id> [--yes]                     Delete an account
+  institution delete <cred-id> [--yes]            Unlink a Plaid credential (institution).
+                                                  Use credential id from `monarch institutions`.
+                                                  Soft-deletes linked accounts.
+  account upload-balances <id> <csv-path> [--wait [--timeout N]]
+                                                  Backfill balance history from CSV (header
+                                                  date,balance). Returns a session key; --wait
+                                                  blocks until status is completed or failed
+                                                  (default 60s, max 300s)
+  tag create <name> [--color #hex]                Create a new transaction tag
+  tag delete <id> [--yes]                         Delete a tag (detaches from every transaction)
+  category create <name> --group <group-id>
+                          [--icon I] [--rollover-enabled] [--rollover-type T] [--rollover-start YYYY-MM-DD]
+                                                  Create a custom category
+  category delete <id> [--move-to <id>] [--yes]   Delete a category (optionally remap its txns)
+  category delete-bulk <id1,id2,...> [--move-to <id>] [--yes]
+                                                  Delete many categories in one call; per-id
+                                                  failures returned in failed[] rather than 4xx
+  budget set --start D --amount X (--category C | --category-group G) [--timeframe month] [--apply-future]
+                                                  Set planned budget for one category OR
+                                                  category-group for a month (amount 0 clears)
+  budget flex --start D --amount X [--apply-future]
+                                                  Update the Flex bucket total for a month
+  budget flex-rollover --start D [--balance B] [--enabled T|F] [--system fixed_and_flex]
+                                                  Configure / reset the Flex rollover period
+  budget reset --start D [--yes]                  Reset all planned amounts for one month back
+                                                  to defaults (destructive - needs --yes)
+  merchant recurrence <id> --name N [--recurring T|F] [--frequency F] [--base-date D]
+                                   [--amount X] [--active T|F]
+                                                  Update a merchant's recurring-transaction
+                                                  settings (name is REQUIRED - pass existing
+                                                  display name if only changing recurrence)
+  merchant delete <id> [--move-to <other-id>] [--yes]
+                                                  Delete a merchant (optionally reassign txns first)
+  merchant logo <id> --cloudinary-id ID|--clear   Point merchant at existing Cloudinary asset
+                                                  (binary upload not supported by Monarch)
+  paycheck create --employer ID --gross X --date D [--net X] [--period-start D] [--period-end D]
+                                                  [--provider P] [--owner ID]
+                                                  Record a new paycheck
+  paycheck update <id> [--employer ID] [--gross X] [--date D] [--period-start D]
+                       [--period-end D] [--provider P] [--owner ID]
+                                                  Patch fields on a paycheck
+  paycheck delete <id> [--yes]                    Delete a paycheck
+  paycheck-employer create --name N               Register a new employer
+  paycheck-employer update <id> --name N          Rename an employer
+  paycheck-employer delete <id> [--yes]           Delete an employer (refuses if attached)
+  holding add <account-id> --security-id ID --quantity Q
+                                                  Add a manual holding to an account
+  holding update <id> [--quantity Q] [--security-type T] [--basis X]
+                                                  Partial-update a holding
+  holding delete <id> [--yes]                     Delete a holding
+  account create-investments --name N --subtype S [--tracking balances|holdings]
+                                                  [--initial-balance X] [--initial-holdings '<json>']
+                                                  Create a manual investments account
+  account bulk-update '<json-array>'              Bulk-patch many accounts in one call.
+                                                  Each entry: {id, ...patch fields}
+  category-group create --name N --type expense|income|transfer
+                                                  [--color C] [--icon I] [--variability V]
+                                                  [--group-budgeting T|F] [--order-before ID]
+                                                  Create a category group
+  category-group update <id> [--name N] [--color C] [--icon I] [--variability V]
+                              [--group-budgeting T|F] [--rollover-enabled T|F]
+                              [--rollover-type T] [--rollover-start D]
+                                                  Patch a category group
+  category-group delete <id> [--move-to <other-id>] [--yes]
+                                                  Delete a category group
+  category-group budget-variability <id> --variability fixed|flexible|non_monthly
+                                                  Set the fixed/flex classification
+  goal create --name N [--type savings|debt] [--target X] [--target-date D]
+              [--image-provider P --image-id ID]
+                                                  Create a new savings goal
+  goal update <id> [--name N] [--target X] [--target-date D] [--priority N]
+                   [--sinking-fund T|F] [--image-provider P --image-id ID]
+                                                  Partial-update a goal
+  goal contribute <id> --account ID --amount X [--date D]
+                                                  Record a contribution to a goal
+  goal archive <id> [--yes]                       Archive (soft-delete) a goal
+  goal unarchive <id> [--yes]                     Un-archive a goal
+  goal delete <id> [--yes]                        Hard-delete a goal (irreversible)
+  goal priorities <id1>,<id2>,<id3>               Re-order goals (index = priority)
+  goal budget <id> --amount X [--month D] [--account ID] [--apply-future]
+                                                  Set monthly budget allocation for a goal
+  goal complete <id>                              Mark a goal as complete (v2 lifecycle)
+  goal incomplete <id>                            Reverse a complete (back to active)
+  goal spend <id> --amount X [--date D] [--notes N]
+                                                  Log a spend event against goal balance
+  goal withdraw <id> --amount X [--account ID] [--date D]
+                                                  Withdraw goal balance back to source account
+  rule create '<json>'                            Create a transaction rule (raw rule json)
+  rule update <id> '<json>'                       Update a transaction rule (full shape)
+  rule delete <id> [--yes]                        Delete a transaction rule
+  rule preview '<json>' [--offset N]              Dry-run: matching txns + proposed values
+  tx bulk-update --expected N --updates '<json>'
+                 [--ids a,b,c | --all-selected [--exclude a,b,c] [--filters '<json>']]
+                                                  Bulk-patch many transactions
+  tx bulk-delete --expected N
+                 [--ids a,b,c | --all-selected [--exclude a,b,c] [--filters '<json>']] [--yes]
+                                                  Bulk-delete many transactions
+  tx not-recurring <stream-id>                    Mark a recurring stream as not-recurring
+
+Global flag:
+  --raw    Print raw JSON (skip jq formatting)
+
+Env:
+  MONARCH_GATEWAY (default: http://localhost:9084)
+USAGE
+}
+
+[[ $# -eq 0 ]] && { usage; exit 0; }
+
+case "$1" in
+  -h|--help|help) usage ;;
+
+  health)
+    call GET /healthz | emit '"\(.status)  authenticated=\(.authenticated)  lastVerifiedAt=\(.lastVerifiedAt // "-")"'
+    ;;
+
+  auth)
+    if [[ "${2:-}" == "refresh" ]]; then
+      call POST /v1/auth/refresh | emit '.'
+    else
+      call GET /v1/auth/status | emit '"authenticated=\(.authenticated)  email=\(.email // "-")  lastVerifiedAt=\(.lastVerifiedAt // "-")"'
+    fi
+    ;;
+
+  bootstrap)
+    # Interactive Monarch auth. Runs inside the Docker container so the captured
+    # session token lands in the volume the service reads from.
+    container="${MONARCH_CONTAINER:-monarch-bridge}"
+    if ! command -v docker >/dev/null 2>&1; then
+      echo "monarch bootstrap: docker not found on PATH." >&2
+      echo "For a repo install, run interactive auth via Gradle instead:" >&2
+      echo "  ./gradlew :app:bootstrapMonarch" >&2
+      exit 1
+    fi
+    if ! docker ps --format '{{.Names}}' 2>/dev/null | grep -qx "$container"; then
+      echo "monarch bootstrap: container '$container' is not running." >&2
+      echo "Start it first (docker compose up -d), or set MONARCH_CONTAINER to its name." >&2
+      echo "For a repo install, run interactive auth via Gradle instead:" >&2
+      echo "  ./gradlew :app:bootstrapMonarch" >&2
+      exit 1
+    fi
+    exec docker exec -it "$container" java -jar /app/app.jar --bootstrap-monarch
+    ;;
+
+  accounts)
+    call GET /v1/accounts \
+      | emit '.data.accounts[]
+              | [.id, .displayName, (.currentBalance|tostring),
+                 ((.institution.name // "-")),
+                 ((.type | if type == "object" then (.display // .name) else . end) // "-"),
+                 (if .includeInNetWorth then "Y" else "N" end),
+                 (if .hideFromList     then "Y" else "N" end)]
+              | @tsv' \
+      | fmt_table
+    ;;
+
+  history)
+    [[ -z "${2:-}" ]] && { echo "monarch history <account-id>" >&2; exit 2; }
+    call GET "/v1/account/$2/history" | emit '.data.snapshots | sort_by(.date) | "\(length) snapshots  first=\(.[0].date)  last=\(.[-1].date)  latest_balance=\(.[-1].signedBalance)"'
+    ;;
+
+  holdings)
+    [[ -z "${2:-}" ]] && { echo "monarch holdings <account-id>" >&2; exit 2; }
+    call GET "/v1/account/$2/holdings" | emit '.data.holdings[] | [(.ticker // .security.ticker // "-"), ((.totalQuantity // .quantity // 0)|tostring), ((.totalValue // 0)|tostring), ((.costBasis // .basis // 0)|tostring)] | @tsv' | fmt_table
+    ;;
+
+  transactions)
+    shift
+    parse_flags "$@"
+    call GET "/v1/transactions$(build_query)" | emit '.data.results[] | [.date, .merchant.name, (.amount|tostring), .category.name] | @tsv' | fmt_table
+    ;;
+
+  cashflow)
+    case "${2:-}" in
+      breakdown)
+        shift 2
+        parse_flags "$@"
+        call GET "/v1/cashflow/breakdown$(build_query)" | emit '.data | {summary: .summary, byCategory: ([.byCategory[] | {name: .groupBy.category.name, sum: .summary.sum}]), byCategoryGroup: ([.byCategoryGroup[] | {name: .groupBy.categoryGroup.name, sum: .summary.sum}]), byMerchant: ([.byMerchant[] | {name: .groupBy.merchant.name, sumIncome: .summary.sumIncome, sumExpense: .summary.sumExpense}])}'
+        ;;
+      dashboard)
+        shift 2
+        START=""; END=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --start) START="$2"; shift 2 ;;
+            --end) END="$2"; shift 2 ;;
+            *) echo "cashflow dashboard: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        q=""
+        [[ -n "$START" ]] && q+="&start=$START"
+        [[ -n "$END" ]] && q+="&end=$END"
+        path="/v1/cashflow/dashboard${q:+?${q:1}}"
+        call GET "$path" \
+          | emit '.data.byDay[] | [.day, ((.sumExpense // 0)|tostring)] | @tsv' \
+          | fmt_table
+        ;;
+      entities)
+        shift 2
+        START=""; END=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --start) START="$2"; shift 2 ;;
+            --end) END="$2"; shift 2 ;;
+            *) echo "cashflow entities: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        q=""
+        [[ -n "$START" ]] && q+="&start=$START"
+        [[ -n "$END" ]] && q+="&end=$END"
+        path="/v1/cashflow/entities${q:+?${q:1}}"
+        call GET "$path" | emit '.data | {summary: .summary, byCategory: ([.byCategory[] | {name: (.category.name // "-"), sum}]), byCategoryGroup: ([.byCategoryGroup[] | {name: (.categoryGroup.name // "-"), sum}]), byMerchant: ([.byMerchant[] | {name: (.merchant.name // "-"), sumIncome, sumExpense}])}'
+        ;;
+      timeframe)
+        shift 2
+        START=""; END=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --start) START="$2"; shift 2 ;;
+            --end) END="$2"; shift 2 ;;
+            *) echo "cashflow timeframe: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        q=""
+        [[ -n "$START" ]] && q+="&start=$START"
+        [[ -n "$END" ]] && q+="&end=$END"
+        path="/v1/cashflow/timeframe${q:+?${q:1}}"
+        call GET "$path" | emit '.data | {byYear: ([.byYear[] | {period: .period, income: .sumIncome, expense: .sumExpense, savings: .savings, rate: .savingsRate}]), byMonth: ([.byMonth[] | {period: .period, income: .sumIncome, expense: .sumExpense, savings: .savings, rate: .savingsRate}]), byQuarter: ([.byQuarter[] | {period: .period, income: .sumIncome, expense: .sumExpense, savings: .savings, rate: .savingsRate}])}'
+        ;;
+      filtered)
+        shift 2
+        START=""; END=""; ACCOUNT_IDS=""; CATEGORY_IDS=""; CGROUP_IDS=""; MERCHANT_IDS=""; TAG_IDS=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --start) START="$2"; shift 2 ;;
+            --end) END="$2"; shift 2 ;;
+            --account) ACCOUNT_IDS="${ACCOUNT_IDS:+$ACCOUNT_IDS }$2"; shift 2 ;;
+            --category) CATEGORY_IDS="${CATEGORY_IDS:+$CATEGORY_IDS }$2"; shift 2 ;;
+            --category-group) CGROUP_IDS="${CGROUP_IDS:+$CGROUP_IDS }$2"; shift 2 ;;
+            --merchant) MERCHANT_IDS="${MERCHANT_IDS:+$MERCHANT_IDS }$2"; shift 2 ;;
+            --tag) TAG_IDS="${TAG_IDS:+$TAG_IDS }$2"; shift 2 ;;
+            *) echo "cashflow filtered: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        q=""
+        [[ -n "$START" ]] && q+="&start=$START"
+        [[ -n "$END" ]] && q+="&end=$END"
+        # Note: cashflow-filtered uses singular param names (accountId, categoryId, etc.)
+        # repeated, NOT the plural -Ids form used elsewhere.
+        if [[ -n "$ACCOUNT_IDS" ]]; then
+          for id in $ACCOUNT_IDS; do q+="&accountId=$id"; done
+        fi
+        if [[ -n "$CATEGORY_IDS" ]]; then
+          for id in $CATEGORY_IDS; do q+="&categoryId=$id"; done
+        fi
+        if [[ -n "$CGROUP_IDS" ]]; then
+          for id in $CGROUP_IDS; do q+="&categoryGroupId=$id"; done
+        fi
+        if [[ -n "$MERCHANT_IDS" ]]; then
+          for id in $MERCHANT_IDS; do q+="&merchantId=$id"; done
+        fi
+        if [[ -n "$TAG_IDS" ]]; then
+          for id in $TAG_IDS; do q+="&tagId=$id"; done
+        fi
+        path="/v1/cashflow/filtered${q:+?${q:1}}"
+        call GET "$path" | emit '.data'
+        ;;
+      *)
+        shift
+        parse_flags "$@"
+        call GET "/v1/cashflow$(build_query)" | emit '.data.summary | "income=\(.sumIncome)  expense=\(.sumExpense)  savings=\(.savings)  savingsRate=\(.savingsRate)"'
+        ;;
+    esac
+    ;;
+
+  networth)
+    case "${2:-}" in
+      recent)
+        shift 2
+        parse_flags "$@"
+        call GET "/v1/networth/recent$(build_query)" | emit '.data.accounts[] | "\(.accountId)  recent=\(.recentBalances)"'
+        ;;
+      by-type)
+        shift 2
+        parse_flags "$@"
+        call GET "/v1/networth/by-type$(build_query)" | emit '.data.snapshotsByAccountType[] | [.month, .accountType, (.balance|tostring)] | @tsv' | fmt_table
+        ;;
+      *)
+        shift
+        parse_flags "$@"
+        call GET "/v1/networth$(build_query)" | emit '.data.aggregateSnapshots as $s | "\($s | length) snapshots  first=\($s[0].date // "-")  last=\($s[-1].date // "-")  latest_balance=\($s[-1].balance // "-")"'
+        ;;
+    esac
+    ;;
+
+  categories)
+    call GET /v1/categories | emit '.data.categories[] | [.name, (.group.name // "-"), (.isSystemCategory|tostring)] | @tsv' | fmt_table
+    ;;
+
+  tags)
+    call GET /v1/tags | emit '.data.tags[] | [.name, (.transactionCount|tostring), .color] | @tsv' | fmt_table
+    ;;
+
+  refresh)
+    case "${2:-}" in
+      status)
+        call GET /v1/refresh/status | emit '"allComplete=\(.data.allComplete)  syncing=\([.data.accounts[] | select(.hasSyncInProgress) | .id] | join(","))"'
+        ;;
+      latest)
+        call GET /v1/refresh/latest \
+          | emit '.data.operation | if . == null then "no force-refresh on record" else "id=\(.id)  state=\(.state // "-")" end'
+        ;;
+      *)
+        # Optional --wait [--timeout N]: switch to the synchronous refresh endpoint.
+        shift
+        WAIT=0; TIMEOUT=60
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --wait) WAIT=1; shift ;;
+            --timeout) TIMEOUT="$2"; shift 2 ;;
+            *) echo "refresh: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        if [[ "$WAIT" == "1" ]]; then
+          call POST "/v1/refresh/wait?timeoutSeconds=$TIMEOUT" \
+            | emit '"allComplete=\(.data.allComplete)  syncing=\([.data.accounts[] | select(.hasSyncInProgress) | .id] | join(","))"'
+        else
+          call POST /v1/refresh > /dev/null && echo "refresh requested"
+        fi
+        ;;
+    esac
+    ;;
+
+  balance-history)
+    if [[ "${2:-}" == "status" && -n "${3:-}" ]]; then
+      call GET "/v1/balance-history/$3/status" \
+        | emit '.data | "sessionKey=\(.sessionKey)  status=\(.status)"'
+    else
+      echo "monarch balance-history status <session-key>" >&2; exit 2
+    fi
+    ;;
+
+  # ---------------------------------------------------------------------------
+  # Read: additional Monarch surface (institutions, subscription, credit, etc.)
+  # ---------------------------------------------------------------------------
+  institutions)
+    case "${2:-}" in
+      top-groups)
+        shift 2
+        PROVIDERS=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --provider) PROVIDERS="${PROVIDERS:+$PROVIDERS }$2"; shift 2 ;;
+            *) echo "institutions top-groups: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        q=""
+        if [[ -n "$PROVIDERS" ]]; then
+          for p in $PROVIDERS; do q+="&dataProvider=$p"; done
+        fi
+        path="/v1/institutions/top-groups${q:+?${q:1}}"
+        call GET "$path" \
+          | emit '.data.groups[] | [(.title // .type // "-"), .type, ((.institutions // []) | length | tostring)] | @tsv' \
+          | fmt_table
+        ;;
+      *)
+        call GET /v1/institutions | emit '.data.credentials[] | [.institution.name, .id, (.updateRequired|tostring), (.disconnectedFromDataProviderAt // "-")] | @tsv' | fmt_table
+        ;;
+    esac
+    ;;
+
+  # Write: institution delete (unlink a Plaid credential) + read by Plaid id
+  institution)
+    shift
+    sub="${1:-}"
+    [[ -z "$sub" ]] && { echo "monarch institution <delete|by-plaid> [args]" >&2; exit 2; }
+    shift
+    case "$sub" in
+      delete)
+        [[ -z "${1:-}" ]] && { echo "institution delete <credential-id> [--yes]" >&2; exit 2; }
+        CID="$1"; shift
+        [[ "${1:-}" == "--yes" ]] && YES=1
+        confirm "Delete credential $CID? This unlinks the institution and soft-deletes its accounts."
+        call DELETE "/v1/institutions/$CID" | emit ".data"
+        ;;
+      by-plaid)
+        [[ -z "${1:-}" ]] && { echo "institution by-plaid <plaid-id>" >&2; exit 2; }
+        PID="$1"
+        call GET "/v1/institutions/by-plaid/$PID" | emit '.data.institution'
+        ;;
+      *) echo "monarch institution: unknown subcommand '$sub'" >&2; exit 2 ;;
+    esac
+    ;;
+
+  account-types)
+    call GET /v1/account-type-options | emit '.data.accountTypeOptions[] | [.type.name, .type.display, .subtype.name, .subtype.display] | @tsv' | fmt_table
+    ;;
+
+  category-groups)
+    call GET /v1/category-groups | emit '.data.categoryGroups[] | [.name, .type, (.order|tostring)] | @tsv' | fmt_table
+    ;;
+
+  subscription)
+    call GET /v1/subscription | emit '.data | "tier=\(if .hasPremiumEntitlement then "premium" else "free" end)  trial=\(.isOnFreeTrial)  paymentSource=\(.paymentSource // "-")"'
+    ;;
+
+  credit)
+    if [[ "${2:-}" == "history" ]]; then
+      call GET /v1/credit/history | emit '.data.snapshots[] | [.reportedDate, (.score|tostring)] | @tsv' | fmt_table
+    else
+      echo "monarch credit <history>" >&2; exit 2
+    fi
+    ;;
+
+  budgets)
+    case "${2:-}" in
+      month)
+        shift 2
+        MONTH=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --month) MONTH="$2"; shift 2 ;;
+            *) echo "budgets month: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$MONTH" ]] && { echo "budgets month requires --month YYYY-MM-DD" >&2; exit 2; }
+        path="/v1/budgets/month?month=$MONTH"
+        call GET "$path" | emit '.data'
+        ;;
+      status)
+        call GET /v1/budgets/status \
+          | emit '.data.status | "hasBudget=\(.hasBudget // "-")  hasTransactions=\(.hasTransactions // "-")  willCreateBudgetFromEmptyDefaults=\(.willCreateBudgetFromEmptyDefaultCategories // "-")"'
+        ;;
+      *)
+        shift
+        parse_flags "$@"
+        call GET "/v1/budgets$(build_query)" | emit '"start=\(.data.budgetData.totalsByMonth[0].month // "-")  groups=\(.data.categoryGroups | length)  months=\(.data.budgetData.totalsByMonth | length)"'
+        ;;
+    esac
+    ;;
+
+  # `budget-status` as a top-level alias (some flows expect a flat command).
+  budget-status)
+    call GET /v1/budgets/status \
+      | emit '.data.status | "hasBudget=\(.hasBudget // "-")  hasTransactions=\(.hasTransactions // "-")  willCreateBudgetFromEmptyDefaults=\(.willCreateBudgetFromEmptyDefaultCategories // "-")"'
+    ;;
+
+  recurring)
+    case "${2:-}" in
+      all)
+        shift 2
+        INCL_LIAB=""; INCL_PEND=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --include-liabilities) INCL_LIAB="true"; shift ;;
+            --include-pending) INCL_PEND="true"; shift ;;
+            *) echo "recurring all: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        q=""
+        [[ -n "$INCL_LIAB" ]] && q+="&includeLiabilities=$INCL_LIAB"
+        [[ -n "$INCL_PEND" ]] && q+="&includePending=$INCL_PEND"
+        path="/v1/recurring/all${q:+?${q:1}}"
+        call GET "$path" | emit '.data.items'
+        ;;
+      streams)
+        shift 2
+        INCL_LIAB=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --include-liabilities) INCL_LIAB="true"; shift ;;
+            *) echo "recurring streams: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        q=""
+        [[ -n "$INCL_LIAB" ]] && q+="&includeLiabilities=$INCL_LIAB"
+        path="/v1/recurring/streams${q:+?${q:1}}"
+        call GET "$path" | emit '.data.streams'
+        ;;
+      aggregate)
+        shift 2
+        parse_flags "$@"
+        call GET "/v1/recurring/aggregate$(build_query)" | emit '.data'
+        ;;
+      dashboard)
+        shift 2
+        START=""; END=""; INCL_LIAB=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --start) START="$2"; shift 2 ;;
+            --end) END="$2"; shift 2 ;;
+            --include-liabilities) INCL_LIAB="true"; shift ;;
+            *) echo "recurring dashboard: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        q=""
+        [[ -n "$START" ]] && q+="&start=$START"
+        [[ -n "$END" ]] && q+="&end=$END"
+        [[ -n "$INCL_LIAB" ]] && q+="&includeLiabilities=$INCL_LIAB"
+        path="/v1/recurring/dashboard${q:+?${q:1}}"
+        resp=$(call GET "$path")
+        if [[ "$RAW" == "1" ]]; then
+          printf '%s' "$resp"
+        else
+          printf '%s\n' "$resp" | jq -r '"remainingDueAmount=\(.data.remainingDueAmount // "-")"'
+          printf '%s\n' "$resp" | jq -r '.data.items[] | [.date, (.streamName // "-"), ((.amount // 0)|tostring), (if .isPast then "past" else "upcoming" end), (.frequency // "-")] | @tsv' | column -t -s $'\t'
+        fi
+        ;;
+      *)
+        shift
+        parse_flags "$@"
+        call GET "/v1/recurring$(build_query)" | emit '.data.items[] | [.date, .account.displayName, .merchant.name, (.amount|tostring), (.isPast|tostring)] | @tsv' | fmt_table
+        ;;
+    esac
+    ;;
+
+  # ---------------------------------------------------------------------------
+  # Read: paychecks
+  # ---------------------------------------------------------------------------
+  paychecks)
+    shift
+    START=""; END=""; OWNER=""; EMPLOYER=""
+    while [[ $# -gt 0 ]]; do
+      case "$1" in
+        --start) START="$2"; shift 2 ;;
+        --end) END="$2"; shift 2 ;;
+        --owner) OWNER="$2"; shift 2 ;;
+        --employer) EMPLOYER="$2"; shift 2 ;;
+        *) echo "paychecks: unknown flag: $1" >&2; exit 2 ;;
+      esac
+    done
+    q=""
+    [[ -n "$START" ]] && q+="&start=$START"
+    [[ -n "$END" ]] && q+="&end=$END"
+    [[ -n "$OWNER" ]] && q+="&ownerId=$OWNER"
+    [[ -n "$EMPLOYER" ]] && q+="&employerId=$EMPLOYER"
+    path="/v1/paychecks${q:+?${q:1}}"
+    call GET "$path" | emit '.data.paychecks[] | [.payDate, (.grossAmount|tostring), (.netAmount|tostring), (.employer.name // "-"), .id] | @tsv' | fmt_table
+    ;;
+
+  paycheck)
+    shift
+    sub="${1:-}"
+    [[ -z "$sub" ]] && { echo "monarch paycheck <id|summary|create|update|delete> [args]" >&2; exit 2; }
+    case "$sub" in
+      summary)
+        shift
+        START=""; END=""; EMPLOYER=""; OWNER_IDS=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --start) START="$2"; shift 2 ;;
+            --end) END="$2"; shift 2 ;;
+            --employer) EMPLOYER="$2"; shift 2 ;;
+            --owner) OWNER_IDS="${OWNER_IDS:+$OWNER_IDS }$2"; shift 2 ;;
+            *) echo "paycheck summary: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        q=""
+        [[ -n "$START" ]] && q+="&start=$START"
+        [[ -n "$END" ]] && q+="&end=$END"
+        [[ -n "$EMPLOYER" ]] && q+="&employerId=$EMPLOYER"
+        if [[ -n "$OWNER_IDS" ]]; then
+          for id in $OWNER_IDS; do q+="&ownerIds=$id"; done
+        fi
+        path="/v1/paychecks/summary${q:+?${q:1}}"
+        call GET "$path" | emit '.data'
+        ;;
+      create)
+        shift
+        EMPLOYER=""; GROSS=""; DATE=""; NET=""; P_START=""; P_END=""; PROVIDER=""; OWNER=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --employer) EMPLOYER="$2"; shift 2 ;;
+            --gross) GROSS="$2"; shift 2 ;;
+            --date) DATE="$2"; shift 2 ;;
+            --net) NET="$2"; shift 2 ;;
+            --period-start) P_START="$2"; shift 2 ;;
+            --period-end) P_END="$2"; shift 2 ;;
+            --provider) PROVIDER="$2"; shift 2 ;;
+            --owner) OWNER="$2"; shift 2 ;;
+            *) echo "paycheck create: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$EMPLOYER" || -z "$GROSS" || -z "$DATE" ]] && {
+          echo "paycheck create requires --employer --gross --date" >&2; exit 2;
+        }
+        # NOTE: --net is informational here; Monarch derives net from deposits.
+        # We accept the flag but warn rather than send it as a top-level field.
+        [[ -n "$NET" ]] && echo "monarch: --net is ignored on create (Monarch derives net from deposits)" >&2
+        body=$(jq -n --arg e "$EMPLOYER" --argjson g "$GROSS" --arg d "$DATE" \
+                     --arg ps "$P_START" --arg pe "$P_END" --arg p "$PROVIDER" --arg o "$OWNER" \
+          '{employerId:$e, grossAmount:$g, payDate:$d,
+            payPeriodStart: (if $ps == "" then null else $ps end),
+            payPeriodEnd:   (if $pe == "" then null else $pe end),
+            payrollProvider:(if $p  == "" then null else $p  end),
+            ownerId:        (if $o  == "" then null else $o  end)}
+           | with_entries(select(.value != null))')
+        call POST /v1/paychecks "$body" | emit ".data"
+        ;;
+      update)
+        shift
+        [[ -z "${1:-}" ]] && { echo "paycheck update <id> [flags]" >&2; exit 2; }
+        PID="$1"; shift
+        EMPLOYER=""; GROSS=""; DATE=""; P_START=""; P_END=""; PROVIDER=""; OWNER=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --employer) EMPLOYER="$2"; shift 2 ;;
+            --gross) GROSS="$2"; shift 2 ;;
+            --date) DATE="$2"; shift 2 ;;
+            --period-start) P_START="$2"; shift 2 ;;
+            --period-end) P_END="$2"; shift 2 ;;
+            --provider) PROVIDER="$2"; shift 2 ;;
+            --owner) OWNER="$2"; shift 2 ;;
+            *) echo "paycheck update: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        body=$(jq -n --arg e "$EMPLOYER" --arg g "$GROSS" --arg d "$DATE" \
+                     --arg ps "$P_START" --arg pe "$P_END" --arg p "$PROVIDER" --arg o "$OWNER" \
+          '{employerId:     (if $e  == "" then null else $e  end),
+            grossAmount:    (if $g  == "" then null else ($g|tonumber) end),
+            payDate:        (if $d  == "" then null else $d  end),
+            payPeriodStart: (if $ps == "" then null else $ps end),
+            payPeriodEnd:   (if $pe == "" then null else $pe end),
+            payrollProvider:(if $p  == "" then null else $p  end),
+            ownerId:        (if $o  == "" then null else $o  end)}
+           | with_entries(select(.value != null))')
+        call PATCH "/v1/paychecks/$PID" "$body" | emit ".data"
+        ;;
+      delete)
+        shift
+        [[ -z "${1:-}" ]] && { echo "paycheck delete <id> [--yes]" >&2; exit 2; }
+        PID="$1"; shift
+        [[ "${1:-}" == "--yes" ]] && YES=1
+        confirm "Delete paycheck $PID?"
+        call DELETE "/v1/paychecks/$PID" | emit ".data"
+        ;;
+      *)
+        # Treat first positional as an id (paycheck <id> detail).
+        PID="$sub"
+        call GET "/v1/paychecks/$PID" | emit '.data.paycheck'
+        ;;
+    esac
+    ;;
+
+  paycheck-employers)
+    shift
+    SEARCH=""; LIMIT=""; OFFSET=""
+    while [[ $# -gt 0 ]]; do
+      case "$1" in
+        --search) SEARCH="$2"; shift 2 ;;
+        --limit) LIMIT="$2"; shift 2 ;;
+        --offset) OFFSET="$2"; shift 2 ;;
+        *) echo "paycheck-employers: unknown flag: $1" >&2; exit 2 ;;
+      esac
+    done
+    q=""
+    [[ -n "$SEARCH" ]] && q+="&search=$(_urlenc "$SEARCH")"
+    [[ -n "$LIMIT" ]] && q+="&limit=$LIMIT"
+    [[ -n "$OFFSET" ]] && q+="&offset=$OFFSET"
+    path="/v1/paycheck-employers${q:+?${q:1}}"
+    call GET "$path" | emit '.data.employers[] | [.id, .name] | @tsv' | fmt_table
+    ;;
+
+  paycheck-employer)
+    shift
+    sub="${1:-}"
+    [[ -z "$sub" ]] && { echo "monarch paycheck-employer <create|update|delete> [args]" >&2; exit 2; }
+    shift
+    case "$sub" in
+      create)
+        NAME=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --name) NAME="$2"; shift 2 ;;
+            *) echo "paycheck-employer create: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$NAME" ]] && { echo "paycheck-employer create requires --name" >&2; exit 2; }
+        body=$(jq -n --arg n "$NAME" '{name:$n}')
+        call POST /v1/paycheck-employers "$body" | emit ".data"
+        ;;
+      update)
+        [[ -z "${1:-}" ]] && { echo "paycheck-employer update <id> --name N" >&2; exit 2; }
+        EID="$1"; shift
+        NAME=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --name) NAME="$2"; shift 2 ;;
+            *) echo "paycheck-employer update: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$NAME" ]] && { echo "paycheck-employer update requires --name" >&2; exit 2; }
+        body=$(jq -n --arg n "$NAME" '{name:$n}')
+        call PATCH "/v1/paycheck-employers/$EID" "$body" | emit ".data"
+        ;;
+      delete)
+        [[ -z "${1:-}" ]] && { echo "paycheck-employer delete <id> [--yes]" >&2; exit 2; }
+        EID="$1"; shift
+        [[ "${1:-}" == "--yes" ]] && YES=1
+        confirm "Delete paycheck employer $EID? Refused if any paychecks still attached."
+        call DELETE "/v1/paycheck-employers/$EID" | emit ".data"
+        ;;
+      *) echo "paycheck-employer subcommands: create | update | delete" >&2; exit 2 ;;
+    esac
+    ;;
+
+  # ---------------------------------------------------------------------------
+  # Read: merchants + securities
+  # ---------------------------------------------------------------------------
+  merchants)
+    if [[ "${2:-}" == "search" ]]; then
+      shift 2
+      Q=""; LIMIT=""; OFFSET=""; WITH_LOGO=""; INCLUDE_IDS=""
+      while [[ $# -gt 0 ]]; do
+        case "$1" in
+          --q) Q="$2"; shift 2 ;;
+          --limit) LIMIT="$2"; shift 2 ;;
+          --offset) OFFSET="$2"; shift 2 ;;
+          --with-logo) WITH_LOGO="true"; shift ;;
+          --include-id) INCLUDE_IDS="${INCLUDE_IDS:+$INCLUDE_IDS }$2"; shift 2 ;;
+          *) echo "merchants search: unknown flag: $1" >&2; exit 2 ;;
+        esac
+      done
+      q=""
+      [[ -n "$Q" ]] && q+="&q=$(_urlenc "$Q")"
+      [[ -n "$LIMIT" ]] && q+="&limit=$LIMIT"
+      [[ -n "$OFFSET" ]] && q+="&offset=$OFFSET"
+      [[ -n "$WITH_LOGO" ]] && q+="&withLogo=$WITH_LOGO"
+      if [[ -n "$INCLUDE_IDS" ]]; then
+        for id in $INCLUDE_IDS; do q+="&includeIds=$id"; done
+      fi
+      path="/v1/merchants/search${q:+?${q:1}}"
+      call GET "$path" | emit '.data.merchants[] | [.id, .name, ((.transactionCount // 0)|tostring), (.logoUrl // "-")] | @tsv' | fmt_table
+    else
+      echo "monarch merchants <search> [args]" >&2; exit 2
+    fi
+    ;;
+
+  securities)
+    if [[ "${2:-}" == "search" ]]; then
+      shift 2
+      [[ -z "${1:-}" ]] && { echo "securities search <query> [--limit N] [--popularity]" >&2; exit 2; }
+      QUERY="$1"; shift
+      LIMIT=""; POPULARITY=""
+      while [[ $# -gt 0 ]]; do
+        case "$1" in
+          --limit) LIMIT="$2"; shift 2 ;;
+          --popularity) POPULARITY="true"; shift ;;
+          *) echo "securities search: unknown flag: $1" >&2; exit 2 ;;
+        esac
+      done
+      q="&q=$(_urlenc "$QUERY")"
+      [[ -n "$LIMIT" ]] && q+="&limit=$LIMIT"
+      [[ -n "$POPULARITY" ]] && q+="&orderByPopularity=$POPULARITY"
+      path="/v1/securities/search${q:+?${q:1}}"
+      call GET "$path" | emit '.data.securities[] | [(.ticker // "-"), .name, (.id // "-"), (.type // "-")] | @tsv' | fmt_table
+    else
+      echo "monarch securities <search> <query>" >&2; exit 2
+    fi
+    ;;
+
+  # ---------------------------------------------------------------------------
+  # Read: goals (list/detail) - write subcommands handled under `goal` below.
+  # ---------------------------------------------------------------------------
+  goals)
+    case "${2:-}" in
+      totals)
+        shift 2
+        START_MONTH=""; END_MONTH=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --start-month) START_MONTH="$2"; shift 2 ;;
+            --end-month) END_MONTH="$2"; shift 2 ;;
+            *) echo "goals totals: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        q=""
+        [[ -n "$START_MONTH" ]] && q+="&startMonth=$START_MONTH"
+        [[ -n "$END_MONTH" ]] && q+="&endMonth=$END_MONTH"
+        path="/v1/goals/totals/current-month${q:+?${q:1}}"
+        call GET "$path" | emit '.data'
+        ;;
+      *)
+        call GET /v1/goals | emit '.data.goals[] | [.id, .name, ((.targetAmount // 0)|tostring), ((.currentAmount // 0)|tostring), (.archivedAt // "-")] | @tsv' | fmt_table
+        ;;
+    esac
+    ;;
+
+  # ---------------------------------------------------------------------------
+  # Read: transaction rules (list) - writes handled under `rule` below.
+  # ---------------------------------------------------------------------------
+  rules)
+    call GET /v1/transaction-rules | emit '.data.rules'
+    ;;
+
+  # ---------------------------------------------------------------------------
+  # Write: transactions
+  # ---------------------------------------------------------------------------
+  tx)
+    shift
+    sub="${1:-}"
+    [[ -z "$sub" ]] && { echo "monarch tx <create|update|delete|tags|split|detail|splits|summary|duplicates|attach|bulk-update|bulk-delete|not-recurring|reviewed|explain|dashboard|filter-accounts|review-summary> [args]" >&2; exit 2; }
+    shift
+    case "$sub" in
+      detail)
+        [[ -z "${1:-}" ]] && { echo "tx detail <id>" >&2; exit 2; }
+        call GET "/v1/transactions/$1" | emit '.data.transaction'
+        ;;
+      splits)
+        [[ -z "${1:-}" ]] && { echo "tx splits <id>" >&2; exit 2; }
+        call GET "/v1/transactions/$1/splits" | emit '.data'
+        ;;
+      reviewed)
+        [[ -z "${1:-}" ]] && { echo "tx reviewed <id>" >&2; exit 2; }
+        call POST "/v1/transactions/$1/reviewed" \
+          | emit '.data | "id=\(.id)  reviewedAt=\(.reviewedAt // "-")  needsReview=\(.needsReview)"'
+        ;;
+      explain)
+        [[ -z "${1:-}" ]] && { echo "tx explain <id>" >&2; exit 2; }
+        call GET "/v1/transactions/$1/explain" \
+          | emit '.data | "explanation=\(.explanation // "-")"'
+        ;;
+      dashboard)
+        START=""; END=""; LIMIT=""; OFFSET=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --start) START="$2"; shift 2 ;;
+            --end) END="$2"; shift 2 ;;
+            --limit) LIMIT="$2"; shift 2 ;;
+            --offset) OFFSET="$2"; shift 2 ;;
+            *) echo "tx dashboard: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        q=""
+        [[ -n "$START" ]] && q+="&start=$START"
+        [[ -n "$END" ]] && q+="&end=$END"
+        [[ -n "$LIMIT" ]] && q+="&limit=$LIMIT"
+        [[ -n "$OFFSET" ]] && q+="&offset=$OFFSET"
+        path="/v1/transactions/dashboard${q:+?${q:1}}"
+        resp=$(call GET "$path")
+        if [[ "$RAW" == "1" ]]; then
+          printf '%s' "$resp"
+        else
+          printf '%s\n' "$resp" | jq -r '.data | "totalCount=\(.totalCount // "-")  selectable=\(.totalSelectableCount // "-")  ruleCount=\(.ruleCount // "-")"'
+          printf '%s\n' "$resp" | jq -r '.data.results[] | [.date, (.merchantName // .plaidName // "-"), ((.amount // 0)|tostring), (.categoryName // "-"), (.accountDisplayName // "-"), .id] | @tsv' | column -t -s $'\t'
+        fi
+        ;;
+      filter-accounts)
+        START=""; END=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --start) START="$2"; shift 2 ;;
+            --end) END="$2"; shift 2 ;;
+            *) echo "tx filter-accounts: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        q=""
+        [[ -n "$START" ]] && q+="&start=$START"
+        [[ -n "$END" ]] && q+="&end=$END"
+        path="/v1/transactions/accounts-for-filter${q:+?${q:1}}"
+        call GET "$path" \
+          | emit '.data.accounts[] | [.id, (.displayName // "-"), (.typeDisplay // "-"), (.dataProvider // "-")] | @tsv' \
+          | fmt_table
+        ;;
+      review-summary)
+        call GET /v1/transactions/review-summary \
+          | emit '.data.rows[] | [(.id // "-"), (.name // "-"), ((.count // 0)|tostring)] | @tsv' \
+          | fmt_table
+        ;;
+      summary)
+        parse_flags "$@"
+        call GET "/v1/transactions/summary$(build_query)" | emit '.data.summary | "count=\(.count)  sumIncome=\(.sumIncome)  sumExpense=\(.sumExpense)  avg=\(.avg)  max=\(.max)  first=\(.first // "-")  last=\(.last // "-")"'
+        ;;
+      duplicates)
+        # Accept --start/--end/--account (alias of --account-id). parse_flags handles
+        # --account-id; rewrite --account to --account-id before delegating.
+        rewritten=()
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --account) rewritten+=(--account-id "$2"); shift 2 ;;
+            *) rewritten+=("$1"); shift ;;
+          esac
+        done
+        set -- "${rewritten[@]+"${rewritten[@]}"}"
+        parse_flags "$@"
+        [[ -z "$START" ]] && { echo "tx duplicates requires --start YYYY-MM-DD" >&2; exit 2; }
+        call GET "/v1/transactions/duplicates$(build_query)" \
+          | emit '.data.groups[] as $g
+                  | $g.transactions[]
+                  | [($g.key.date // "-"),
+                     (($g.key.amount // 0)|tostring),
+                     ($g.key.merchantName // "-"),
+                     (.account.displayName // "-"),
+                     .id]
+                  | @tsv' \
+          | fmt_table
+        ;;
+      attach)
+        [[ -z "${1:-}" || -z "${2:-}" ]] && { echo "tx attach <txn-id> <file-path>" >&2; exit 2; }
+        TXID="$1"; FILE="$2"
+        call_multipart POST "/v1/transactions/$TXID/attachments" file "$FILE" \
+          | emit '.data.attachment
+                  | "id=\(.id)  filename=\(.filename // "-")  ext=\(.extension // "-")  size=\(.sizeBytes // 0)  url=\(.originalAssetUrl // "-")"'
+        ;;
+      create)
+        ACCOUNT=""; DATE=""; AMOUNT=""; MERCHANT=""; CATEGORY=""; NOTES=""; UPDATE_BAL="false"
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --account) ACCOUNT="$2"; shift 2 ;;
+            --date) DATE="$2"; shift 2 ;;
+            --amount) AMOUNT="$2"; shift 2 ;;
+            --merchant) MERCHANT="$2"; shift 2 ;;
+            --category) CATEGORY="$2"; shift 2 ;;
+            --notes) NOTES="$2"; shift 2 ;;
+            --update-balance) UPDATE_BAL="true"; shift ;;
+            *) echo "tx create: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$ACCOUNT" || -z "$DATE" || -z "$AMOUNT" || -z "$MERCHANT" || -z "$CATEGORY" ]] && {
+          echo "tx create requires --account --date --amount --merchant --category" >&2; exit 2;
+        }
+        body=$(jq -n --arg acc "$ACCOUNT" --arg d "$DATE" --argjson amt "$AMOUNT" \
+                     --arg m "$MERCHANT" --arg c "$CATEGORY" --arg n "$NOTES" --argjson ub "$UPDATE_BAL" \
+          '{accountId:$acc,date:$d,amount:$amt,merchantName:$m,categoryId:$c,notes:$n,shouldUpdateBalance:$ub}')
+        call POST /v1/transactions "$body" | emit ".data"
+        ;;
+      update)
+        [[ -z "${1:-}" ]] && { echo "tx update <id> [flags]" >&2; exit 2; }
+        TXID="$1"; shift
+        CATEGORY=""; MERCHANT=""; AMOUNT=""; DATE=""; NOTES=""; HIDE=""; REVIEW=""; REVIEWED=""; GOAL=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --category) CATEGORY="$2"; shift 2 ;;
+            --merchant) MERCHANT="$2"; shift 2 ;;
+            --amount) AMOUNT="$2"; shift 2 ;;
+            --date) DATE="$2"; shift 2 ;;
+            --notes) NOTES="$2"; shift 2 ;;
+            --hide) HIDE="$2"; shift 2 ;;
+            --needs-review) REVIEW="$2"; shift 2 ;;
+            --reviewed) REVIEWED="$2"; shift 2 ;;
+            --goal) GOAL="$2"; shift 2 ;;
+            *) echo "tx update: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        # NOTE: do NOT use `select(.!="")` *inside* an object value - it kills the
+        # whole object (jq's `select` drops the entire surrounding context when the
+        # condition is false). Use if/else null per field, then prune nulls outside.
+        body=$(jq -n \
+          --arg c "$CATEGORY" --arg m "$MERCHANT" --arg amt "$AMOUNT" --arg d "$DATE" \
+          --arg n "$NOTES" --arg h "$HIDE" --arg r "$REVIEW" --arg rv "$REVIEWED" --arg g "$GOAL" \
+          '{category:$c, name:$m,
+            amount: (if $amt == "" then null else ($amt|tonumber) end),
+            date:$d, notes:$n,
+            hideFromReports: (if $h == "" then null else ($h|test("^(t|true|yes|1|y)$";"i")) end),
+            needsReview:     (if $r == "" then null else ($r|test("^(t|true|yes|1|y)$";"i")) end),
+            reviewed:        (if $rv == "" then null else ($rv|test("^(t|true|yes|1|y)$";"i")) end),
+            goalId:$g}
+           | with_entries(select(.value != "" and .value != null))')
+        call PATCH "/v1/transactions/$TXID" "$body" | emit ".data"
+        ;;
+      delete)
+        [[ -z "${1:-}" ]] && { echo "tx delete <id> [--yes]" >&2; exit 2; }
+        TXID="$1"; shift
+        [[ "${1:-}" == "--yes" ]] && YES=1
+        confirm "Delete transaction $TXID?"
+        call DELETE "/v1/transactions/$TXID" | emit ".data"
+        ;;
+      tags)
+        [[ -z "${1:-}" || -z "${2:-}" ]] && { echo "tx tags <id> <tag-id>[,<tag-id>...]" >&2; exit 2; }
+        TXID="$1"; CSV="$2"
+        tag_ids_json=$(echo "$CSV" | jq -R 'if . == "" then [] else split(",") end')
+        body=$(jq -n --argjson t "$tag_ids_json" '{tagIds:$t}')
+        call PUT "/v1/transactions/$TXID/tags" "$body" | emit ".data"
+        ;;
+      split)
+        [[ -z "${1:-}" || -z "${2:-}" ]] && { echo "tx split <id> '<json-array>'" >&2; exit 2; }
+        TXID="$1"; SPLIT_JSON="$2"
+        body=$(jq -n --argjson s "$SPLIT_JSON" '{splitData:$s}')
+        call POST "/v1/transactions/$TXID/splits" "$body" | emit '.data'
+        ;;
+      bulk-update)
+        EXPECTED=""; UPDATES=""; IDS=""; ALL_SELECTED=""; EXCLUDE=""; FILTERS=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --expected) EXPECTED="$2"; shift 2 ;;
+            --updates) UPDATES="$2"; shift 2 ;;
+            --ids) IDS="$2"; shift 2 ;;
+            --all-selected) ALL_SELECTED="true"; shift ;;
+            --exclude) EXCLUDE="$2"; shift 2 ;;
+            --filters) FILTERS="$2"; shift 2 ;;
+            *) echo "tx bulk-update: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$EXPECTED" ]] && { echo "tx bulk-update requires --expected N (race-prevention guard)" >&2; exit 2; }
+        [[ -z "$UPDATES" ]] && { echo "tx bulk-update requires --updates '<json>' (TransactionUpdateParams shape)" >&2; exit 2; }
+        if [[ -z "$IDS" && -z "$ALL_SELECTED" ]]; then
+          echo "tx bulk-update requires --ids a,b,c OR --all-selected" >&2; exit 2;
+        fi
+        ids_json="[]"
+        [[ -n "$IDS" ]] && ids_json=$(echo "$IDS" | jq -R 'split(",")')
+        excl_json="[]"
+        [[ -n "$EXCLUDE" ]] && excl_json=$(echo "$EXCLUDE" | jq -R 'split(",")')
+        all_json="false"
+        [[ -n "$ALL_SELECTED" ]] && all_json="true"
+        filters_json="null"
+        [[ -n "$FILTERS" ]] && filters_json="$FILTERS"
+        body=$(jq -n --argjson ids "$ids_json" --argjson excl "$excl_json" \
+                     --argjson all "$all_json" --argjson exp "$EXPECTED" \
+                     --argjson upd "$UPDATES" --argjson f "$filters_json" \
+          '{selectedTransactionIds:$ids, excludedTransactionIds:$excl, allSelected:$all,
+            expectedAffectedTransactionCount:$exp, updates:$upd, filters:$f}
+           | with_entries(select(.value != null))')
+        call PATCH /v1/transactions/bulk "$body" | emit ".data"
+        ;;
+      bulk-delete)
+        EXPECTED=""; IDS=""; ALL_SELECTED=""; EXCLUDE=""; FILTERS=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --expected) EXPECTED="$2"; shift 2 ;;
+            --ids) IDS="$2"; shift 2 ;;
+            --all-selected) ALL_SELECTED="true"; shift ;;
+            --exclude) EXCLUDE="$2"; shift 2 ;;
+            --filters) FILTERS="$2"; shift 2 ;;
+            --yes) YES=1; shift ;;
+            *) echo "tx bulk-delete: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$EXPECTED" ]] && { echo "tx bulk-delete requires --expected N (race-prevention guard)" >&2; exit 2; }
+        if [[ -z "$IDS" && -z "$ALL_SELECTED" ]]; then
+          echo "tx bulk-delete requires --ids a,b,c OR --all-selected" >&2; exit 2;
+        fi
+        ids_json="[]"
+        [[ -n "$IDS" ]] && ids_json=$(echo "$IDS" | jq -R 'split(",")')
+        excl_json="[]"
+        [[ -n "$EXCLUDE" ]] && excl_json=$(echo "$EXCLUDE" | jq -R 'split(",")')
+        all_json="false"
+        [[ -n "$ALL_SELECTED" ]] && all_json="true"
+        filters_json="null"
+        [[ -n "$FILTERS" ]] && filters_json="$FILTERS"
+        confirm "Bulk-delete $EXPECTED transactions? This is destructive."
+        body=$(jq -n --argjson ids "$ids_json" --argjson excl "$excl_json" \
+                     --argjson all "$all_json" --argjson exp "$EXPECTED" \
+                     --argjson f "$filters_json" \
+          '{selectedTransactionIds:$ids, excludedTransactionIds:$excl, allSelected:$all,
+            expectedAffectedTransactionCount:$exp, filters:$f}
+           | with_entries(select(.value != null))')
+        call POST /v1/transactions/bulk-delete "$body" | emit ".data"
+        ;;
+      not-recurring)
+        [[ -z "${1:-}" ]] && { echo "tx not-recurring <stream-id>  (pass the transaction's stream.id, NOT txn id)" >&2; exit 2; }
+        SID="$1"
+        call POST "/v1/transactions/$SID/not-recurring" | emit ".data"
+        ;;
+      *) echo "tx subcommands: create | update | delete | tags | split | detail | splits | summary | duplicates | attach | bulk-update | bulk-delete | not-recurring | reviewed | explain | dashboard | filter-accounts | review-summary" >&2; exit 2 ;;
+    esac
+    ;;
+
+  # ---------------------------------------------------------------------------
+  # Write: accounts
+  # ---------------------------------------------------------------------------
+  account)
+    shift
+    sub="${1:-}"
+    [[ -z "$sub" ]] && { echo "monarch account <create|update|delete|upload-balances|create-investments|bulk-update> [args]" >&2; exit 2; }
+    shift
+    case "$sub" in
+      create)
+        TYPE=""; SUBTYPE=""; NAME=""; BALANCE="0"; INC_NW="true"
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --type) TYPE="$2"; shift 2 ;;
+            --subtype) SUBTYPE="$2"; shift 2 ;;
+            --name) NAME="$2"; shift 2 ;;
+            --balance) BALANCE="$2"; shift 2 ;;
+            --no-net-worth) INC_NW="false"; shift ;;
+            *) echo "account create: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$TYPE" || -z "$SUBTYPE" || -z "$NAME" ]] && {
+          echo "account create requires --type --subtype --name" >&2; exit 2;
+        }
+        body=$(jq -n --arg t "$TYPE" --arg st "$SUBTYPE" --arg n "$NAME" \
+                     --argjson b "$BALANCE" --argjson inw "$INC_NW" \
+          '{type:$t,subtype:$st,name:$n,displayBalance:$b,includeInNetWorth:$inw}')
+        call POST /v1/accounts "$body" | emit ".data"
+        ;;
+      update)
+        [[ -z "${1:-}" ]] && { echo "account update <id> [flags]" >&2; exit 2; }
+        AID="$1"; shift
+        NAME=""; BALANCE=""; TYPE=""; SUBTYPE=""; HIDE_LIST=""; INC_NW=""; HIDE_REP=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --name) NAME="$2"; shift 2 ;;
+            --balance) BALANCE="$2"; shift 2 ;;
+            --type) TYPE="$2"; shift 2 ;;
+            --subtype) SUBTYPE="$2"; shift 2 ;;
+            --hide-from-list) HIDE_LIST="$2"; shift 2 ;;
+            --include-net-worth) INC_NW="$2"; shift 2 ;;
+            --hide-from-reports) HIDE_REP="$2"; shift 2 ;;
+            *) echo "account update: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        # Same jq gotcha as tx update - use if/else null per field, not select(.!="").
+        body=$(jq -n --arg n "$NAME" --arg b "$BALANCE" --arg t "$TYPE" --arg st "$SUBTYPE" \
+                     --arg hl "$HIDE_LIST" --arg inw "$INC_NW" --arg hr "$HIDE_REP" \
+          '{name:$n,
+            displayBalance:               (if $b   == "" then null else ($b|tonumber) end),
+            type:$t, subtype:$st,
+            hideFromList:                 (if $hl  == "" then null else ($hl|test("^(t|true|yes|1|y)$";"i")) end),
+            includeInNetWorth:            (if $inw == "" then null else ($inw|test("^(t|true|yes|1|y)$";"i")) end),
+            hideTransactionsFromReports:  (if $hr  == "" then null else ($hr|test("^(t|true|yes|1|y)$";"i")) end)}
+           | with_entries(select(.value != "" and .value != null))')
+        call PATCH "/v1/accounts/$AID" "$body" | emit ".data"
+        ;;
+      delete)
+        [[ -z "${1:-}" ]] && { echo "account delete <id> [--yes]" >&2; exit 2; }
+        AID="$1"; shift
+        [[ "${1:-}" == "--yes" ]] && YES=1
+        confirm "Delete account $AID? This is destructive and removes all linked transactions."
+        call DELETE "/v1/accounts/$AID" | emit ".data"
+        ;;
+      upload-balances)
+        [[ -z "${1:-}" || -z "${2:-}" ]] && { echo "account upload-balances <id> <csv-path> [--wait [--timeout N]]" >&2; exit 2; }
+        AID="$1"; CSV="$2"; shift 2
+        WAIT=0; TIMEOUT=60
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --wait) WAIT=1; shift ;;
+            --timeout) TIMEOUT="$2"; shift 2 ;;
+            *) echo "account upload-balances: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        resp=$(call_multipart POST "/v1/accounts/$AID/balance-history" file "$CSV")
+        if [[ "$WAIT" == "0" ]]; then
+          printf '%s' "$resp" \
+            | emit '.data | "sessionKey=\(.sessionKey)  status=\(.status)\nnext: monarch balance-history status \(.sessionKey)"'
+          exit 0
+        fi
+        # --wait: poll the status endpoint until terminal state or timeout.
+        SESSION=$(printf '%s' "$resp" | jq -r '.data.sessionKey')
+        [[ -z "$SESSION" || "$SESSION" == "null" ]] && { echo "monarch: upload returned no sessionKey" >&2; exit 1; }
+        elapsed=0
+        status="pending"
+        while [[ $elapsed -lt $TIMEOUT ]]; do
+          status_resp=$(call GET "/v1/balance-history/$SESSION/status")
+          status=$(printf '%s' "$status_resp" | jq -r '.data.status')
+          case "$status" in
+            completed|failed|error) break ;;
+          esac
+          sleep 2
+          elapsed=$((elapsed + 2))
+        done
+        printf '{"data":{"sessionKey":"%s","status":"%s","elapsedSeconds":%d}}' "$SESSION" "$status" "$elapsed" \
+          | emit '.data | "sessionKey=\(.sessionKey)  status=\(.status)  elapsedSeconds=\(.elapsedSeconds)"'
+        case "$status" in
+          completed) exit 0 ;;
+          failed|error) exit 1 ;;
+          *) echo "monarch: timeout after ${TIMEOUT}s (last status=$status)" >&2; exit 1 ;;
+        esac
+        ;;
+      create-investments)
+        NAME=""; SUBTYPE=""; TRACKING=""; INIT_BAL=""; INIT_HOLDINGS=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --name) NAME="$2"; shift 2 ;;
+            --subtype) SUBTYPE="$2"; shift 2 ;;
+            --tracking) TRACKING="$2"; shift 2 ;;
+            --initial-balance) INIT_BAL="$2"; shift 2 ;;
+            --initial-holdings) INIT_HOLDINGS="$2"; shift 2 ;;
+            *) echo "account create-investments: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$NAME" || -z "$SUBTYPE" ]] && {
+          echo "account create-investments requires --name --subtype" >&2; exit 2;
+        }
+        holdings_json="null"
+        [[ -n "$INIT_HOLDINGS" ]] && holdings_json="$INIT_HOLDINGS"
+        body=$(jq -n --arg n "$NAME" --arg st "$SUBTYPE" --arg tr "$TRACKING" \
+                     --arg ib "$INIT_BAL" --argjson ih "$holdings_json" \
+          '{name:$n, subtype:$st,
+            trackingMethod: (if $tr == "" then null else $tr end),
+            initialBalance: (if $ib == "" then null else ($ib|tonumber) end),
+            initialHoldings: $ih}
+           | with_entries(select(.value != null))')
+        call POST /v1/accounts/manual-investments "$body" | emit ".data"
+        ;;
+      bulk-update)
+        [[ -z "${1:-}" ]] && { echo "account bulk-update '<json-array of {id, ...patches}>'" >&2; exit 2; }
+        UPDATES_JSON="$1"
+        body=$(jq -n --argjson u "$UPDATES_JSON" '{updates:$u}')
+        call PATCH /v1/accounts/bulk "$body" | emit ".data"
+        ;;
+      *) echo "account subcommands: create | update | delete | upload-balances | create-investments | bulk-update" >&2; exit 2 ;;
+    esac
+    ;;
+
+  # ---------------------------------------------------------------------------
+  # Write: tags
+  # ---------------------------------------------------------------------------
+  tag)
+    shift
+    sub="${1:-}"
+    [[ -z "$sub" ]] && { echo "monarch tag <create|delete> [args]" >&2; exit 2; }
+    shift
+    case "$sub" in
+      create)
+        [[ -z "${1:-}" ]] && { echo "tag create <name> [--color #hex]" >&2; exit 2; }
+        TAG_NAME="$1"; shift
+        COLOR="#999999"
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --color) COLOR="$2"; shift 2 ;;
+            *) echo "tag create: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        body=$(jq -n --arg n "$TAG_NAME" --arg c "$COLOR" '{name:$n,color:$c}')
+        call POST /v1/tags "$body" | emit '.data'
+        ;;
+      delete)
+        [[ -z "${1:-}" ]] && { echo "tag delete <id> [--yes]" >&2; exit 2; }
+        TID="$1"; shift
+        [[ "${1:-}" == "--yes" ]] && YES=1
+        confirm "Delete tag $TID? It is detached from every transaction it was attached to."
+        call DELETE "/v1/tags/$TID" | emit ".data"
+        ;;
+      *) echo "tag subcommands: create | delete" >&2; exit 2 ;;
+    esac
+    ;;
+
+  # ---------------------------------------------------------------------------
+  # Write: categories
+  # ---------------------------------------------------------------------------
+  category)
+    shift
+    sub="${1:-}"
+    [[ -z "$sub" ]] && { echo "monarch category <create|delete|delete-bulk|edit|deletion-info> [args]" >&2; exit 2; }
+    shift
+    case "$sub" in
+      edit)
+        [[ -z "${1:-}" ]] && { echo "category edit <id>" >&2; exit 2; }
+        call GET "/v1/categories/$1/edit" | emit '.data.category'
+        ;;
+      deletion-info)
+        [[ -z "${1:-}" ]] && { echo "category deletion-info <id>" >&2; exit 2; }
+        call GET "/v1/categories/$1/deletion-info" | emit '.data.category'
+        ;;
+      create)
+        [[ -z "${1:-}" ]] && { echo "category create <name> --group <group-id> [flags]" >&2; exit 2; }
+        CAT_NAME="$1"; shift
+        GROUP=""; ICON="❓"; ROLL_EN="false"; ROLL_TYPE="monthly"; ROLL_START=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --group) GROUP="$2"; shift 2 ;;
+            --icon) ICON="$2"; shift 2 ;;
+            --rollover-enabled) ROLL_EN="true"; shift ;;
+            --rollover-type) ROLL_TYPE="$2"; shift 2 ;;
+            --rollover-start) ROLL_START="$2"; shift 2 ;;
+            *) echo "category create: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$GROUP" ]] && { echo "category create requires --group <group-id>" >&2; exit 2; }
+        [[ -z "$ROLL_START" ]] && ROLL_START=$(date +%Y-%m-01)
+        body=$(jq -n --arg g "$GROUP" --arg n "$CAT_NAME" --arg i "$ICON" \
+                     --argjson re "$ROLL_EN" --arg rt "$ROLL_TYPE" --arg rs "$ROLL_START" \
+          '{group:$g,name:$n,icon:$i,rolloverEnabled:$re,rolloverType:$rt,rolloverStartMonth:$rs}')
+        call POST /v1/categories "$body" | emit ".data"
+        ;;
+      delete)
+        [[ -z "${1:-}" ]] && { echo "category delete <id> [--move-to <id>] [--yes]" >&2; exit 2; }
+        CID="$1"; shift
+        MOVE_TO=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --move-to) MOVE_TO="$2"; shift 2 ;;
+            --yes) YES=1; shift ;;
+            *) echo "category delete: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        confirm "Delete category $CID?${MOVE_TO:+ (transactions will be moved to $MOVE_TO)}"
+        path="/v1/categories/$CID"
+        [[ -n "$MOVE_TO" ]] && path="$path?moveToCategoryId=$MOVE_TO"
+        call DELETE "$path" | emit ".data"
+        ;;
+      delete-bulk)
+        [[ -z "${1:-}" ]] && { echo "category delete-bulk <id1,id2,...> [--move-to <id>] [--yes]" >&2; exit 2; }
+        CSV="$1"; shift
+        MOVE_TO=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --move-to) MOVE_TO="$2"; shift 2 ;;
+            --yes) YES=1; shift ;;
+            *) echo "category delete-bulk: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        ids_json=$(echo "$CSV" | jq -R 'if . == "" then [] else split(",") end')
+        count=$(echo "$ids_json" | jq 'length')
+        [[ "$count" -eq 0 ]] && { echo "category delete-bulk: no ids provided" >&2; exit 2; }
+        confirm "Delete $count categories?${MOVE_TO:+ (transactions will be moved to $MOVE_TO)}"
+        if [[ -n "$MOVE_TO" ]]; then
+          body=$(jq -n --argjson ids "$ids_json" --arg m "$MOVE_TO" '{ids:$ids,moveToCategoryId:$m}')
+        else
+          body=$(jq -n --argjson ids "$ids_json" '{ids:$ids}')
+        fi
+        call POST /v1/categories/bulk-delete "$body" \
+          | emit '.data | "deleted=\((.deleted // []) | length)  failed=\((.failed // []) | length)\n\((.failed // [])[] | "  failed \(.id): \(.reason)")"'
+        ;;
+      *) echo "category subcommands: create | delete | delete-bulk | edit | deletion-info" >&2; exit 2 ;;
+    esac
+    ;;
+
+  # ---------------------------------------------------------------------------
+  # Write: budgets (set/flex/flex-rollover/reset)
+  # ---------------------------------------------------------------------------
+  budget)
+    shift
+    sub="${1:-}"
+    [[ -z "$sub" ]] && { echo "monarch budget <set|flex|flex-rollover|reset> [args]" >&2; exit 2; }
+    shift
+    case "$sub" in
+      set)
+        START=""; AMOUNT=""; CAT=""; CGRP=""; TIMEFRAME=""; APPLY_FUTURE="false"
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --start) START="$2"; shift 2 ;;
+            --amount) AMOUNT="$2"; shift 2 ;;
+            --category) CAT="$2"; shift 2 ;;
+            --category-group) CGRP="$2"; shift 2 ;;
+            --timeframe) TIMEFRAME="$2"; shift 2 ;;
+            --apply-future) APPLY_FUTURE="true"; shift ;;
+            *) echo "budget set: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$START" || -z "$AMOUNT" ]] && {
+          echo "budget set requires --start --amount" >&2; exit 2;
+        }
+        if [[ -n "$CAT" && -n "$CGRP" ]] || [[ -z "$CAT" && -z "$CGRP" ]]; then
+          echo "budget set requires exactly one of --category or --category-group" >&2; exit 2;
+        fi
+        body=$(jq -n --arg s "$START" --argjson a "$AMOUNT" \
+                     --arg c "$CAT" --arg g "$CGRP" --arg tf "$TIMEFRAME" --argjson af "$APPLY_FUTURE" \
+          '{amount:$a, startDate:$s,
+            categoryId:      (if $c  == "" then null else $c  end),
+            categoryGroupId: (if $g  == "" then null else $g  end),
+            timeframe:       (if $tf == "" then null else $tf end),
+            applyToFuture:$af}
+           | with_entries(select(.value != null))')
+        call POST /v1/budgets/items "$body" | emit ".data"
+        ;;
+      flex)
+        START=""; AMOUNT=""; APPLY_FUTURE="false"
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --start) START="$2"; shift 2 ;;
+            --amount) AMOUNT="$2"; shift 2 ;;
+            --apply-future) APPLY_FUTURE="true"; shift ;;
+            *) echo "budget flex: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$START" || -z "$AMOUNT" ]] && {
+          echo "budget flex requires --start --amount" >&2; exit 2;
+        }
+        body=$(jq -n --arg s "$START" --argjson a "$AMOUNT" --argjson af "$APPLY_FUTURE" \
+          '{amount:$a, startDate:$s, applyToFuture:$af}')
+        call PUT /v1/budgets/flex "$body" | emit ".data"
+        ;;
+      flex-rollover)
+        START=""; BALANCE=""; ENABLED=""; SYSTEM=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --start) START="$2"; shift 2 ;;
+            --balance) BALANCE="$2"; shift 2 ;;
+            --enabled) ENABLED="$2"; shift 2 ;;
+            --system) SYSTEM="$2"; shift 2 ;;
+            *) echo "budget flex-rollover: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$START" ]] && { echo "budget flex-rollover requires --start" >&2; exit 2; }
+        body=$(jq -n --arg s "$START" --arg b "$BALANCE" --arg e "$ENABLED" --arg sys "$SYSTEM" \
+          '{rolloverStartMonth:$s,
+            rolloverStartingBalance: (if $b   == "" then null else ($b|tonumber) end),
+            rolloverEnabled:         (if $e   == "" then null else ($e|test("^(t|true|yes|1|y)$";"i")) end),
+            budgetSystem:            (if $sys == "" then null else $sys end)}
+           | with_entries(select(.value != null))')
+        call PUT /v1/budgets/flex/rollover "$body" | emit ".data"
+        ;;
+      reset)
+        START=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --start) START="$2"; shift 2 ;;
+            --yes) YES=1; shift ;;
+            *) echo "budget reset: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$START" ]] && { echo "budget reset requires --start" >&2; exit 2; }
+        confirm "Reset all planned amounts for month starting $START? This is destructive."
+        body=$(jq -n --arg s "$START" '{startDate:$s}')
+        call POST /v1/budgets/reset "$body" | emit ".data"
+        ;;
+      *) echo "budget subcommands: set | flex | flex-rollover | reset" >&2; exit 2 ;;
+    esac
+    ;;
+
+  # ---------------------------------------------------------------------------
+  # merchants: read (transactions) + write (recurrence/delete/logo)
+  # ---------------------------------------------------------------------------
+  merchant)
+    shift
+    sub="${1:-}"
+    [[ -z "$sub" ]] && { echo "monarch merchant <transactions|recurrence|delete|logo> [args]" >&2; exit 2; }
+    shift
+    case "$sub" in
+      transactions)
+        [[ -z "${1:-}" ]] && { echo "merchant transactions <id> [--start --end]" >&2; exit 2; }
+        MID="$1"; shift
+        START=""; END=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --start) START="$2"; shift 2 ;;
+            --end) END="$2"; shift 2 ;;
+            *) echo "merchant transactions: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        q=""
+        [[ -n "$START" ]] && q+="&start=$START"
+        [[ -n "$END" ]] && q+="&end=$END"
+        call GET "/v1/merchants/$MID/transactions${q:+?${q:1}}" \
+          | emit '.data.transactions[] | [.date, ((.amount // 0)|tostring), (.merchant.name // "-"), (.category.name // "-"), .id] | @tsv' \
+          | fmt_table
+        ;;
+      recurrence)
+        [[ -z "${1:-}" ]] && { echo "merchant recurrence <id> --name N [flags]" >&2; exit 2; }
+        MID="$1"; shift
+        NAME=""; REC=""; FREQ=""; BASE_DATE=""; AMOUNT=""; ACTIVE=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --name) NAME="$2"; shift 2 ;;
+            --recurring) REC="$2"; shift 2 ;;
+            --frequency) FREQ="$2"; shift 2 ;;
+            --base-date) BASE_DATE="$2"; shift 2 ;;
+            --amount) AMOUNT="$2"; shift 2 ;;
+            --active) ACTIVE="$2"; shift 2 ;;
+            *) echo "merchant recurrence: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$NAME" ]] && {
+          echo "merchant recurrence requires --name (pass current name if only changing recurrence)" >&2; exit 2;
+        }
+        body=$(jq -n --arg n "$NAME" --arg r "$REC" --arg f "$FREQ" \
+                     --arg bd "$BASE_DATE" --arg amt "$AMOUNT" --arg a "$ACTIVE" \
+          '{name:$n,
+            isRecurring: (if $r   == "" then null else ($r|test("^(t|true|yes|1|y)$";"i")) end),
+            frequency:   (if $f   == "" then null else $f end),
+            baseDate:    (if $bd  == "" then null else $bd end),
+            amount:      (if $amt == "" then null else ($amt|tonumber) end),
+            isActive:    (if $a   == "" then null else ($a|test("^(t|true|yes|1|y)$";"i")) end)}
+           | with_entries(select(.value != null))')
+        call PATCH "/v1/merchants/$MID/recurrence" "$body" | emit ".data"
+        ;;
+      delete)
+        [[ -z "${1:-}" ]] && { echo "merchant delete <id> [--move-to <id>] [--yes]" >&2; exit 2; }
+        MID="$1"; shift
+        MOVE_TO=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --move-to) MOVE_TO="$2"; shift 2 ;;
+            --yes) YES=1; shift ;;
+            *) echo "merchant delete: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        confirm "Delete merchant $MID?${MOVE_TO:+ (transactions and rules reassigned to $MOVE_TO)}"
+        path="/v1/merchants/$MID"
+        [[ -n "$MOVE_TO" ]] && path="$path?moveToId=$MOVE_TO"
+        call DELETE "$path" | emit ".data"
+        ;;
+      logo)
+        [[ -z "${1:-}" ]] && { echo "merchant logo <id> --cloudinary-id ID|--clear" >&2; exit 2; }
+        MID="$1"; shift
+        CLOUD_ID=""; CLEAR=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --cloudinary-id) CLOUD_ID="$2"; shift 2 ;;
+            --clear) CLEAR="true"; shift ;;
+            *) echo "merchant logo: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        if [[ -z "$CLOUD_ID" && -z "$CLEAR" ]]; then
+          echo "merchant logo requires --cloudinary-id ID or --clear" >&2; exit 2;
+        fi
+        if [[ -n "$CLEAR" ]]; then
+          body='{"cloudinaryPublicId":null}'
+        else
+          body=$(jq -n --arg c "$CLOUD_ID" '{cloudinaryPublicId:$c}')
+        fi
+        call PATCH "/v1/merchants/$MID/logo" "$body" | emit ".data"
+        ;;
+      *) echo "merchant subcommands: transactions | recurrence | delete | logo" >&2; exit 2 ;;
+    esac
+    ;;
+
+  # ---------------------------------------------------------------------------
+  # Write: category groups
+  # ---------------------------------------------------------------------------
+  category-group)
+    shift
+    sub="${1:-}"
+    [[ -z "$sub" ]] && { echo "monarch category-group <create|update|delete|budget-variability|details> [args]" >&2; exit 2; }
+    shift
+    case "$sub" in
+      details)
+        [[ -z "${1:-}" ]] && { echo "category-group details <id> [--include-disabled-system]" >&2; exit 2; }
+        GID="$1"; shift
+        INCL_SYS=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --include-disabled-system) INCL_SYS="true"; shift ;;
+            *) echo "category-group details: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        q=""
+        [[ -n "$INCL_SYS" ]] && q+="&includeDisabledSystemCategories=$INCL_SYS"
+        path="/v1/category-groups/$GID/details${q:+?${q:1}}"
+        call GET "$path" | emit '.data.categoryGroup'
+        ;;
+      create)
+        NAME=""; TYPE=""; COLOR=""; ICON=""; VARIABILITY=""; GBE=""; ORDER_BEFORE=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --name) NAME="$2"; shift 2 ;;
+            --type) TYPE="$2"; shift 2 ;;
+            --color) COLOR="$2"; shift 2 ;;
+            --icon) ICON="$2"; shift 2 ;;
+            --variability) VARIABILITY="$2"; shift 2 ;;
+            --group-budgeting) GBE="$2"; shift 2 ;;
+            --order-before) ORDER_BEFORE="$2"; shift 2 ;;
+            *) echo "category-group create: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$NAME" || -z "$TYPE" ]] && {
+          echo "category-group create requires --name --type" >&2; exit 2;
+        }
+        body=$(jq -n --arg n "$NAME" --arg t "$TYPE" --arg c "$COLOR" --arg i "$ICON" \
+                     --arg v "$VARIABILITY" --arg g "$GBE" --arg ob "$ORDER_BEFORE" \
+          '{name:$n, type:$t,
+            color:             (if $c  == "" then null else $c  end),
+            icon:              (if $i  == "" then null else $i  end),
+            budgetVariability: (if $v  == "" then null else $v  end),
+            groupLevelBudgetingEnabled: (if $g == "" then null else ($g|test("^(t|true|yes|1|y)$";"i")) end),
+            orderBefore:       (if $ob == "" then null else $ob end)}
+           | with_entries(select(.value != null))')
+        call POST /v1/category-groups "$body" | emit ".data"
+        ;;
+      update)
+        [[ -z "${1:-}" ]] && { echo "category-group update <id> [flags]" >&2; exit 2; }
+        GID="$1"; shift
+        NAME=""; COLOR=""; ICON=""; VARIABILITY=""; GBE=""; ROLL_EN=""; ROLL_TYPE=""; ROLL_START=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --name) NAME="$2"; shift 2 ;;
+            --color) COLOR="$2"; shift 2 ;;
+            --icon) ICON="$2"; shift 2 ;;
+            --variability) VARIABILITY="$2"; shift 2 ;;
+            --group-budgeting) GBE="$2"; shift 2 ;;
+            --rollover-enabled) ROLL_EN="$2"; shift 2 ;;
+            --rollover-type) ROLL_TYPE="$2"; shift 2 ;;
+            --rollover-start) ROLL_START="$2"; shift 2 ;;
+            *) echo "category-group update: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        body=$(jq -n --arg n "$NAME" --arg c "$COLOR" --arg i "$ICON" \
+                     --arg v "$VARIABILITY" --arg g "$GBE" \
+                     --arg re "$ROLL_EN" --arg rt "$ROLL_TYPE" --arg rs "$ROLL_START" \
+          '{name:              (if $n  == "" then null else $n  end),
+            color:             (if $c  == "" then null else $c  end),
+            icon:              (if $i  == "" then null else $i  end),
+            budgetVariability: (if $v  == "" then null else $v  end),
+            groupLevelBudgetingEnabled: (if $g == "" then null else ($g|test("^(t|true|yes|1|y)$";"i")) end),
+            rolloverEnabled:   (if $re == "" then null else ($re|test("^(t|true|yes|1|y)$";"i")) end),
+            rolloverType:      (if $rt == "" then null else $rt end),
+            rolloverStartMonth:(if $rs == "" then null else $rs end)}
+           | with_entries(select(.value != null))')
+        call PATCH "/v1/category-groups/$GID" "$body" | emit ".data"
+        ;;
+      delete)
+        [[ -z "${1:-}" ]] && { echo "category-group delete <id> [--move-to <id>] [--yes]" >&2; exit 2; }
+        GID="$1"; shift
+        MOVE_TO=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --move-to) MOVE_TO="$2"; shift 2 ;;
+            --yes) YES=1; shift ;;
+            *) echo "category-group delete: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        confirm "Delete category-group $GID?${MOVE_TO:+ (child categories will be moved to $MOVE_TO)}"
+        path="/v1/category-groups/$GID"
+        [[ -n "$MOVE_TO" ]] && path="$path?moveToGroupId=$MOVE_TO"
+        call DELETE "$path" | emit ".data"
+        ;;
+      budget-variability)
+        [[ -z "${1:-}" ]] && { echo "category-group budget-variability <id> --variability V" >&2; exit 2; }
+        GID="$1"; shift
+        VARIABILITY=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --variability) VARIABILITY="$2"; shift 2 ;;
+            *) echo "category-group budget-variability: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$VARIABILITY" ]] && {
+          echo "category-group budget-variability requires --variability fixed|flexible|non_monthly" >&2; exit 2;
+        }
+        body=$(jq -n --arg v "$VARIABILITY" '{budgetVariability:$v}')
+        call PATCH "/v1/category-groups/$GID/budget-variability" "$body" | emit ".data"
+        ;;
+      *) echo "category-group subcommands: create | update | delete | budget-variability | details" >&2; exit 2 ;;
+    esac
+    ;;
+
+  # ---------------------------------------------------------------------------
+  # Write: goals
+  # ---------------------------------------------------------------------------
+  goal)
+    shift
+    sub="${1:-}"
+    [[ -z "$sub" ]] && { echo "monarch goal <id|create|update|contribute|archive|unarchive|delete|events|priorities|budget> [args]" >&2; exit 2; }
+    case "$sub" in
+      create)
+        shift
+        NAME=""; TYPE=""; TARGET=""; TARGET_DATE=""; IMG_PROVIDER=""; IMG_ID=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --name) NAME="$2"; shift 2 ;;
+            --type) TYPE="$2"; shift 2 ;;
+            --target) TARGET="$2"; shift 2 ;;
+            --target-date) TARGET_DATE="$2"; shift 2 ;;
+            --image-provider) IMG_PROVIDER="$2"; shift 2 ;;
+            --image-id) IMG_ID="$2"; shift 2 ;;
+            *) echo "goal create: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$NAME" ]] && { echo "goal create requires --name" >&2; exit 2; }
+        body=$(jq -n --arg n "$NAME" --arg t "$TYPE" --arg tg "$TARGET" \
+                     --arg td "$TARGET_DATE" --arg ip "$IMG_PROVIDER" --arg ii "$IMG_ID" \
+          '{name:$n,
+            type:                  (if $t  == "" then null else $t  end),
+            targetAmount:          (if $tg == "" then null else ($tg|tonumber) end),
+            targetDate:            (if $td == "" then null else $td end),
+            imageStorageProvider:  (if $ip == "" then null else $ip end),
+            imageStorageProviderId:(if $ii == "" then null else $ii end)}
+           | with_entries(select(.value != null))')
+        call POST /v1/goals "$body" | emit ".data"
+        ;;
+      update)
+        shift
+        [[ -z "${1:-}" ]] && { echo "goal update <id> [flags]" >&2; exit 2; }
+        GID="$1"; shift
+        NAME=""; TARGET=""; TARGET_DATE=""; PRIORITY=""; SINKING=""; IMG_PROVIDER=""; IMG_ID=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --name) NAME="$2"; shift 2 ;;
+            --target) TARGET="$2"; shift 2 ;;
+            --target-date) TARGET_DATE="$2"; shift 2 ;;
+            --priority) PRIORITY="$2"; shift 2 ;;
+            --sinking-fund) SINKING="$2"; shift 2 ;;
+            --image-provider) IMG_PROVIDER="$2"; shift 2 ;;
+            --image-id) IMG_ID="$2"; shift 2 ;;
+            *) echo "goal update: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        body=$(jq -n --arg n "$NAME" --arg tg "$TARGET" --arg td "$TARGET_DATE" \
+                     --arg p "$PRIORITY" --arg sk "$SINKING" \
+                     --arg ip "$IMG_PROVIDER" --arg ii "$IMG_ID" \
+          '{name:                  (if $n  == "" then null else $n  end),
+            targetAmount:          (if $tg == "" then null else ($tg|tonumber) end),
+            targetDate:            (if $td == "" then null else $td end),
+            priority:              (if $p  == "" then null else ($p|tonumber) end),
+            isSinkingFund:         (if $sk == "" then null else ($sk|test("^(t|true|yes|1|y)$";"i")) end),
+            imageStorageProvider:  (if $ip == "" then null else $ip end),
+            imageStorageProviderId:(if $ii == "" then null else $ii end)}
+           | with_entries(select(.value != null))')
+        call PATCH "/v1/goals/$GID" "$body" | emit ".data"
+        ;;
+      contribute)
+        shift
+        [[ -z "${1:-}" ]] && { echo "goal contribute <id> --account ID --amount X [--date D]" >&2; exit 2; }
+        GID="$1"; shift
+        ACC=""; AMT=""; DATE=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --account) ACC="$2"; shift 2 ;;
+            --amount) AMT="$2"; shift 2 ;;
+            --date) DATE="$2"; shift 2 ;;
+            *) echo "goal contribute: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$ACC" || -z "$AMT" ]] && {
+          echo "goal contribute requires --account --amount" >&2; exit 2;
+        }
+        body=$(jq -n --arg a "$ACC" --argjson amt "$AMT" --arg d "$DATE" \
+          '{accountId:$a, amount:$amt,
+            date: (if $d == "" then null else $d end)}
+           | with_entries(select(.value != null))')
+        call POST "/v1/goals/$GID/contributions" "$body" | emit ".data"
+        ;;
+      archive)
+        shift
+        [[ -z "${1:-}" ]] && { echo "goal archive <id> [--yes]" >&2; exit 2; }
+        GID="$1"; shift
+        [[ "${1:-}" == "--yes" ]] && YES=1
+        confirm "Archive (soft-delete) goal $GID?"
+        call DELETE "/v1/goals/$GID" | emit ".data"
+        ;;
+      unarchive)
+        shift
+        [[ -z "${1:-}" ]] && { echo "goal unarchive <id> [--yes]" >&2; exit 2; }
+        GID="$1"; shift
+        [[ "${1:-}" == "--yes" ]] && YES=1
+        confirm "Un-archive goal $GID?"
+        call POST "/v1/goals/$GID/unarchive" | emit ".data"
+        ;;
+      delete)
+        shift
+        [[ -z "${1:-}" ]] && { echo "goal delete <id> [--yes]" >&2; exit 2; }
+        GID="$1"; shift
+        [[ "${1:-}" == "--yes" ]] && YES=1
+        confirm "Hard-delete goal $GID? This is irreversible (use 'goal archive' for soft delete)."
+        call DELETE "/v1/goals/$GID/hard" | emit ".data"
+        ;;
+      events)
+        shift
+        [[ -z "${1:-}" ]] && { echo "goal events <id>" >&2; exit 2; }
+        GID="$1"
+        call GET "/v1/goals/$GID/events" | emit '.data.events[] | [.date, (.amount|tostring), .type, .id] | @tsv' | fmt_table
+        ;;
+      priorities)
+        shift
+        [[ -z "${1:-}" ]] && { echo "goal priorities <id1>,<id2>,<id3>" >&2; exit 2; }
+        CSV="$1"
+        ids_json=$(echo "$CSV" | jq -R 'split(",")')
+        body=$(jq -n --argjson g "$ids_json" '{goalIds:$g}')
+        call PUT /v1/goals/priorities "$body" | emit ".data"
+        ;;
+      budget)
+        shift
+        [[ -z "${1:-}" ]] && { echo "goal budget <id> --amount X [--month D] [--account ID] [--apply-future]" >&2; exit 2; }
+        GID="$1"; shift
+        AMT=""; MONTH=""; ACC=""; APPLY_FUTURE="false"
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --amount) AMT="$2"; shift 2 ;;
+            --month) MONTH="$2"; shift 2 ;;
+            --account) ACC="$2"; shift 2 ;;
+            --apply-future) APPLY_FUTURE="true"; shift ;;
+            *) echo "goal budget: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$AMT" ]] && { echo "goal budget requires --amount" >&2; exit 2; }
+        body=$(jq -n --argjson amt "$AMT" --arg m "$MONTH" --arg a "$ACC" --argjson af "$APPLY_FUTURE" \
+          '{amount:$amt, applyToFuture:$af,
+            month:     (if $m == "" then null else $m end),
+            accountId: (if $a == "" then null else $a end)}
+           | with_entries(select(.value != null))')
+        call PUT "/v1/goals/$GID/budget" "$body" | emit ".data"
+        ;;
+      # ---- Goals v2 lifecycle (post-180 expansion) ----
+      complete)
+        shift
+        [[ -z "${1:-}" ]] && { echo "goal complete <id>" >&2; exit 2; }
+        call POST "/v1/goals/$1/complete" | emit '.data'
+        ;;
+      incomplete)
+        shift
+        [[ -z "${1:-}" ]] && { echo "goal incomplete <id>" >&2; exit 2; }
+        call POST "/v1/goals/$1/incomplete" | emit '.data'
+        ;;
+      spend)
+        shift
+        [[ -z "${1:-}" ]] && { echo "goal spend <id> --amount X [--date D] [--notes N]" >&2; exit 2; }
+        GID="$1"; shift
+        AMT=""; DATE=""; NOTES=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --amount) AMT="$2"; shift 2 ;;
+            --date) DATE="$2"; shift 2 ;;
+            --notes) NOTES="$2"; shift 2 ;;
+            *) echo "goal spend: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$AMT" ]] && { echo "goal spend requires --amount" >&2; exit 2; }
+        body=$(jq -n --argjson amt "$AMT" --arg d "$DATE" --arg n "$NOTES" \
+          '{amount:$amt,
+            date: (if $d == "" then null else $d end),
+            notes:(if $n == "" then null else $n end)}
+           | with_entries(select(.value != null))')
+        call POST "/v1/goals/$GID/spend" "$body" | emit '.data'
+        ;;
+      withdraw)
+        shift
+        [[ -z "${1:-}" ]] && { echo "goal withdraw <id> --amount X [--account ID] [--date D]" >&2; exit 2; }
+        GID="$1"; shift
+        AMT=""; ACC=""; DATE=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --amount) AMT="$2"; shift 2 ;;
+            --account) ACC="$2"; shift 2 ;;
+            --date) DATE="$2"; shift 2 ;;
+            *) echo "goal withdraw: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$AMT" ]] && { echo "goal withdraw requires --amount" >&2; exit 2; }
+        body=$(jq -n --argjson amt "$AMT" --arg a "$ACC" --arg d "$DATE" \
+          '{amount:$amt,
+            accountId:(if $a == "" then null else $a end),
+            date:     (if $d == "" then null else $d end)}
+           | with_entries(select(.value != null))')
+        call POST "/v1/goals/$GID/withdraw" "$body" | emit '.data'
+        ;;
+      *)
+        # Treat first positional as an id (goal <id> detail).
+        GID="$sub"
+        call GET "/v1/goals/$GID" | emit '.data'
+        ;;
+    esac
+    ;;
+
+  # ---------------------------------------------------------------------------
+  # Write: transaction rules
+  # ---------------------------------------------------------------------------
+  rule)
+    shift
+    sub="${1:-}"
+    [[ -z "$sub" ]] && { echo "monarch rule <create|update|delete|preview> [args]" >&2; exit 2; }
+    shift
+    case "$sub" in
+      create)
+        [[ -z "${1:-}" ]] && { echo "rule create '<json>'" >&2; exit 2; }
+        BODY="$1"
+        # Pass-through: rule body shape is complex; let Monarch validate.
+        call POST /v1/transaction-rules "$BODY" | emit ".data"
+        ;;
+      update)
+        [[ -z "${1:-}" || -z "${2:-}" ]] && { echo "rule update <id> '<json>'" >&2; exit 2; }
+        RID="$1"; BODY="$2"
+        call PATCH "/v1/transaction-rules/$RID" "$BODY" | emit ".data"
+        ;;
+      delete)
+        [[ -z "${1:-}" ]] && { echo "rule delete <id> [--yes]" >&2; exit 2; }
+        RID="$1"; shift
+        [[ "${1:-}" == "--yes" ]] && YES=1
+        confirm "Delete transaction rule $RID?"
+        call DELETE "/v1/transaction-rules/$RID" | emit ".data"
+        ;;
+      preview)
+        [[ -z "${1:-}" ]] && { echo "rule preview '<json>' [--offset N]" >&2; exit 2; }
+        BODY="$1"; shift
+        OFFSET_VAL=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --offset) OFFSET_VAL="$2"; shift 2 ;;
+            *) echo "rule preview: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        path="/v1/transaction-rules/preview"
+        [[ -n "$OFFSET_VAL" ]] && path="$path?offset=$OFFSET_VAL"
+        call POST "$path" "$BODY" | emit ".data"
+        ;;
+      *) echo "rule subcommands: create | update | delete | preview" >&2; exit 2 ;;
+    esac
+    ;;
+
+  # ---------------------------------------------------------------------------
+  # holdings: read (history) + write (add/update/delete)
+  # ---------------------------------------------------------------------------
+  holding)
+    shift
+    sub="${1:-}"
+    [[ -z "$sub" ]] && { echo "monarch holding <history|add|update|delete> [args]" >&2; exit 2; }
+    shift
+    case "$sub" in
+      history)
+        [[ -z "${1:-}" ]] && { echo "holding history <id> [--start --end]" >&2; exit 2; }
+        HID="$1"; shift
+        START=""; END=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --start) START="$2"; shift 2 ;;
+            --end) END="$2"; shift 2 ;;
+            *) echo "holding history: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        q=""
+        [[ -n "$START" ]] && q+="&start=$START"
+        [[ -n "$END" ]] && q+="&end=$END"
+        call GET "/v1/holdings/$HID/history${q:+?${q:1}}" \
+          | emit '.data.history[] | [.date, ((.value // 0)|tostring), ((.quantity // 0)|tostring)] | @tsv' \
+          | fmt_table
+        ;;
+      add)
+        [[ -z "${1:-}" ]] && { echo "holding add <account-id> --security-id ID --quantity Q" >&2; exit 2; }
+        AID="$1"; shift
+        SID=""; QTY=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --security-id) SID="$2"; shift 2 ;;
+            --quantity) QTY="$2"; shift 2 ;;
+            *) echo "holding add: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$SID" || -z "$QTY" ]] && {
+          echo "holding add requires --security-id --quantity" >&2; exit 2;
+        }
+        body=$(jq -n --arg s "$SID" --argjson q "$QTY" '{securityId:$s, quantity:$q}')
+        call POST "/v1/account/$AID/holdings" "$body" | emit ".data"
+        ;;
+      update)
+        [[ -z "${1:-}" ]] && { echo "holding update <id> [--quantity Q] [--security-type T] [--basis X]" >&2; exit 2; }
+        HID="$1"; shift
+        QTY=""; SEC_TYPE=""; BASIS=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --quantity) QTY="$2"; shift 2 ;;
+            --security-type) SEC_TYPE="$2"; shift 2 ;;
+            --basis) BASIS="$2"; shift 2 ;;
+            *) echo "holding update: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        body=$(jq -n --arg q "$QTY" --arg st "$SEC_TYPE" --arg b "$BASIS" \
+          '{quantity:      (if $q  == "" then null else ($q|tonumber) end),
+            securityType:  (if $st == "" then null else $st end),
+            userCostBasis: (if $b  == "" then null else ($b|tonumber) end)}
+           | with_entries(select(.value != null))')
+        call PATCH "/v1/holdings/$HID" "$body" | emit ".data"
+        ;;
+      delete)
+        [[ -z "${1:-}" ]] && { echo "holding delete <id> [--yes]" >&2; exit 2; }
+        HID="$1"; shift
+        [[ "${1:-}" == "--yes" ]] && YES=1
+        confirm "Delete holding $HID?"
+        call DELETE "/v1/holdings/$HID" | emit ".data"
+        ;;
+      *) echo "holding subcommands: history | add | update | delete" >&2; exit 2 ;;
+    esac
+    ;;
+
+  # ---------------------------------------------------------------------------
+  # Read: lookup, balance-at, recap, insights, attachment, credentials,
+  #        portfolio, security
+  # ---------------------------------------------------------------------------
+  lookup)
+    [[ -z "${2:-}" ]] && { echo "monarch lookup <query>" >&2; exit 2; }
+    Q="$2"
+    path="/v1/lookup?q=$(_urlenc "$Q")"
+    call GET "$path" \
+      | emit '.data.results[] | [(.type // "-"), (.id // "-"), (.name // "-")] | @tsv' \
+      | fmt_table
+    ;;
+
+  balance-at)
+    [[ -z "${2:-}" ]] && { echo "monarch balance-at <account-id> --date YYYY-MM-DD" >&2; exit 2; }
+    AID="$2"; shift 2
+    DATE=""
+    while [[ $# -gt 0 ]]; do
+      case "$1" in
+        --date) DATE="$2"; shift 2 ;;
+        *) echo "balance-at: unknown flag: $1" >&2; exit 2 ;;
+      esac
+    done
+    [[ -z "$DATE" ]] && { echo "balance-at requires --date YYYY-MM-DD" >&2; exit 2; }
+    call GET "/v1/accounts/$AID/balance/at?date=$DATE" \
+      | emit '.data | "id=\(.id)  displayBalance=\(.displayBalance // "-")  includeInNetWorth=\(.includeInNetWorth)"'
+    ;;
+
+  recap)
+    sub="${2:-}"
+    [[ -z "$sub" ]] && { echo "monarch recap <weekly> [args]" >&2; exit 2; }
+    case "$sub" in
+      weekly)
+        shift 2
+        START=""; END=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --start) START="$2"; shift 2 ;;
+            --end) END="$2"; shift 2 ;;
+            *) echo "recap weekly: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$START" || -z "$END" ]] && {
+          echo "recap weekly requires --start YYYY-MM-DD --end YYYY-MM-DD" >&2; exit 2;
+        }
+        call GET "/v1/recap/weekly?start=$START&end=$END" \
+          | emit '.data.recap | if . == null then "no recap generated for this week yet" else "id=\(.id)  range=\(.dateRangeStart)..\(.dateRangeEnd)  sentiment=\(.sentiment // "-")\n\n\(.summary // "(no summary)")" end'
+        ;;
+      *) echo "recap subcommands: weekly" >&2; exit 2 ;;
+    esac
+    ;;
+
+  insights)
+    case "${2:-}" in
+      latest-run)
+        call GET /v1/insights/latest-run \
+          | emit '.data | "insightsCount=\(.insightsCount // "-")  latestRun=\(.latestRun // {} | "id=\(.id // "-") status=\(.status // "-") generated=\(.insightsGeneratedCount // "-") error=\(.errorMessage // "-")")"'
+        ;;
+      *)
+        shift
+        STATUS_VALS=""; S_START=""; S_END=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --status) STATUS_VALS="${STATUS_VALS:+$STATUS_VALS }$2"; shift 2 ;;
+            --start) S_START="$2"; shift 2 ;;
+            --end) S_END="$2"; shift 2 ;;
+            *) echo "insights: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        q=""
+        if [[ -n "$STATUS_VALS" ]]; then
+          for s in $STATUS_VALS; do q+="&status=$s"; done
+        fi
+        [[ -n "$S_START" ]] && q+="&summaryStart=$S_START"
+        [[ -n "$S_END" ]] && q+="&summaryEnd=$S_END"
+        path="/v1/insights${q:+?${q:1}}"
+        call GET "$path" \
+          | emit '.data.insights[] | [(.id // "-"), (.status // "-"), (.merchantNameDisplay // .dashboardSubtitle // "-"), ((.annualSavingsEstimateMin // 0)|tostring), ((.annualSavingsEstimateMax // 0)|tostring)] | @tsv' \
+          | fmt_table
+        ;;
+    esac
+    ;;
+
+  insight)
+    [[ -z "${2:-}" ]] && { echo "monarch insight <id>" >&2; exit 2; }
+    call GET "/v1/insights/$2" | emit '.data.insight'
+    ;;
+
+  attachment)
+    [[ -z "${2:-}" ]] && { echo "monarch attachment <id>" >&2; exit 2; }
+    call GET "/v1/attachments/$2" \
+      | emit '.data.attachment | "id=\(.id)  url=\(.originalAssetUrl // "-")"'
+    ;;
+
+  credentials)
+    case "${2:-}" in
+      with-institutions)
+        call GET /v1/credentials/institutions \
+          | emit '.data.credentials[] | [(.credentialId // "-"), (.name // "-"), (.preferredDataProvider // "-"), (.plaidInstitutionId // "-")] | @tsv' \
+          | fmt_table
+        ;;
+      *)
+        call GET /v1/credentials \
+          | emit '.data.credentials[] | [(.id // "-"), (.institutionName // "-"), (.institutionId // "-")] | @tsv' \
+          | fmt_table
+        ;;
+    esac
+    ;;
+
+  tax)
+    sub="${2:-}"
+    [[ -z "$sub" ]] && { echo "monarch tax <categories|aggregates|mappings> [args]" >&2; exit 2; }
+    case "$sub" in
+      categories)
+        call GET /v1/tax/categories \
+          | emit '.data.categories[] | [(.id // "-"), (.name // "-"), (.systemCategory // "-")] | @tsv' \
+          | fmt_table
+        ;;
+      aggregates)
+        shift 2
+        START=""; END=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --start) START="$2"; shift 2 ;;
+            --end) END="$2"; shift 2 ;;
+            *) echo "tax aggregates: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        q=""
+        [[ -n "$START" ]] && q+="&start=$START"
+        [[ -n "$END" ]] && q+="&end=$END"
+        path="/v1/tax/category-aggregates${q:+?${q:1}}"
+        call GET "$path" \
+          | emit '.data.rows[] | [(.category.id // "-"), (.category.name // "-"), (.category.systemCategory // "-"), ((.sum // 0)|tostring), ((.count // 0)|tostring)] | @tsv' \
+          | fmt_table
+        ;;
+      mappings)
+        shift 2
+        SCHEDULE=""; YEAR=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --schedule) SCHEDULE="$2"; shift 2 ;;
+            --tax-year|--year) YEAR="$2"; shift 2 ;;
+            *) echo "tax mappings: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        [[ -z "$SCHEDULE" || -z "$YEAR" ]] && { echo "tax mappings requires --schedule S --tax-year YYYY" >&2; exit 2; }
+        path="/v1/tax/schedule-mappings?schedule=$SCHEDULE&taxYear=$YEAR"
+        call GET "$path" \
+          | emit '.data.mappings[] | [(.id // "-"), (.lineItem // "-"), (.lineItemInfo.lineNumber // "-"), (.category.id // "-"), (.category.name // "-")] | @tsv' \
+          | fmt_table
+        ;;
+      *)
+        echo "monarch tax <categories|aggregates|mappings> [args]" >&2; exit 2
+        ;;
+    esac
+    ;;
+
+  portfolio)
+    sub="${2:-}"
+    [[ -z "$sub" ]] && { echo "monarch portfolio <allocation> [args]" >&2; exit 2; }
+    case "$sub" in
+      allocation)
+        sub2="${3:-}"
+        case "$sub2" in
+          by-account)
+            shift 3
+            ACCOUNT_IDS=""; LIMIT=""
+            while [[ $# -gt 0 ]]; do
+              case "$1" in
+                --account) ACCOUNT_IDS="${ACCOUNT_IDS:+$ACCOUNT_IDS }$2"; shift 2 ;;
+                --limit) LIMIT="$2"; shift 2 ;;
+                *) echo "portfolio allocation by-account: unknown flag: $1" >&2; exit 2 ;;
+              esac
+            done
+            q=""
+            if [[ -n "$ACCOUNT_IDS" ]]; then
+              for id in $ACCOUNT_IDS; do q+="&accountIds=$id"; done
+            fi
+            [[ -n "$LIMIT" ]] && q+="&limit=$LIMIT"
+            path="/v1/portfolio/allocation/by-account${q:+?${q:1}}"
+            call GET "$path" \
+              | emit '.data.buckets[] | [(.typeDisplay // .type), ((.allocationPercent // 0)|tostring), ((.totalValue // 0)|tostring)] | @tsv' \
+              | fmt_table
+            ;;
+          by-holdings)
+            shift 3
+            ACCOUNT_IDS=""; LIMIT=""
+            while [[ $# -gt 0 ]]; do
+              case "$1" in
+                --account) ACCOUNT_IDS="${ACCOUNT_IDS:+$ACCOUNT_IDS }$2"; shift 2 ;;
+                --limit) LIMIT="$2"; shift 2 ;;
+                *) echo "portfolio allocation by-holdings: unknown flag: $1" >&2; exit 2 ;;
+              esac
+            done
+            q=""
+            if [[ -n "$ACCOUNT_IDS" ]]; then
+              for id in $ACCOUNT_IDS; do q+="&accountIds=$id"; done
+            fi
+            [[ -n "$LIMIT" ]] && q+="&limit=$LIMIT"
+            path="/v1/portfolio/allocation/by-holdings${q:+?${q:1}}"
+            call GET "$path" \
+              | emit '.data.buckets[] | [(.typeDisplay // .type), ((.allocationPercent // 0)|tostring), ((.totalValue // 0)|tostring)] | @tsv' \
+              | fmt_table
+            ;;
+          holdings-detail)
+            shift 3
+            ACCOUNT_IDS=""; CLASS_F=""; CLASS_V=""; LIMIT=""; OFFSET=""
+            while [[ $# -gt 0 ]]; do
+              case "$1" in
+                --account) ACCOUNT_IDS="${ACCOUNT_IDS:+$ACCOUNT_IDS }$2"; shift 2 ;;
+                --classification) CLASS_F="$2"; shift 2 ;;
+                --value) CLASS_V="$2"; shift 2 ;;
+                --limit) LIMIT="$2"; shift 2 ;;
+                --offset) OFFSET="$2"; shift 2 ;;
+                *) echo "portfolio allocation holdings-detail: unknown flag: $1" >&2; exit 2 ;;
+              esac
+            done
+            [[ -z "$CLASS_F" || -z "$CLASS_V" ]] && {
+              echo "portfolio allocation holdings-detail requires --classification FIELD --value VAL" >&2; exit 2;
+            }
+            q="&classificationField=$CLASS_F&classificationValue=$(_urlenc "$CLASS_V")"
+            if [[ -n "$ACCOUNT_IDS" ]]; then
+              for id in $ACCOUNT_IDS; do q+="&accountIds=$id"; done
+            fi
+            [[ -n "$LIMIT" ]] && q+="&limit=$LIMIT"
+            [[ -n "$OFFSET" ]] && q+="&offset=$OFFSET"
+            path="/v1/portfolio/allocation/holdings-detail?${q:1}"
+            call GET "$path" \
+              | emit '.data.holdings[] | [(.ticker // "-"), .securityName, ((.quantity // 0)|tostring), ((.value // 0)|tostring)] | @tsv' \
+              | fmt_table
+            ;;
+          *)
+            # Default: top-level allocation by classification
+            shift 2
+            ACCOUNT_IDS=""; CLASS_F=""
+            while [[ $# -gt 0 ]]; do
+              case "$1" in
+                --account) ACCOUNT_IDS="${ACCOUNT_IDS:+$ACCOUNT_IDS }$2"; shift 2 ;;
+                --classification) CLASS_F="$2"; shift 2 ;;
+                *) echo "portfolio allocation: unknown flag: $1" >&2; exit 2 ;;
+              esac
+            done
+            q=""
+            if [[ -n "$ACCOUNT_IDS" ]]; then
+              for id in $ACCOUNT_IDS; do q+="&accountIds=$id"; done
+            fi
+            [[ -n "$CLASS_F" ]] && q+="&classificationField=$CLASS_F"
+            path="/v1/portfolio/allocation${q:+?${q:1}}"
+            # Two-pass emit: header line, then a TSV table of buckets.
+            resp=$(call GET "$path")
+            if [[ "$RAW" == "1" ]]; then
+              printf '%s' "$resp"
+            else
+              printf '%s\n' "$resp" | jq -r '"totalValue=\(.data.totalValue // "-")"'
+              printf '%s\n' "$resp" | jq -r '.data.buckets[] | [(.typeDisplay // .type), ((.allocationPercent // 0)|tostring), ((.totalValue // 0)|tostring)] | @tsv' | column -t -s $'\t'
+            fi
+            ;;
+        esac
+        ;;
+      *) echo "portfolio subcommands: allocation [by-account|by-holdings|holdings-detail]" >&2; exit 2 ;;
+    esac
+    ;;
+
+  security)
+    sub="${2:-}"
+    [[ -z "$sub" ]] && { echo "monarch security <performance> [args]" >&2; exit 2; }
+    case "$sub" in
+      performance)
+        [[ -z "${3:-}" ]] && { echo "security performance <id> [--start --end]" >&2; exit 2; }
+        SID="$3"; shift 3
+        START=""; END=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --start) START="$2"; shift 2 ;;
+            --end) END="$2"; shift 2 ;;
+            *) echo "security performance: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        q=""
+        [[ -n "$START" ]] && q+="&start=$START"
+        [[ -n "$END" ]] && q+="&end=$END"
+        path="/v1/securities/$SID/performance${q:+?${q:1}}"
+        resp=$(call GET "$path")
+        if [[ "$RAW" == "1" ]]; then
+          printf '%s' "$resp"
+        else
+          printf '%s\n' "$resp" | jq -r '.data | "currentPrice=\(.security.currentPrice // "-")  closingPrice=\(.security.closingPrice // "-")  points=\(.chart | length)"'
+          printf '%s\n' "$resp" | jq -r '.data.chart[] | [.date, ((.returnPercent // 0)|tostring), ((.value // 0)|tostring)] | @tsv' | column -t -s $'\t'
+        fi
+        ;;
+      details)
+        [[ -z "${3:-}" ]] && { echo "security details <id>" >&2; exit 2; }
+        call GET "/v1/securities/$3" \
+          | emit '.data.security | "id=\(.id)  ticker=\(.ticker // "-")  name=\(.name // "-")  type=\(.type // "-")  currentPrice=\(.currentPrice // "-")"'
+        ;;
+      dividends)
+        [[ -z "${3:-}" ]] && { echo "security dividends <id>" >&2; exit 2; }
+        call GET "/v1/securities/$3/dividends" \
+          | emit '.data.dividends[] | [.exDate, ((.amount // 0)|tostring), (.frequency // "-")] | @tsv' \
+          | fmt_table
+        ;;
+      *) echo "security subcommands: performance|details|dividends" >&2; exit 2 ;;
+    esac
+    ;;
+
+  # ---------------------------------------------------------------------------
+  # Reports family (post-180 expansion)
+  # ---------------------------------------------------------------------------
+  reports)
+    sub="${2:-}"
+    [[ -z "$sub" ]] && { echo "monarch reports <spending|income|net-worth|savings-rate|monthly-summary> [args]" >&2; exit 2; }
+    case "$sub" in
+      spending|income|net-worth|savings-rate|monthly-summary)
+        path_seg="/v1/reports/$sub"
+        shift 2
+        START=""; END=""
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --start) START="$2"; shift 2 ;;
+            --end) END="$2"; shift 2 ;;
+            *) echo "reports $sub: unknown flag: $1" >&2; exit 2 ;;
+          esac
+        done
+        q=""
+        [[ -n "$START" ]] && q+="&start=$START"
+        [[ -n "$END" ]] && q+="&end=$END"
+        call GET "${path_seg}${q:+?${q:1}}" | emit '.data'
+        ;;
+      *) echo "reports subcommands: spending|income|net-worth|savings-rate|monthly-summary" >&2; exit 2 ;;
+    esac
+    ;;
+
+  calendar)
+    [[ "${2:-}" != "events" ]] && { echo "monarch calendar events [--start --end]" >&2; exit 2; }
+    shift 2
+    START=""; END=""
+    while [[ $# -gt 0 ]]; do
+      case "$1" in
+        --start) START="$2"; shift 2 ;;
+        --end) END="$2"; shift 2 ;;
+        *) echo "calendar events: unknown flag: $1" >&2; exit 2 ;;
+      esac
+    done
+    q=""
+    [[ -n "$START" ]] && q+="&start=$START"
+    [[ -n "$END" ]] && q+="&end=$END"
+    call GET "/v1/calendar/events${q:+?${q:1}}" \
+      | emit '.data.events[] | [.date, (.type // "-"), (.name // "-"), ((.amount // 0)|tostring)] | @tsv' \
+      | fmt_table
+    ;;
+
+  *)
+    echo "monarch: unknown command: $1" >&2
+    usage >&2
+    exit 2
+    ;;
+esac

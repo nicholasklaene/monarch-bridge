@@ -1,0 +1,25 @@
+query Common_GetWeeklyRecap($startDate: Date!, $endDate: Date!) {
+  recap(startDate: $startDate, endDate: $endDate) {
+    id
+    dateRangeStart
+    dateRangeEnd
+    summary
+    sentiment
+    createdAt
+    updatedAt
+    cards {
+      module
+      title
+      headline
+      message
+      sentiment
+      metrics
+      richBlocks
+      titleMarkdown
+      headlineMarkdown
+      messageMarkdown
+      __typename
+    }
+    __typename
+  }
+}

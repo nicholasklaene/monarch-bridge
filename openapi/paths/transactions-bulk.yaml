@@ -1,0 +1,44 @@
+patch:
+  tags: [Transactions]
+  summary: Bulk-update transactions
+  description: |
+    Forwards Monarch's `bulkUpdateTransactions` mutation. Two selection modes are
+    supported on the same shape (`allSelected` discriminates):
+
+    - `allSelected: false` + `selectedTransactionIds: [a,b,c]` is the common case:
+      apply `updates` to exactly those N transactions.
+    - `allSelected: true` + `filters: {...}` + optional `excludedTransactionIds: [...]`
+      is the "select everything matching the filter then minus these" pattern.
+
+    `expectedAffectedTransactionCount` is a safety check. Monarch refuses the mutation
+    if its actual affected-row count differs from this number (race-prevention).
+
+    The `updates` object is Monarch's `TransactionUpdateParams` input shape (same
+    field surface as `PATCH /v1/transactions/{id}`: categoryId, merchantName, notes,
+    date, hide, etc.).
+  operationId: bulkUpdateTransactions
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/BulkUpdateTransactionsRequest"
+  responses:
+    "200":
+      description: Monarch reports success plus the affected-row count.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/BulkUpdateTransactionsResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+    "422":
+      description: Monarch rejected the mutation (e.g. expected-count mismatch).
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

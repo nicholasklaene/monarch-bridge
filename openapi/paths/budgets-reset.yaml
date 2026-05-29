@@ -1,0 +1,28 @@
+post:
+  tags: [Budgets]
+  summary: Reset all planned amounts for one month back to defaults
+  description: |
+    Clears every category and category-group budget line for the target
+    month and reverts to Monarch's auto-calculated defaults (typically
+    the trailing-3-month average of actuals).
+
+    **Destructive** for that month's plan. Use when a user wants to start
+    fresh for a new month and have Monarch re-suggest amounts based on
+    recent spend, instead of carrying over last month's plan.
+
+    Required: `startDate` (first-of-month YYYY-MM-01). Operates on a
+    single month only; loop client-side to reset a range.
+  operationId: resetBudget
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/ResetBudgetRequest"
+  responses:
+    "200":
+      description: Confirmation.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ResetBudgetResponse"

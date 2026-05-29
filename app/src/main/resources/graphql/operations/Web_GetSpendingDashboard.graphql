@@ -1,0 +1,13 @@
+query Web_GetSpendingDashboard($startDate: Date, $endDate: Date) {
+  spendingDashboard(startDate: $startDate, endDate: $endDate) {
+    totalSpend
+    budgetRemaining
+    topCategories {
+      categoryId
+      name
+      amount
+      __typename
+    }
+    __typename
+  }
+}

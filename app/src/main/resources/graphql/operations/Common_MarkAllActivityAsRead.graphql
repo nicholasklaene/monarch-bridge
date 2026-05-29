@@ -1,0 +1,16 @@
+mutation Common_MarkAllActivityAsRead($first: Int) {
+  markAllActivityAsRead {
+    activityEvents(first: $first) {
+      edges {
+        node {
+          id
+          readAt
+          __typename
+        }
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}

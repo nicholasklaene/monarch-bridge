@@ -1,0 +1,8 @@
+fragment PaycheckDeductionFields on PaycheckDeduction {
+  id
+  deductionType
+  customDeductionName
+  amount
+  createdAt
+  __typename
+}

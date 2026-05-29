@@ -1,0 +1,39 @@
+get:
+  tags: [Transactions]
+  summary: Groups of likely-duplicate transactions
+  description: |
+    Server-side composite over `GET /v1/transactions`. Pulls the window and groups
+    results by the python-lib `find_duplicate_transactions` key:
+    `(date, amount, plaidName, accountId)`.
+
+    Using `plaidName` (the raw Plaid description) rather than `merchantName`
+    (Monarch's normalized display name) avoids false positives: two genuine
+    same-day same-merchant same-amount charges carry different `plaidName`
+    reference strings. Only true double-inserts share the exact `plaidName`.
+
+    Returns only groups with size > 1. Useful for surfacing accidental
+    double-posts after re-linking an institution (a known Monarch issue,
+    particularly for Apple Card / Apple Cash / Apple Savings).
+  operationId: getTransactionsDuplicates
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/AccountIdQuery"
+    - in: query
+      name: accountIds
+      required: false
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+      description: |
+        Filter to multiple accounts. Merged with the legacy single-value
+        `accountId` if both are passed.
+  responses:
+    "200":
+      description: Groups of likely-duplicate transactions in the window.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/TransactionsDuplicatesResponse"

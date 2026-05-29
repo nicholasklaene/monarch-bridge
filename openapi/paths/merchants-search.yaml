@@ -1,0 +1,57 @@
+get:
+  tags: [Merchants]
+  summary: Search merchants by name
+  description: |
+    Free-text search across merchant names, ordered by transaction
+    count (most-used first). Use to populate a merchant picker, resolve
+    a merchant id by name, or browse the merchant catalog.
+
+    Two backing queries via the `withLogo` flag:
+
+    - `withLogo: false` (default): faster, omits `logoUrl`, but
+      supports the `includeIds` filter (repeat the query param to pin
+      specific merchants into the result set even if they don't match
+      the search text).
+    - `withLogo: true`: includes `logoUrl` per merchant; supports
+      `offset` pagination but drops `includeIds`.
+  operationId: searchMerchants
+  parameters:
+    - in: query
+      name: q
+      required: false
+      schema: { type: string }
+      description: Free-text search across merchant names.
+    - in: query
+      name: limit
+      required: false
+      schema: { type: integer }
+      description: Max number of merchants to return.
+    - in: query
+      name: offset
+      required: false
+      schema: { type: integer }
+      description: Page offset. Only respected when `withLogo` is true.
+    - in: query
+      name: withLogo
+      required: false
+      schema:
+        type: boolean
+        default: false
+      description: When true, switch to the logo-enabled variant of the query.
+    - in: query
+      name: includeIds
+      required: false
+      explode: true
+      schema:
+        type: array
+        items: { type: string }
+      description: |
+        Pin specific merchant ids into the result set. Repeat the query param for each id.
+        Only respected when `withLogo` is false.
+  responses:
+    "200":
+      description: Matching merchants.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/SearchMerchantsResponse"

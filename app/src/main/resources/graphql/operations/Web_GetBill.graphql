@@ -1,0 +1,3 @@
+query Web_GetBill {
+  __typename
+}

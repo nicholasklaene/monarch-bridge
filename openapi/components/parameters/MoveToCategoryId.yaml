@@ -1,0 +1,6 @@
+in: query
+name: moveToCategoryId
+required: false
+schema:
+  type: string
+description: Remap any transactions assigned to the deleted category to this one. Omit to leave them uncategorized.

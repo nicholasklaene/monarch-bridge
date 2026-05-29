@@ -1,0 +1,10 @@
+query Web_SearchSecurities($limit: Int, $orderByPopularity: Boolean, $search: String) {
+    securities(limit: $limit, orderByPopularity: $orderByPopularity, search: $search) {
+      id
+      name
+      ticker
+      type
+      currentPrice
+      closingPrice
+    }
+  }

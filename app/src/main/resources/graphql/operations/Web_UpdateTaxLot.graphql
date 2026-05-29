@@ -1,0 +1,17 @@
+mutation Web_UpdateTaxLot($input: UpdateTaxLotInput!) {
+  updateTaxLot(input: $input) {
+    taxLot {
+      id
+      createdAt
+      acquisitionDate
+      acquisitionQuantity
+      costBasisPerUnit
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

@@ -1,0 +1,10 @@
+mutation Web_SetErrorReporting($input: SetErrorReportingInput!) {
+  setErrorReporting(input: $input) {
+    enabled
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

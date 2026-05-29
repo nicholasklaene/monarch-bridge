@@ -1,0 +1,9 @@
+mutation Common_UpdateCategoryGroup($input: UpdateCategoryGroupInput!) {
+  updateCategoryGroup(input: $input) {
+    categoryGroup {
+      ...CategoryGroupFields
+      __typename
+    }
+    __typename
+  }
+}

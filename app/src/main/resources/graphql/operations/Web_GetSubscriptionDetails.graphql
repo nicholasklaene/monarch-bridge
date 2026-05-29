@@ -1,0 +1,13 @@
+query Web_GetSubscriptionDetails {
+  subscriptionDetails {
+    tier
+    status
+    renewalDate
+    billingFrequency
+    amount
+    currency
+    paymentMethod
+    trialEndsAt
+    __typename
+  }
+}

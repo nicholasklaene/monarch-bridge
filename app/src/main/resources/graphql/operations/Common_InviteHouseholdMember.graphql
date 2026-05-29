@@ -1,0 +1,14 @@
+mutation Common_InviteHouseholdMember($input: InviteHouseholdMemberInput!) {
+  inviteHouseholdMember(input: $input) {
+    invitation {
+      email
+      role
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

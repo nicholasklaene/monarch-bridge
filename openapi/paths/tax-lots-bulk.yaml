@@ -1,0 +1,35 @@
+post:
+  tags: [TaxLots]
+  summary: Bulk-create tax lots under an account
+  description: |
+    Batch import of manual tax lots scoped to one investments account.
+    Each row carries its own `holdingId`. Per-row errors surface in the
+    `errors` array; successful lots in `taxLots`. Idempotent on identical
+    `(holdingId, acquisitionDate, acquisitionQuantity, costBasisPerUnit)`
+    tuples - Monarch dedupes.
+  operationId: createManualTaxLotsBulk
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { type: string }
+      description: Monarch account id (manual investments account).
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/CreateManualTaxLotsBulkRequest"
+  responses:
+    "200":
+      description: Created tax lots plus per-row error rows.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CreateManualTaxLotsBulkResponse"
+    "422":
+      description: Monarch PayloadError.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

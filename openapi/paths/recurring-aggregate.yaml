@@ -1,0 +1,24 @@
+get:
+  tags: [Recurring]
+  summary: Month-by-month aggregate recurring view
+  description: |
+    Aggregates recurring-transaction occurrences in the window, grouped
+    by status (`completed`, `remaining`, etc.) and rolled up into
+    `expense` / `creditCard` / `income` totals per-group AND across the
+    whole window.
+
+    Use for "what recurring spend hits this month" or "what's already
+    happened vs still pending" summaries. For the per-occurrence
+    calendar view use `GET /v1/recurring`; for stream definitions use
+    `GET /v1/recurring/streams`.
+  operationId: listRecurringAggregate
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: Aggregated tree from Monarch (pass-through).
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ListRecurringAggregateResponse"

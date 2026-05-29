@@ -1,0 +1,17 @@
+mutation Web_CancelSponsorship($input: CancelSponsorshipInput!) {
+    cancelSubscriptionSponsorship(input: $input) {
+      canceled
+      errors {
+        ...PayloadErrorFields
+      }
+    }
+  }
+
+fragment PayloadErrorFields on PayloadError {
+    fieldErrors {
+      field
+      messages
+    }
+    message
+    code
+  }

@@ -1,0 +1,141 @@
+fragment TransactionRuleFields on TransactionRuleV2 {
+  id
+  merchantCriteriaUseOriginalStatement
+  merchantCriteria {
+    operator
+    value
+    __typename
+  }
+  originalStatementCriteria {
+    operator
+    value
+    __typename
+  }
+  merchantNameCriteria {
+    operator
+    value
+    __typename
+  }
+  amountCriteria {
+    operator
+    isExpense
+    value
+    valueRange {
+      lower
+      upper
+      __typename
+    }
+    __typename
+  }
+  categoryIds
+  accountIds
+  categories {
+    id
+    name
+    icon
+    __typename
+  }
+  accounts {
+    id
+    displayName
+    icon
+    logoUrl
+    __typename
+  }
+  criteriaOwnerIsJoint
+  criteriaOwnerUserIds
+  criteriaOwnerUsers {
+    id
+    displayName
+    profilePictureUrl
+    __typename
+  }
+  criteriaBusinessEntityIds
+  criteriaBusinessEntityIsUnassigned
+  criteriaBusinessEntities {
+    id
+    name
+    logoUrl
+    color
+    __typename
+  }
+  setMerchantAction {
+    id
+    name
+    __typename
+  }
+  setCategoryAction {
+    id
+    name
+    icon
+    __typename
+  }
+  addTagsAction {
+    id
+    name
+    color
+    __typename
+  }
+  linkGoalAction {
+    id
+    name
+    imageStorageProvider
+    imageStorageProviderId
+    __typename
+  }
+  linkSavingsGoalAction {
+    id
+    name
+    imageStorageProvider
+    imageStorageProviderId
+    __typename
+  }
+  needsReviewByUserAction {
+    id
+    displayName
+    __typename
+  }
+  unassignNeedsReviewByUserAction
+  sendNotificationAction
+  setHideFromReportsAction
+  setLinkToPaydownBudgetAction
+  reviewStatusAction
+  actionSetOwnerIsJoint
+  actionSetOwner {
+    id
+    displayName
+    profilePictureUrl
+    __typename
+  }
+  actionSetBusinessEntity {
+    id
+    name
+    logoUrl
+    color
+    __typename
+  }
+  actionSetBusinessEntityIsUnassigned
+  recentApplicationCount
+  lastAppliedAt
+  splitTransactionsAction {
+    amountType
+    splitsInfo {
+      categoryId
+      merchantName
+      amount
+      goalId
+      savingsGoalId
+      tags
+      hideFromReports
+      reviewStatus
+      needsReviewByUserId
+      ownerUserId
+      ownerIsJoint
+      businessEntityId
+      businessEntityIsUnassigned
+      __typename
+    }
+    __typename
+  }
+  __typename
+}

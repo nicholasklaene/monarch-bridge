@@ -1,0 +1,15 @@
+get:
+  tags: [System]
+  summary: App version info
+  description: |
+    Current build version, the minimum supported version (older
+    clients are blocked), and the recommended version. Use to drive
+    "please update your app" prompts.
+  operationId: getAppVersion
+  responses:
+    "200":
+      description: Version triple plus optional build SHA.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetAppVersionResponse"

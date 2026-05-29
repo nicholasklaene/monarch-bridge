@@ -1,0 +1,15 @@
+mutation Web_CreateFeedbackEvent($input: CreateFeedbackEventInput!) {
+    createFeedbackEvent(input: $input) {
+      feedbackEvent {
+        id
+        userId
+        formName
+        formVersion
+        answers
+        metadata
+      }
+      errors {
+        message
+      }
+    }
+  }

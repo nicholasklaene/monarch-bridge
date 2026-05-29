@@ -1,0 +1,12 @@
+query Web_GetBenchmark($benchmark: String!, $startDate: String, $endDate: String) {
+  portfolioBenchmark(benchmark: $benchmark, startDate: $startDate, endDate: $endDate) {
+    benchmark
+    points {
+      date
+      portfolioReturn
+      benchmarkReturn
+      __typename
+    }
+    __typename
+  }
+}

@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  app:
+    name: App (Kotlin / Spring Boot)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: No em dashes in docs / spec
+        run: |
+          # Fail if any em dash (U+2014) appears in committed Markdown or in the
+          # openapi spec tree. Scoped tight so unrelated YAML (docker-compose,
+          # spring application.yaml) isn't policed by this guard.
+          found=0
+          if grep -rn '—' --include="*.md" \
+               --exclude-dir=build --exclude-dir=.gradle --exclude-dir=.git \
+               --exclude-dir=clients .; then
+            found=1
+          fi
+          if grep -rn '—' openapi/ ; then
+            found=1
+          fi
+          if [ "$found" -ne 0 ]; then
+            echo "::error::Em dashes found in docs or openapi spec. Use hyphens instead."
+            exit 1
+          fi
+
+      - name: Build + test + detekt + spotless + kover gate
+        run: ./gradlew :app:check
+
+      - name: Publish test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-test-reports
+          path: app/build/reports/
+
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Use the gitleaks binary directly (MIT, free) instead of gitleaks/gitleaks-action@v2,
+      # which requires a paid license for organization repos. The binary has the same
+      # scanning engine without the license gate. Mirrors PDS's CI.
+      - name: Install gitleaks
+        run: |
+          version=8.21.2
+          curl -sL "https://github.com/gitleaks/gitleaks/releases/download/v${version}/gitleaks_${version}_linux_x64.tar.gz" \
+            | tar -xz -C /usr/local/bin gitleaks
+
+      - name: Scan repo
+        run: |
+          gitleaks detect \
+            --source . \
+            --config .gitleaks.toml \
+            --redact \
+            --no-banner \
+            --verbose \
+            --report-format sarif \
+            --report-path gitleaks.sarif
+
+      - name: Upload SARIF
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitleaks-sarif
+          path: gitleaks.sarif

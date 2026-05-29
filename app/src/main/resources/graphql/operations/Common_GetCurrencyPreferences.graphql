@@ -1,0 +1,8 @@
+query Common_GetCurrencyPreferences {
+  currencyPreferences {
+    currency
+    symbol
+    position
+    __typename
+  }
+}

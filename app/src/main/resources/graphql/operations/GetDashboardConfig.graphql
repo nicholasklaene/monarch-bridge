@@ -1,0 +1,3 @@
+query GetDashboardConfig {
+  __typename
+}

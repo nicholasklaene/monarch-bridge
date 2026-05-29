@@ -1,0 +1,19 @@
+query Web_GetMerchantSelectHouseholdMerchants(
+    $offset: Int!
+    $limit: Int!
+    $orderBy: MerchantOrdering
+    $search: String
+  ) {
+    merchants(
+      offset: $offset
+      limit: $limit
+      orderBy: $orderBy
+      search: $search
+      includeMerchantsWithoutTransactions: false
+    ) {
+      id
+      name
+      logoUrl
+      transactionCount
+    }
+  }

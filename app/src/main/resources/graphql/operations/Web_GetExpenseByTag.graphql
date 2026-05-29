@@ -1,0 +1,9 @@
+query Web_GetExpenseByTag($startDate: String, $endDate: String) {
+  expenseByTag(startDate: $startDate, endDate: $endDate) {
+    tagId
+    tagName
+    amount
+    transactionCount
+    __typename
+  }
+}

@@ -1,0 +1,13 @@
+query Web_GetCancellationReasonsWithSubreasons($isTrialing: Boolean) {
+    cancellationReasons(isTrialing: $isTrialing) {
+        reason
+        label
+        subquestion
+        subquestionType
+        subreasons {
+            value
+            label
+            opensFreeText
+        }
+    }
+  }

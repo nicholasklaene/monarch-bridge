@@ -1,0 +1,29 @@
+post:
+  tags: [System]
+  summary: Mark one notification as read
+  description: |
+    Flip a single activity event's `readAt` to now. Used by the bell UI
+    when an event is opened or clicked. Idempotent.
+  operationId: markNotificationAsRead
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: Monarch activity-event id.
+  responses:
+    "200":
+      description: Updated event id + readAt timestamp.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [id]
+                properties:
+                  id: { type: string }
+                  readAt: { type: string, nullable: true }

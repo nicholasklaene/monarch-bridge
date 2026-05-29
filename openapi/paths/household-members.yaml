@@ -1,0 +1,33 @@
+get:
+  tags: [Settings]
+  summary: Household members
+  description: |
+    Every user who shares this household, plus the id of the caller
+    (`meId`) so the client can highlight "you" in member lists.
+  operationId: getHouseholdMembers
+  responses:
+    "200":
+      description: Member list + caller id.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [meId, householdId, members]
+                properties:
+                  meId: { type: string }
+                  householdId: { type: string }
+                  members:
+                    type: array
+                    items:
+                      type: object
+                      required: [id]
+                      properties:
+                        id: { type: string }
+                        name: { type: string, nullable: true }
+                        displayName: { type: string, nullable: true }
+                        householdRole: { type: string, nullable: true }
+                        profilePictureUrl: { type: string, nullable: true }

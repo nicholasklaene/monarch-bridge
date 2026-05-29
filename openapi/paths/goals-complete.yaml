@@ -1,0 +1,28 @@
+post:
+  tags: [Goals]
+  summary: Mark a goal complete
+  description: |
+    Stamp a savings goal `completedAt=now`. Surfaces a celebration in the
+    UI and freezes the goal balance display. Idempotent - replays do not
+    re-trigger the celebration.
+
+    Pair with `POST /v1/goals/{id}/incomplete` to un-mark a goal that was
+    marked complete by mistake.
+  operationId: markGoalComplete
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/GoalIdPath"
+  responses:
+    "200":
+      description: Updated completion state.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [id]
+                properties:
+                  id: { type: string }
+                  completedAt: { type: string, nullable: true }

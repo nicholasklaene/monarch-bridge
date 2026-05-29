@@ -1,0 +1,18 @@
+query Web_GetHoldingDrawerHistoricalPerformance($input: SecurityHistoricalPerformanceInput!) {
+  securityHistoricalPerformance(input: $input) {
+    security {
+      id
+      currentPrice
+      closingPrice
+      currentPriceUpdatedAt
+      __typename
+    }
+    historicalChart {
+      date
+      returnPercent
+      value
+      __typename
+    }
+    __typename
+  }
+}

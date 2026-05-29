@@ -1,0 +1,40 @@
+get:
+  tags: [Transactions]
+  summary: Income, expense, and savings summary for a window
+  description: |
+    Returns the four headline numbers for a date range: total income,
+    total expense, net savings (income minus expense), and savings rate
+    (net savings divided by income). Single row, no per-category
+    breakdown.
+
+    Use for dashboard summary tiles or to drive a savings-rate trend
+    chart by calling repeatedly across months. For the per-category /
+    per-merchant breakdown call `GET /v1/cashflow/breakdown` instead.
+
+    All the standard transaction filters apply (`accountIds`,
+    `categoryIds`, `tagIds`, `search`, etc.) - useful to scope to one
+    account or to exclude transfers.
+  operationId: getCashflow
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/AccountIdsQuery"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/CategoryIdsQuery"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TagIdsQuery"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Search"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/HasAttachments"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/HasNotes"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/HideFromReports"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/IsSplit"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/IsRecurring"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/ImportedFromMint"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/SyncedFromInstitution"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/NeedsReview"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TransactionVisibility"
+  responses:
+    "200":
+      description: Aggregate summary for the window.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CashflowResponse"

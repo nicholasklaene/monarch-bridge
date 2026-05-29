@@ -1,0 +1,9 @@
+query Web_GetExpenseByMerchant($startDate: String, $endDate: String) {
+  expenseByMerchant(startDate: $startDate, endDate: $endDate) {
+    merchantId
+    merchantName
+    amount
+    transactionCount
+    __typename
+  }
+}

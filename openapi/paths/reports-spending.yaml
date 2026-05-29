@@ -1,0 +1,17 @@
+get:
+  tags: [System]
+  summary: Spending report
+  description: |
+    High-level spending vs. budget summary for a date window with the
+    top-N category breakdown. Backs the web Reports page Spending tab.
+  operationId: getSpendingReport
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: Spending summary plus top categories.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetSpendingReportResponse"

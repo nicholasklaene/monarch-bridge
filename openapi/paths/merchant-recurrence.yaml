@@ -1,0 +1,31 @@
+patch:
+  tags: [Recurring]
+  summary: Update a merchant's recurring-transaction settings
+  description: |
+    Reconfigures the recurring-transaction stream rules tied to a
+    merchant: frequency, expected day-of-month, base date, whether
+    the stream is approved as recurring.
+
+    **Gotcha**: Monarch's mutation requires `name` even when only
+    changing recurrence fields. Pass the merchant's current display
+    name unchanged if you don't intend to rename. Use
+    `GET /v1/merchants/{id}` to fetch the current name first.
+
+    Pairs with `POST /v1/transactions/{id}/not-recurring` for the
+    "dismiss this false-positive stream" workflow.
+  operationId: updateMerchantRecurrence
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/MerchantIdPath"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/UpdateMerchantRecurrenceRequest"
+  responses:
+    "200":
+      description: Updated merchant with recurrence stream.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/UpdateMerchantRecurrenceResponse"

@@ -1,0 +1,9 @@
+mutation Common_DeleteHouseholdTransactionTag($tagId: ID!) {
+  deleteTransactionTag(tagId: $tagId) {
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

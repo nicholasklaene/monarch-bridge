@@ -1,0 +1,9 @@
+query Web_GetDownloadTransactionsSession($sessionKey: String!) {
+  downloadTransactionsSession(sessionKey: $sessionKey) {
+    sessionKey
+    status
+    errorMessage
+    url
+    __typename
+  }
+}

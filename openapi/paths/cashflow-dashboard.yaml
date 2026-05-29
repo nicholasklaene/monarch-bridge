@@ -1,0 +1,18 @@
+get:
+  tags: [Transactions]
+  summary: Day-by-day expense series for a date window
+  description: |
+    Returns daily-bucket expense totals. Lightweight series for charting
+    spend over a date window. Sparser shape than `/v1/cashflow`, with
+    only the day-grain summary.
+  operationId: getCashflowDashboard
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: Day-by-day expense totals.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CashflowDashboardResponse"

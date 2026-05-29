@@ -1,0 +1,31 @@
+query Web_GetEditCategory($id: UUID!) {
+  category(id: $id) {
+    id
+    order
+    name
+    icon
+    systemCategory
+    systemCategoryDisplayName
+    budgetVariability
+    excludeFromBudget
+    isSystemCategory
+    isDisabled
+    isProtected
+    group {
+      id
+      type
+      groupLevelBudgetingEnabled
+      __typename
+    }
+    rolloverPeriod {
+      id
+      startMonth
+      startingBalance
+      type
+      frequency
+      targetAmount
+      __typename
+    }
+    __typename
+  }
+}

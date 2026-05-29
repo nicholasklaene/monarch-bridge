@@ -1,0 +1,35 @@
+delete:
+  tags: [Accounts]
+  summary: Delete a Plaid credential (institution connection)
+  description: |
+    Unlinks an institution from Monarch by deleting its Plaid credential.
+    Equivalent to Monarch web UI: Settings -> Data Sources -> unlink.
+
+    The associated accounts get **soft-deleted**: they still appear in
+    `GET /v1/institutions` under `accounts[]` with a non-null `deletedAt`,
+    but are excluded from default `GET /v1/accounts` results.
+
+    Use this to clean up stale credentials with `updateRequired: true` that
+    no longer authenticate (the equivalent of a dead Plaid connection).
+    Credential IDs come from `GET /v1/institutions` `credentials[].id`.
+  operationId: deleteInstitution
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: Credential ID from `/v1/institutions` `credentials[].id`.
+  responses:
+    "200":
+      description: Confirmation.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/DeleteInstitutionResponse"
+    "422":
+      description: Monarch refused the delete (PayloadError).
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

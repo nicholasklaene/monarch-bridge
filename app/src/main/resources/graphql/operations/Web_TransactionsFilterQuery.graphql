@@ -1,0 +1,73 @@
+query Web_TransactionsFilterQuery($search: String, $includeIds: [ID!]) {
+    categoryGroups {
+      id
+      name
+      order
+
+      categories {
+        id
+        name
+        icon
+        order
+      }
+    }
+
+    goalsV2 {
+      id
+      name
+      imageStorageProvider
+      imageStorageProviderId
+      archivedAt
+      priority
+    }
+
+    savingsGoals {
+      id
+      name
+      imageStorageProvider
+      imageStorageProviderId
+      archivedAt
+      priority
+    }
+
+    merchants(search: $search, includeIds: $includeIds) {
+      id
+      name
+      transactionCount
+      logoUrl
+    }
+
+    accounts {
+      id
+      displayName
+      logoUrl
+      icon
+      type {
+        name
+        display
+      }
+    }
+
+    householdTransactionTags {
+      id
+      name
+      order
+      color
+    }
+
+    myHousehold {
+      id
+
+      users {
+        id
+        name
+        displayName
+        profilePictureUrl
+      }
+    }
+
+    householdPreferences {
+      accountGroupOrder
+      collaborationToolsEnabled
+    }
+  }

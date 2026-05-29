@@ -1,0 +1,80 @@
+get:
+  tags: [Paychecks]
+  summary: Single-paycheck full detail
+  description: |
+    Returns the full breakdown for one paycheck: pay date, gross,
+    net, employer, owner (household member), per-line `deductions`
+    (taxes, retirement, insurance, etc.) and per-account `deposits`.
+
+    Use when surfacing a paycheck in a detail view or before a PATCH
+    to inspect current state. For the list view use
+    `GET /v1/paychecks`; for window-level rollups use
+    `GET /v1/paychecks/summary`.
+  operationId: getPaycheck
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/PaycheckIdPath"
+  responses:
+    "200":
+      description: "Full paycheck record with deductions and deposits."
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetPaycheckResponse"
+patch:
+  tags: [Paychecks]
+  summary: Partial-update a paycheck
+  description: |
+    Patches one paycheck. Only fields present in the body are forwarded
+    to Monarch; omit a field to leave it untouched.
+
+    **Gotcha**: the `deductions` and `deposits` arrays are NOT delta
+    updates. When either array is present in the body it WHOLESALE
+    REPLACES the existing list (Monarch's `UpdatePaycheckInput`
+    semantics). To add a single deduction, fetch the current list via
+    `GET /v1/paychecks/{id}` first then send the merged list back.
+
+    Common edits: rename via `description`, change `payDate` if logged
+    on the wrong day, or fill in deductions/deposits after creating
+    with a bare gross+net.
+  operationId: updatePaycheck
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/PaycheckIdPath"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/UpdatePaycheckRequest"
+  responses:
+    "200":
+      description: Updated paycheck.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/UpdatePaycheckResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+delete:
+  tags: [Paychecks]
+  summary: Delete a paycheck
+  description: |
+    Removes one paycheck and its deductions/deposits. **Destructive** -
+    drops the row, future summary calls will no longer count it.
+
+    The underlying transaction (the actual paycheck deposit on the bank
+    side) is not deleted by this call - only the Monarch paycheck
+    record that links the gross + deductions + deposit structure.
+  operationId: deletePaycheck
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/PaycheckIdPath"
+  responses:
+    "200":
+      description: Confirmation.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/DeletePaycheckResponse"

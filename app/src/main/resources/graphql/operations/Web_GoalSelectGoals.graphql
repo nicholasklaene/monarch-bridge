@@ -1,0 +1,17 @@
+query Web_GoalSelectGoals {
+    goalsV2 {
+      id
+      name
+      priority
+      archivedAt
+      imageStorageProvider
+      imageStorageProviderId
+
+      accountAllocations {
+        id
+        account {
+          id
+        }
+      }
+    }
+  }

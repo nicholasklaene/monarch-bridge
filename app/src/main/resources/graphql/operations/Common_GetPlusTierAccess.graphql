@@ -1,0 +1,9 @@
+query Common_GetPlusTierAccess {
+  subscription {
+    id
+    entitlements
+    plusTrialEndsAt
+    canceledPlusTrialAt
+    __typename
+  }
+}

@@ -1,0 +1,23 @@
+get:
+  tags: [Merchants]
+  summary: Per-merchant aggregate stats
+  description: |
+    Aggregate stats for one merchant across a window: total spend,
+    transaction count, average ticket, first / last seen, and the count
+    of distinct months with activity. Backs the merchant detail page's
+    "Activity" card.
+
+    Use `GET /v1/merchants/{id}/transactions` for the row-level
+    transactions list.
+  operationId: getMerchantStats
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/MerchantIdPath"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: Stats for the merchant.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetMerchantStatsResponse"

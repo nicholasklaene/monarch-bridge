@@ -1,0 +1,17 @@
+mutation Web_CreateSpinwheelAccountMapping($input: SpinwheelAccountMappingInput!) {
+    createSpinwheelAccountMapping(input: $input) {
+      success
+      errors {
+        ...PayloadErrorFields
+      }
+    }
+  }
+
+fragment PayloadErrorFields on PayloadError {
+    fieldErrors {
+      field
+      messages
+    }
+    message
+    code
+  }

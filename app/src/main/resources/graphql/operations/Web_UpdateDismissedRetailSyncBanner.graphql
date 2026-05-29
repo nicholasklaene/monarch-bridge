@@ -1,0 +1,28 @@
+mutation Web_UpdateDismissedRetailSyncBanner(
+    $dismissedRetailSyncBanner: Boolean
+    $dismissedRetailSyncTargetBannerAt: DateTime
+  ) {
+    updateUserProfile(
+      input: {
+        dismissedRetailSyncBanner: $dismissedRetailSyncBanner
+        dismissedRetailSyncTargetBannerAt: $dismissedRetailSyncTargetBannerAt
+      }
+    ) {
+      userProfile {
+        dismissedRetailSyncBanner
+        dismissedRetailSyncTargetBannerAt
+      }
+      errors {
+        ...PayloadErrorFields
+      }
+    }
+  }
+
+fragment PayloadErrorFields on PayloadError {
+    fieldErrors {
+      field
+      messages
+    }
+    message
+    code
+  }

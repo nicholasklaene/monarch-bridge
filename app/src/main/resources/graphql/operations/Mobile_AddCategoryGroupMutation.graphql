@@ -1,0 +1,3 @@
+mutation Mobile_AddCategoryGroupMutation {
+  __typename
+}

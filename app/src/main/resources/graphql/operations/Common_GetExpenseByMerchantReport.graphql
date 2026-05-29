@@ -1,0 +1,12 @@
+query Common_GetExpenseByMerchantReport($startDate: Date, $endDate: Date) {
+  expenseByMerchantReport(startDate: $startDate, endDate: $endDate) {
+    rows {
+      merchantId
+      merchantName
+      amount
+      transactionCount
+      __typename
+    }
+    __typename
+  }
+}

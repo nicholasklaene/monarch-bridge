@@ -1,0 +1,39 @@
+mutation Web_UpdateCompany($input: UpdateCompanyMutationInput!) {
+    updateCompany(input: $input) {
+      account {
+        id
+        name
+        company {
+          id
+          name
+          isPublic
+          employmentStatus
+          ownerStartDate
+          ownerEndDate
+          fullyDilutedShares
+          latestFundingRound
+          latestPreferredPrice
+          fmv409aPrice
+          sharePrice
+          linkedAccountId
+          priceHistory {
+            date
+            price
+            priceType
+          }
+        }
+      }
+      errors {
+        ...PayloadErrorFields
+      }
+    }
+  }
+
+fragment PayloadErrorFields on PayloadError {
+    fieldErrors {
+      field
+      messages
+    }
+    message
+    code
+  }

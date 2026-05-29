@@ -1,0 +1,21 @@
+get:
+  tags: [Accounts]
+  summary: Institution lookup by Plaid id
+  description: |
+    Look up institution metadata (logo, status, connection health) by
+    its Plaid institution id.
+  operationId: getInstitutionByPlaidId
+  parameters:
+    - in: path
+      name: plaidId
+      required: true
+      schema:
+        type: string
+      description: The Plaid institution id (e.g. `ins_3`).
+  responses:
+    "200":
+      description: Institution detail.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetInstitutionByPlaidResponse"

@@ -1,0 +1,8 @@
+query Common_GetBetaFeatures {
+  betaFeatures {
+    name
+    description
+    enrolled
+    __typename
+  }
+}

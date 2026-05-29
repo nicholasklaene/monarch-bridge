@@ -1,0 +1,21 @@
+get:
+  tags: [System]
+  summary: Single AI savings insight
+  description: |
+    Detail view of one insight, including the optional `playbook.diySteps`
+    (do-it-yourself walkthrough text) and `paymentAccount` label when relevant.
+  operationId: getFinancialInsight
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: Monarch financial insight id.
+  responses:
+    "200":
+      description: Insight detail.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetFinancialInsightResponse"

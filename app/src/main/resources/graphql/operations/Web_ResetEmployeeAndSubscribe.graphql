@@ -1,0 +1,15 @@
+mutation Web_ResetEmployeeAndSubscribe($input: EmployeeSubscriptionInput!) {
+    resetEmployeeAndSubscribe(input: $input) {
+      subscription {
+        id
+        isOnFreeTrial
+        hasStartedFreeTrial
+        entitlements
+        billingPeriod
+        hasBillingIssue
+      }
+      errors {
+        message
+      }
+    }
+  }

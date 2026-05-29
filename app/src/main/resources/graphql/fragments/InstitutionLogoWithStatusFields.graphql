@@ -1,0 +1,12 @@
+fragment InstitutionLogoWithStatusFields on Credential {
+  dataProvider
+  updateRequired
+  institution {
+    hasIssuesReported
+    status
+    balanceStatus
+    transactionsStatus
+    __typename
+  }
+  __typename
+}

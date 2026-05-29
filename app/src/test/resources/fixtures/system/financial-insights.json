@@ -1,0 +1,36 @@
+{
+  "financialInsights": [
+    {
+      "id": "ins-1",
+      "merchantNameDisplay": "Netflix",
+      "merchantLogoUrl": null,
+      "dashboardSubtitle": "Subscription audit",
+      "description": "Dormant subscription detected",
+      "reasoning": "No usage in 6 months",
+      "effort": "LOW",
+      "status": "NEW",
+      "savingsEstimateLow": 15.99,
+      "savingsEstimateHigh": 17.99,
+      "capturedSavingsLow": 0.0,
+      "currentAnnualCost": 191.88,
+      "recurringStreamSnapshot": {"frequency": "monthly"},
+      "nextChargeDate": "2026-06-01",
+      "score": 0.92,
+      "opportunityType": "CANCEL_SUBSCRIPTION",
+      "suggestedActionType": "CANCEL",
+      "relatedMerchants": [{"name": "Netflix", "logoUrl": null, "merchantId": "m-1"}]
+    }
+  ],
+  "financialInsightSummary": {
+    "totalCapturedSavings": 50.0,
+    "completedCount": 2,
+    "totalIdentifiedSavingsLow": 100.0,
+    "totalIdentifiedSavingsHigh": 200.0,
+    "acceptedCount": 1,
+    "inProgressCount": 1,
+    "newCount": 3
+  },
+  "financialInsightRuns": [
+    {"id": "run-1", "status": "COMPLETED", "createdAt": "2026-05-25T00:00:00Z", "insightsGeneratedCount": 4}
+  ]
+}

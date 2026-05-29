@@ -1,0 +1,115 @@
+query Web_RecommendedAccounts($accountId: ID) {
+    recommendedAccountDataTransferAccounts(accountId: $accountId) {
+      recommendedAccounts {
+        createdAt
+        dataProvider
+        ...AccountsListFields
+      }
+      otherAccounts {
+        createdAt
+        dataProvider
+        ...AccountsListFields
+      }
+      sameSubtypeAccounts {
+        createdAt
+        dataProvider
+        ...AccountsListFields
+      }
+      unsupportedAccounts {
+        account {
+          createdAt
+          dataProvider
+          ...AccountsListFields
+        }
+        reason
+      }
+    }
+  }
+
+fragment AccountsListFields on Account {
+      id
+      syncDisabled
+      isHidden
+      isAsset
+      includeInNetWorth
+      order
+      type {
+        name
+        display
+      }
+      ...AccountListItemFields
+    }
+
+fragment AccountListItemFields on Account {
+      id
+      displayName
+      displayBalance
+      signedBalance
+      updatedAt
+      syncDisabled
+      dataProviderDeactivatedAt
+      icon
+      logoUrl
+      isHidden
+      isAsset
+      includeInNetWorth
+      includeBalanceInNetWorth
+      displayLastUpdatedAt
+      limit
+      type {
+        name
+      }
+      ...AccountMaskFields
+      credential {
+        id
+        updateRequired
+        dataProvider
+        disconnectedFromDataProviderAt
+        syncDisabledAt
+        syncDisabledReason
+      }
+      connectionStatus {
+        connectionStatusCode
+        copyTitle
+        inAppSmallCopy
+        inAppCopy
+        helpCenterUrl
+      }
+      institution {
+        id
+        ...InstitutionStatusTooltipFields
+      }
+      ownedByUser {
+        id
+        displayName
+        profilePictureUrl
+      }
+      businessEntity {
+        id
+        name
+        logoUrl
+        color
+      }
+    }
+
+fragment AccountMaskFields on Account {
+    id
+    mask
+    subtype {
+      display
+    }
+  }
+
+fragment InstitutionStatusTooltipFields on Institution {
+    id
+    logo
+    name
+    status
+    plaidStatus
+    newConnectionsDisabled
+    hasIssuesReported
+    url
+    hasIssuesReportedMessage
+    transactionsStatus
+    balanceStatus
+  }

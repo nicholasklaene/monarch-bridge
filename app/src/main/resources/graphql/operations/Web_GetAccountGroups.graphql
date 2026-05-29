@@ -1,0 +1,10 @@
+query Web_GetAccountGroups {
+  accountGroups {
+    id
+    name
+    order
+    isCollapsed
+    accountIds
+    __typename
+  }
+}

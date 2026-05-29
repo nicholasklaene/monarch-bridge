@@ -1,0 +1,3 @@
+query GetYearlyReviewStatus {
+  __typename
+}

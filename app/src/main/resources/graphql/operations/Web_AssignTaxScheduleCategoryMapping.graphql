@@ -1,0 +1,18 @@
+mutation Web_AssignTaxScheduleCategoryMapping($input: AssignTaxScheduleCategoryMappingInput!) {
+    assignTaxScheduleCategoryMapping(input: $input) {
+      taxScheduleCategoryMapping {
+        id
+        lineItem
+        lineItemInfo {
+          key
+          lineNumber
+          description
+          lineType
+          sortOrder
+        }
+      }
+      errors {
+        message
+      }
+    }
+  }

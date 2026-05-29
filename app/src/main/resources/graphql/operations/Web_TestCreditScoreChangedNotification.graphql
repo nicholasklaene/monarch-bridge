@@ -1,0 +1,5 @@
+mutation Web_TestCreditScoreChangedNotification($previousScore: Int!, $currentScore: Int!) {
+    sendCreditScoreNotification(previousScore: $previousScore, currentScore: $currentScore) {
+      success
+    }
+  }

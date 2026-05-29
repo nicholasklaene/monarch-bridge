@@ -1,0 +1,16 @@
+get:
+  tags: [Transactions]
+  summary: Transaction notes
+  description: |
+    Standalone notes accessor for one transaction. Lighter than
+    `/v1/transactions/{id}` when you only need the notes string.
+  operationId: getTransactionNotes
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TransactionIdPath"
+  responses:
+    "200":
+      description: Note value.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetTransactionNotesResponse"

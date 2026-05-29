@@ -1,0 +1,3 @@
+query RecurringMerchantSearch {
+  __typename
+}

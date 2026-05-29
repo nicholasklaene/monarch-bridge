@@ -1,0 +1,10 @@
+mutation Web_CreateAdvisorSubscription {
+    createAdvisorStripeSubscription {
+      subscription {
+        id
+      }
+      errors {
+        message
+      }
+    }
+  }

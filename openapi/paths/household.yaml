@@ -1,0 +1,27 @@
+get:
+  tags: [Settings]
+  summary: My household
+  description: |
+    Household-level metadata (name, mailing address). One row per Monarch
+    household; every member of the household sees the same value.
+  operationId: getMyHousehold
+  responses:
+    "200":
+      description: Household record.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [id]
+                properties:
+                  id: { type: string }
+                  name: { type: string, nullable: true }
+                  address: { type: string, nullable: true }
+                  city: { type: string, nullable: true }
+                  state: { type: string, nullable: true }
+                  zipCode: { type: string, nullable: true }
+                  country: { type: string, nullable: true }

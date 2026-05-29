@@ -1,0 +1,26 @@
+get:
+  tags: [Categories]
+  summary: Category group with its child categories
+  description: |
+    Category-group detail including each child category (id, name, icon)
+    and the group-level rollover period config.
+  operationId: getCategoryGroupDetails
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: Monarch category-group id.
+    - in: query
+      name: includeDisabledSystemCategories
+      required: false
+      schema:
+        type: boolean
+  responses:
+    "200":
+      description: Category group with child categories.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetCategoryGroupDetailsResponse"

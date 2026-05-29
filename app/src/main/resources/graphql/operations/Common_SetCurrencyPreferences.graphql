@@ -1,0 +1,15 @@
+mutation Common_SetCurrencyPreferences($input: SetCurrencyPreferencesInput!) {
+  setCurrencyPreferences(input: $input) {
+    currencyPreferences {
+      currency
+      symbol
+      position
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

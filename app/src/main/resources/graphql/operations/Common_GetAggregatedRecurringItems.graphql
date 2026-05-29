@@ -1,0 +1,140 @@
+query Common_GetAggregatedRecurringItems(
+  $startDate: Date!
+  $endDate: Date!
+  $filters: RecurringTransactionFilter
+) {
+  aggregatedRecurringItems(
+    startDate: $startDate
+    endDate: $endDate
+    groupBy: "status"
+    filters: $filters
+  ) {
+    groups {
+      groupBy {
+        status
+        __typename
+      }
+      results {
+        stream {
+          id
+          frequency
+          isActive
+          amount
+          isApproximate
+          name
+          logoUrl
+          merchant {
+            id
+            name
+            logoUrl
+            __typename
+          }
+          creditReportLiabilityAccount {
+            id
+            liabilityType
+            account {
+              id
+              __typename
+            }
+            __typename
+          }
+          __typename
+        }
+        date
+        isPast
+        isLate
+        markedPaidAt
+        isCompleted
+        transactionId
+        amount
+        amountDiff
+        isAmountDifferentThanOriginal
+        creditReportLiabilityStatementId
+        category {
+          id
+          name
+          icon
+          __typename
+        }
+        account {
+          id
+          displayName
+          icon
+          logoUrl
+          __typename
+        }
+        liabilityStatement {
+          id
+          minimumPaymentAmount
+          paymentsInformation {
+            status
+            remainingBalance
+            transactions {
+              id
+              amount
+              date
+              category {
+                id
+                name
+                icon
+                group {
+                  id
+                  name
+                  type
+                  __typename
+                }
+                __typename
+              }
+              __typename
+            }
+            __typename
+          }
+          __typename
+        }
+        __typename
+      }
+      summary {
+        expense {
+          total
+          __typename
+        }
+        creditCard {
+          total
+          __typename
+        }
+        income {
+          total
+          __typename
+        }
+        __typename
+      }
+      __typename
+    }
+    aggregatedSummary {
+      expense {
+        completed
+        remaining
+        total
+        count
+        pendingAmountCount
+        __typename
+      }
+      creditCard {
+        completed
+        remaining
+        total
+        count
+        pendingAmountCount
+        __typename
+      }
+      income {
+        completed
+        remaining
+        total
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}

@@ -1,0 +1,3 @@
+query VehiclesSearch {
+  __typename
+}

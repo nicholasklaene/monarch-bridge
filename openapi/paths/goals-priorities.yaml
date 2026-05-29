@@ -1,0 +1,25 @@
+put:
+  tags: [Goals]
+  summary: Re-order savings goals by priority
+  description: |
+    Reorders goals by sending the full id list in the desired order.
+    The proxy assigns `priority = index` (0-based) to each id, then
+    calls Monarch's batch priority mutation in one round-trip.
+
+    Send the COMPLETE goal id list, not a delta. Goals missing from
+    the list keep their current priority but end up after all listed
+    goals. Use after a drag-and-drop reorder in a goals UI.
+  operationId: updateGoalsPriorities
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/UpdateGoalsPrioritiesRequest"
+  responses:
+    "200":
+      description: Updated `(goalId, priority)` pairs.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/UpdateGoalsPrioritiesResponse"

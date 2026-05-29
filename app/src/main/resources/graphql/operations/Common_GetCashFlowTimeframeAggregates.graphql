@@ -1,0 +1,44 @@
+query Common_GetCashFlowTimeframeAggregates($filters: TransactionFilterInput) {
+  byYear: aggregates(groupBy: ["year"], fillEmptyValues: true, filters: $filters) {
+    groupBy {
+      year
+      __typename
+    }
+    summary {
+      savings
+      savingsRate
+      sumIncome
+      sumExpense
+      __typename
+    }
+    __typename
+  }
+  byMonth: aggregates(groupBy: ["month"], fillEmptyValues: true, filters: $filters) {
+    groupBy {
+      month
+      __typename
+    }
+    summary {
+      savings
+      savingsRate
+      sumIncome
+      sumExpense
+      __typename
+    }
+    __typename
+  }
+  byQuarter: aggregates(groupBy: ["quarter"], fillEmptyValues: true, filters: $filters) {
+    groupBy {
+      quarter
+      __typename
+    }
+    summary {
+      savings
+      savingsRate
+      sumIncome
+      sumExpense
+      __typename
+    }
+    __typename
+  }
+}

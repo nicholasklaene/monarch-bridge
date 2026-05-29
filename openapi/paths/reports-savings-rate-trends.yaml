@@ -1,0 +1,21 @@
+get:
+  tags: [System]
+  summary: Savings-rate trend series
+  description: |
+    Savings rate (income minus expense divided by income) plotted per
+    period. Each point carries the period label, the savings rate, and
+    the underlying income and expense totals.
+  operationId: getSavingsRateTrends
+  parameters:
+    - in: query
+      name: months
+      required: false
+      schema: { type: integer, default: 12 }
+      description: How many months of history; defaults to 12.
+  responses:
+    "200":
+      description: Savings-rate trend points.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetSavingsRateTrendsResponse"

@@ -1,0 +1,21 @@
+get:
+  tags: [System]
+  summary: Income vs. expense year-over-year
+  description: |
+    Compares income vs. expense across years. Each point carries a
+    period label (typically a month) plus the income and expense
+    totals for that period.
+  operationId: getIncomeVsExpenseYoy
+  parameters:
+    - in: query
+      name: years
+      required: false
+      schema: { type: integer, default: 2 }
+      description: How many years of history to include; defaults to 2.
+  responses:
+    "200":
+      description: Period-level income/expense points.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetIncomeVsExpenseYoyResponse"

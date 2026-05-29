@@ -1,0 +1,36 @@
+fragment PaycheckFields on Paycheck {
+  id
+  employer {
+    id
+    name
+    __typename
+  }
+  employerName
+  payrollProvider
+  payDate
+  payPeriodStart
+  payPeriodEnd
+  grossAmount
+  createdAt
+  isMagicImported
+  owner {
+    id
+    name
+    profilePictureUrl
+    __typename
+  }
+  createdBy {
+    id
+    name
+    __typename
+  }
+  deductions {
+    ...PaycheckDeductionFields
+    __typename
+  }
+  deposits {
+    ...PaycheckDepositFields
+    __typename
+  }
+  __typename
+}

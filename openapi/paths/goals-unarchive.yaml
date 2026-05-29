@@ -1,0 +1,21 @@
+post:
+  tags: [Goals]
+  summary: Un-archive a savings goal
+  description: |
+    Restores a previously archived goal back to active state. Inverse
+    of `DELETE /v1/goals/{id}`: clears the upstream `archivedAt`
+    timestamp and flips `status` back to `active`.
+
+    Use when a user accidentally archived a goal or wants to revive an
+    old one. No-op if the goal is already active. For permanent
+    removal use `DELETE /v1/goals/{id}/hard` (no undo).
+  operationId: unarchiveGoal
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/GoalIdPath"
+  responses:
+    "200":
+      description: The restored goal.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ArchiveGoalResponse"

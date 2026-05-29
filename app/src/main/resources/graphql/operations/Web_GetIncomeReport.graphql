@@ -1,0 +1,14 @@
+query Web_GetIncomeReport($startDate: Date, $endDate: Date) {
+  incomeReport(startDate: $startDate, endDate: $endDate) {
+    totalIncome
+    averageMonthlyIncome
+    sources {
+      categoryId
+      name
+      amount
+      percentOfTotal
+      __typename
+    }
+    __typename
+  }
+}

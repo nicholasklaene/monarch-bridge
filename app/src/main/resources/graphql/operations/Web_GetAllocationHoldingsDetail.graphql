@@ -1,0 +1,30 @@
+query Web_GetAllocationHoldingsDetail(
+  $porfolioInput: PortfolioInput
+  $classificationField: PortfolioAllocationClassificationField!
+  $classificationValue: String!
+  $limit: Int
+  $offset: Int
+) {
+  portfolio(input: $porfolioInput) {
+    allocationHoldingsDetail(
+      classificationField: $classificationField
+      classificationValue: $classificationValue
+      limit: $limit
+      offset: $offset
+    ) {
+      holdings {
+        holdingIds
+        securityName
+        ticker
+        securityType
+        securityTypeDisplay
+        quantity
+        value
+        __typename
+      }
+      totalCount
+      __typename
+    }
+    __typename
+  }
+}

@@ -1,0 +1,11 @@
+query Web_GetZestimate($address: String!) {
+  zestimates(address: $address) {
+    zpid
+    addressStreet
+    addressCity
+    addressStateAbbr
+    addressPostalCode
+    zestimate
+    __typename
+  }
+}

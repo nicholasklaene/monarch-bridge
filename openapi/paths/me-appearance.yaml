@@ -1,0 +1,34 @@
+get:
+  tags: [Settings]
+  summary: Appearance preferences
+  description: |
+    User-scoped appearance settings: theme (`light` / `dark` / `system`),
+    accent color, compact-mode toggle.
+  operationId: getAppearance
+  responses:
+    "200":
+      description: Appearance preferences.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetAppearanceResponse"
+patch:
+  tags: [Settings]
+  summary: Update appearance preferences
+  description: |
+    Patch one or more appearance preferences. Only populated fields are
+    forwarded; omit a field to leave it untouched.
+  operationId: updateAppearance
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/UpdateAppearanceRequest"
+  responses:
+    "200":
+      description: Updated appearance.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/UpdateAppearanceResponse"

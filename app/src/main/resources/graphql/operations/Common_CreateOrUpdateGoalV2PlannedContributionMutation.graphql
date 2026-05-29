@@ -1,0 +1,3 @@
+query Common_CreateOrUpdateGoalV2PlannedContributionMutation {
+  __typename
+}

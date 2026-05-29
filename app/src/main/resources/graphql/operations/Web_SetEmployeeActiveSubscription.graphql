@@ -1,0 +1,14 @@
+mutation Web_SetEmployeeActiveSubscription($input: EmployeeSubscriptionInput!) {
+    setEmployeeActiveSubscription(input: $input) {
+      subscription {
+        id
+        isOnFreeTrial
+        entitlements
+        billingPeriod
+        hasBillingIssue
+      }
+      errors {
+        message
+      }
+    }
+  }

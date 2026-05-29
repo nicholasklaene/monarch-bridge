@@ -1,0 +1,19 @@
+get:
+  tags: [System]
+  summary: Calendar events
+  description: |
+    Bills, recurring transactions, and paychecks projected onto a
+    calendar shape for a date window. One entry per event with date,
+    type (`bill`, `recurring`, `paycheck`), title, amount, and the id
+    of the underlying source record.
+  operationId: getCalendarEvents
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: Calendar events.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetCalendarEventsResponse"

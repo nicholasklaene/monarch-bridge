@@ -1,0 +1,7 @@
+query Common_GetEntitlements {
+  subscription {
+    id
+    entitlements
+    __typename
+  }
+}

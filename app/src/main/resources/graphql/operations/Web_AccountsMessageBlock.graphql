@@ -1,0 +1,79 @@
+query Web_AccountsMessageBlock($ids: [ID!]!) {
+    accounts(filters: { ids: $ids }) {
+      ...AccountListItemFields
+    }
+  }
+
+fragment AccountListItemFields on Account {
+      id
+      displayName
+      displayBalance
+      signedBalance
+      updatedAt
+      syncDisabled
+      dataProviderDeactivatedAt
+      icon
+      logoUrl
+      isHidden
+      isAsset
+      includeInNetWorth
+      includeBalanceInNetWorth
+      displayLastUpdatedAt
+      limit
+      type {
+        name
+      }
+      ...AccountMaskFields
+      credential {
+        id
+        updateRequired
+        dataProvider
+        disconnectedFromDataProviderAt
+        syncDisabledAt
+        syncDisabledReason
+      }
+      connectionStatus {
+        connectionStatusCode
+        copyTitle
+        inAppSmallCopy
+        inAppCopy
+        helpCenterUrl
+      }
+      institution {
+        id
+        ...InstitutionStatusTooltipFields
+      }
+      ownedByUser {
+        id
+        displayName
+        profilePictureUrl
+      }
+      businessEntity {
+        id
+        name
+        logoUrl
+        color
+      }
+    }
+
+fragment AccountMaskFields on Account {
+    id
+    mask
+    subtype {
+      display
+    }
+  }
+
+fragment InstitutionStatusTooltipFields on Institution {
+    id
+    logo
+    name
+    status
+    plaidStatus
+    newConnectionsDisabled
+    hasIssuesReported
+    url
+    hasIssuesReportedMessage
+    transactionsStatus
+    balanceStatus
+  }

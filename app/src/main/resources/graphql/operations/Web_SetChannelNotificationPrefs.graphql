@@ -1,0 +1,17 @@
+mutation Web_SetChannelNotificationPrefs($input: SetChannelNotificationPrefsInput!) {
+  setChannelNotificationPrefs(input: $input) {
+    prefs {
+      weeklyRecap
+      budgetAlerts
+      billReminders
+      goalUpdates
+      marketingTips
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

@@ -1,0 +1,12 @@
+# updateAppearance_request
+
+## Properties
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**theme** | **string** |  | [optional] [default to null]
+**accentColor** | **string** |  | [optional] [default to null]
+**compactMode** | **boolean** |  | [optional] [default to null]
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
+

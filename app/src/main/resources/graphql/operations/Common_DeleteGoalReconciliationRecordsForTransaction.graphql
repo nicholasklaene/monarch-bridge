@@ -1,0 +1,10 @@
+mutation Common_DeleteGoalReconciliationRecordsForTransaction($transactionId: ID!) {
+  deleteGoalReconciliationRecordsForTransaction(transactionId: $transactionId) {
+    success
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

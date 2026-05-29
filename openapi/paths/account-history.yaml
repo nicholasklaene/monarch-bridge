@@ -1,0 +1,25 @@
+get:
+  tags: [Accounts]
+  summary: Daily balance snapshots for one account
+  description: |
+    Returns the full daily balance series for a single account: one snapshot
+    per day from the link date (or first manual entry) through today.
+
+    Use for per-account trend charts, drift analysis between two accounts, or
+    to reconstruct a balance at a specific point in time. For aggregated
+    net-worth across accounts use `GET /v1/networth` instead.
+
+    Series is chronologically ascending. Each entry is `(date, signedBalance)`
+    where the sign matches the account type (loans/credit are negative). For
+    type-grouped or recent-only views see `GET /v1/networth/by-type` and
+    `GET /v1/networth/recent`.
+  operationId: getAccountHistory
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/AccountIdPath"
+  responses:
+    "200":
+      description: Chronologically-ascending snapshots starting from the account link date.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/AccountHistoryResponse"

@@ -1,0 +1,9 @@
+query Web_GetTrustAndWillSubscription {
+    subscription {
+      id
+      entitlements
+      isOnFreeTrial
+      trialEndsAt
+      plusTrialEndsAt
+    }
+  }

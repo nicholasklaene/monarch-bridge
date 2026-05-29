@@ -1,0 +1,20 @@
+query Web_GetTopInstitutionGroups($dataProviders: [String]!) {
+  credentials {
+    id
+    __typename
+  }
+  equityAccountsCount
+  topInstitutionGroups(dataProviders: $dataProviders) {
+    type
+    title
+    shortTitle
+    accountsConnectedCount
+    institutions {
+      id
+      name
+      logo
+      __typename
+    }
+    __typename
+  }
+}

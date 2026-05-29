@@ -1,0 +1,21 @@
+delete:
+  tags: [Goals]
+  summary: Hard-delete a savings goal
+  description: |
+    Permanently removes the goal. **No undo**. Distinct from
+    `DELETE /v1/goals/{id}` (which archives / soft-deletes and is
+    reversible via the unarchive endpoint).
+
+    After this call the goal disappears from `GET /v1/goals` entirely
+    and its event log is no longer queryable. Use only when the user
+    explicitly wants to purge a goal, not for routine cleanup.
+  operationId: hardDeleteGoal
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/GoalIdPath"
+  responses:
+    "200":
+      description: Confirmation of hard delete.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/DeleteGoalResponse"

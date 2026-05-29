@@ -1,0 +1,12 @@
+mutation Web_PauseSubscription($input: PauseSubscriptionInput!) {
+  pauseSubscription(input: $input) {
+    paused
+    pausedAt
+    resumeAt
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

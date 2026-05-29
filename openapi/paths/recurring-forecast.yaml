@@ -1,0 +1,18 @@
+get:
+  tags: [Recurring]
+  summary: Recurring transaction forecast
+  description: |
+    Forward calendar of forecast recurring occurrences for a date
+    window. One entry per occurrence with date, amount, merchant,
+    and linked stream id.
+  operationId: getRecurringForecast
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: Forecast occurrences.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetRecurringForecastResponse"

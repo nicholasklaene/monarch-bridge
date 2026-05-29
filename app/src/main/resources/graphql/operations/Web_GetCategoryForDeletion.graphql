@@ -1,0 +1,9 @@
+query Web_GetCategoryForDeletion($id: UUID!) {
+  category(id: $id) {
+    id
+    name
+    icon
+    isSystemCategory
+    __typename
+  }
+}

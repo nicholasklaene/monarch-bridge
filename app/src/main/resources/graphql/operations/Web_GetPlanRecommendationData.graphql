@@ -1,0 +1,15 @@
+query Web_GetPlanRecommendationData {
+    me {
+      profile {
+        id
+        hasSideIncomeOrBusiness
+      }
+    }
+    userOnboardingFinancialGoals {
+      id
+      onboardingFinancialGoal {
+        id
+        name
+      }
+    }
+  }

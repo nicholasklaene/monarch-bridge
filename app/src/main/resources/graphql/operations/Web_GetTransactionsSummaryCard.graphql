@@ -1,0 +1,5 @@
+query Web_GetTransactionsSummaryCard($filters: TransactionFilterInput!) {
+    allTransactions(filters: $filters) {
+      totalCount
+    }
+  }

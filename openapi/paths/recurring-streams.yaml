@@ -1,0 +1,28 @@
+get:
+  tags: [Recurring]
+  summary: Recurring stream definitions
+  description: |
+    Returns the raw recurrence rules behind each stream: review status,
+    base date, frequency (`weekly`, `monthly`, etc.), expected
+    day-of-month, and any linked credit-report liability account.
+
+    Lighter than `GET /v1/recurring/all` which adds merchant /
+    category resolution. Use to build an editing UI for recurrence
+    rules; pair with `PATCH /v1/merchants/{id}/recurrence` to mutate
+    the rule for a specific merchant. Toggle `includeLiabilities` to
+    add credit-report-derived streams.
+  operationId: listRecurringStreams
+  parameters:
+    - in: query
+      name: includeLiabilities
+      required: false
+      schema:
+        type: boolean
+      description: Include liability-account-derived streams.
+  responses:
+    "200":
+      description: All recurring streams.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ListRecurringStreamsResponse"

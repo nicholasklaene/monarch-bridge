@@ -1,0 +1,47 @@
+post:
+  tags: [Transactions]
+  summary: Move transactions between accounts
+  description: |
+    Reassign one or more transactions from their current account to a
+    target account. Use when reconciling a mis-categorized import (e.g.
+    Plaid bucketed a charge under the wrong account) or after a manual
+    merge.
+
+    Returns the count of transactions Monarch actually moved, plus a
+    flat error array (one message per failed transaction).
+  operationId: moveTransactions
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required: [transactionIds, toAccountId]
+          properties:
+            transactionIds:
+              type: array
+              items: { type: string }
+              description: Transaction ids to move.
+            toAccountId:
+              type: string
+              description: Destination Monarch account id.
+  responses:
+    "200":
+      description: Move result.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [numTransactionsMoved]
+                properties:
+                  numTransactionsMoved: { type: integer }
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message: { type: string, nullable: true }

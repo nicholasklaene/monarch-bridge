@@ -1,0 +1,5 @@
+mutation Web_UpdateRenewalReminder($input: UpdateRenewalReminderInput!) {
+    updateRenewalReminder(input: $input) {
+      renewalReminderDays
+    }
+  }

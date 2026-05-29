@@ -1,0 +1,10 @@
+mutation Web_DeleteAccountLogo($accountId: ID!) {
+    deleteAccountLogo(accountId: $accountId) {
+      success
+      account {
+        id
+        logoUrl
+        hasCustomizedLogo
+      }
+    }
+  }

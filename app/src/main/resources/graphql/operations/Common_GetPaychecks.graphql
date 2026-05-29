@@ -1,0 +1,11 @@
+query Common_GetPaychecks($startDate: Date, $endDate: Date, $ownerId: ID, $employerId: ID) {
+  paychecks(
+    startDate: $startDate
+    endDate: $endDate
+    ownerId: $ownerId
+    employerId: $employerId
+  ) {
+    ...PaycheckFields
+    __typename
+  }
+}

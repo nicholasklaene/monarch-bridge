@@ -1,0 +1,12 @@
+query Common_GetMyHousehold {
+  myHousehold {
+    id
+    name
+    address
+    city
+    state
+    zipCode
+    country
+    __typename
+  }
+}

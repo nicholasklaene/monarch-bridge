@@ -1,0 +1,34 @@
+get:
+  tags: [Settings]
+  summary: Currency preferences
+  description: |
+    User's default display currency. Returns the ISO currency code plus
+    Monarch's render hints (symbol + before/after position).
+  operationId: getCurrency
+  responses:
+    "200":
+      description: Current currency preferences.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetCurrencyResponse"
+put:
+  tags: [Settings]
+  summary: Update currency preferences
+  description: |
+    Set the user's default display currency. `currency` is required (ISO
+    code, e.g. `USD`, `EUR`). `position` is optional ("before" / "after").
+  operationId: setCurrency
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/SetCurrencyRequest"
+  responses:
+    "200":
+      description: Updated currency preferences.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/SetCurrencyResponse"

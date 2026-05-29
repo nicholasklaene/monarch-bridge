@@ -1,0 +1,7 @@
+query Web_GetMerchantSelectRecommendedMerchants($transactionId: ID!) {
+    recommendedMerchants(id: $transactionId) {
+      name
+      source
+      transactionCount
+    }
+  }

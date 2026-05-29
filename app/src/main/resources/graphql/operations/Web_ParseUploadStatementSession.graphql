@@ -1,0 +1,18 @@
+mutation Web_ParseUploadStatementSession($input: ParseStatementInput!) {
+    parseUploadStatementSession(input: $input) {
+      uploadStatementSession {
+        ...UploadStatementSessionFields
+      }
+    }
+  }
+
+fragment UploadStatementSessionFields on UploadStatementSession {
+    sessionKey
+    status
+    errorMessage
+    skipCheckForDuplicates
+    uploadedStatement {
+      id
+      transactionCount
+    }
+  }

@@ -1,0 +1,10 @@
+
+# GetCreditHistoryResponse
+
+## Properties
+| Name | Type | Description | Notes |
+| ------------ | ------------- | ------------- | ------------- |
+| **&#x60;data&#x60;** | [**GetCreditHistoryResponseData**](GetCreditHistoryResponseData.md) |  |  |
+
+
+

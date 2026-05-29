@@ -1,0 +1,43 @@
+get:
+  tags: [Paychecks]
+  summary: Aggregate paycheck stats over a window
+  description: |
+    Returns one rollup row over the filtered paycheck set: `count`,
+    `totalGross`, `totalDeductions`, `totalNet`, `deductionRate`
+    (deductions divided by gross), plus a breakdown by deduction type
+    (federal tax, state tax, 401k, health insurance, etc.).
+
+    Window is `start` to `end` inclusive on `payDate`. Defaults to
+    all-time when both omitted. Optional `employerId` scopes to one
+    employer; optional `ownerIds[]` scopes to one or more household
+    members.
+
+    Use for YTD income/deduction dashboards or to answer "how much have
+    I contributed to 401k this year". For per-paycheck detail use
+    `GET /v1/paychecks`.
+  operationId: getPaychecksSummary
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+    - in: query
+      name: ownerIds
+      required: false
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+      description: Restrict to one or more household-member ids.
+    - in: query
+      name: employerId
+      required: false
+      schema:
+        type: string
+      description: Filter to one employer id.
+  responses:
+    "200":
+      description: Aggregate stats over the window.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetPaychecksSummaryResponse"

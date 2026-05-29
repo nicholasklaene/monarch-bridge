@@ -1,0 +1,8 @@
+query GetMerchantsSearch($search: String, $limit: Int, $includeIds: [ID!]) {
+  merchants(search: $search, limit: $limit, orderBy: TRANSACTION_COUNT, includeIds: $includeIds) {
+    id
+    name
+    transactionCount
+    __typename
+  }
+}

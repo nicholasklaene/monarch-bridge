@@ -1,0 +1,27 @@
+get:
+  tags: [System]
+  summary: Cross-entity fuzzy lookup
+  description: |
+    One-shot semantic search across accounts + categories + tags + merchants.
+    Backs Monarch's web command palette. Each result is tagged with its
+    `type` so the caller can route to the right resource.
+
+    Cuts the typical "search accounts then categories then tags then merchants"
+    round-trip dance to one. Use from AI assistants that need to resolve a
+    free-form user reference ("my Chase card", "the Coffee category") to a
+    Monarch entity id.
+  operationId: getLookup
+  parameters:
+    - in: query
+      name: q
+      required: true
+      schema:
+        type: string
+      description: Free-text query - matches across all entity types Monarch indexes for the palette.
+  responses:
+    "200":
+      description: Matching entities with `type` discriminator.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetLookupResponse"

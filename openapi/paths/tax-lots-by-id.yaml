@@ -1,0 +1,53 @@
+patch:
+  tags: [TaxLots]
+  summary: Update one manual tax lot
+  description: |
+    Partial-update one tax lot. Only fields present on the request body are
+    forwarded. Use to fix a fat-finger on cost basis or acquisition date
+    without recreating the lot.
+  operationId: updateTaxLot
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { type: string }
+      description: Monarch tax-lot id.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/UpdateTaxLotRequest"
+  responses:
+    "200":
+      description: The updated tax lot.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/UpdateTaxLotResponse"
+    "422":
+      description: Monarch PayloadError.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+delete:
+  tags: [TaxLots]
+  summary: Delete one manual tax lot
+  description: |
+    Removes one manual tax lot. **Destructive** - no soft-delete. The
+    holding's aggregate cost basis re-totals from the remaining lots.
+  operationId: deleteTaxLot
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { type: string }
+      description: Monarch tax-lot id.
+  responses:
+    "200":
+      description: Confirmation.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/DeleteTaxLotResponse"

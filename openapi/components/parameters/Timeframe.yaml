@@ -1,0 +1,8 @@
+in: query
+name: timeframe
+required: false
+schema:
+  type: string
+  default: month
+  enum: [day, month, year]
+description: Bucket size for grouped snapshots.

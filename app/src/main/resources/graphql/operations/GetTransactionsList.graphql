@@ -1,0 +1,15 @@
+query GetTransactionsList($offset: Int, $limit: Int, $filters: TransactionFilterInput, $orderBy: TransactionOrdering) {
+  allTransactions(filters: $filters) {
+    totalCount
+    results(offset: $offset, limit: $limit, orderBy: $orderBy) {
+      id
+      ...TransactionOverviewFields
+      __typename
+    }
+    __typename
+  }
+  transactionRules {
+    id
+    __typename
+  }
+}

@@ -1,0 +1,17 @@
+query Web_GetTaxBracketEstimates($taxYear: Int!, $filingStatus: String) {
+  taxBracketEstimates(taxYear: $taxYear, filingStatus: $filingStatus) {
+    taxYear
+    filingStatus
+    estimatedAgi
+    marginalRate
+    effectiveRate
+    brackets {
+      lowerBound
+      upperBound
+      rate
+      taxOwed
+      __typename
+    }
+    __typename
+  }
+}

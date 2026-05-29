@@ -1,0 +1,37 @@
+get:
+  tags: [Transactions]
+  summary: Cashflow broken down by category, group, merchant
+  description: |
+    Same date window as `GET /v1/cashflow`, but returns four buckets in
+    one call: per-category totals, per-category-group totals,
+    per-merchant totals, and an aggregate summary.
+
+    Use to drive a "where did the money go" breakdown view, or to find
+    the top N merchants/categories without making three separate
+    transaction queries. All standard transaction filters apply
+    (`accountIds`, `categoryIds`, `tagIds`, `search`, etc.) - useful to
+    exclude transfers or scope to one account.
+  operationId: getCashflowBreakdown
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/AccountIdsQuery"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/CategoryIdsQuery"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TagIdsQuery"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Search"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/HasAttachments"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/HasNotes"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/HideFromReports"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/IsSplit"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/IsRecurring"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/ImportedFromMint"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/SyncedFromInstitution"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/NeedsReview"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TransactionVisibility"
+  responses:
+    "200":
+      description: Four buckets - byCategory / byCategoryGroup / byMerchant / summary.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CashflowBreakdownResponse"

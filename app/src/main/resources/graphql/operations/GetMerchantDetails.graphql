@@ -1,0 +1,3 @@
+query GetMerchantDetails {
+  __typename
+}

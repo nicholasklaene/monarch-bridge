@@ -1,0 +1,8 @@
+query Web_GetCategorizationDetails($input: TransactionCategorizationDetailsInput!) {
+    categorizationDetails(input: $input) {
+      inputs
+      prompts
+      context
+      outputs
+    }
+  }

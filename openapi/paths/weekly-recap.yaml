@@ -1,0 +1,33 @@
+get:
+  tags: [System]
+  summary: Weekly recap
+  description: |
+    AI-generated narrative recap for one week. Monarch backfills this on a schedule.
+    Pick `start` = Monday, `end` = Sunday of the target week. Returns `null` recap if
+    Monarch has not generated one for that window yet.
+
+    Includes a top-level `summary` plus per-module `cards` (cashflow card, biggest
+    spend, savings progress, etc.) with both rich-block JSON and markdown variants.
+  operationId: getWeeklyRecap
+  parameters:
+    - in: query
+      name: start
+      required: true
+      schema:
+        type: string
+        format: date
+      description: Week start (inclusive), `YYYY-MM-DD`. Typically a Monday.
+    - in: query
+      name: end
+      required: true
+      schema:
+        type: string
+        format: date
+      description: Week end (inclusive), `YYYY-MM-DD`. Typically a Sunday.
+  responses:
+    "200":
+      description: Recap (may be null).
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetWeeklyRecapResponse"

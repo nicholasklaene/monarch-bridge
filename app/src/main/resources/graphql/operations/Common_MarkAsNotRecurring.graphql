@@ -1,0 +1,9 @@
+mutation Common_MarkAsNotRecurring($streamId: ID!) {
+  markStreamAsNotRecurring(streamId: $streamId) {
+    success
+    errors {
+      ...PayloadErrorFields
+    }
+    __typename
+  }
+}

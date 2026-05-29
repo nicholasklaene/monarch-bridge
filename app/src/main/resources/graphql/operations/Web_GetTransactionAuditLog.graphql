@@ -1,0 +1,15 @@
+query Web_GetTransactionAuditLog($id: ID!) {
+  transactionAuditLog(transactionId: $id) {
+    entries {
+      id
+      timestamp
+      actor
+      action
+      field
+      oldValue
+      newValue
+      __typename
+    }
+    __typename
+  }
+}

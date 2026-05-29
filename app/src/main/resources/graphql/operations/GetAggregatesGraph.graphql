@@ -1,0 +1,3 @@
+query GetAggregatesGraph {
+  __typename
+}

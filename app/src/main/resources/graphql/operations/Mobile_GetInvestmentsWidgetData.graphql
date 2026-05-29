@@ -1,0 +1,3 @@
+query Mobile_GetInvestmentsWidgetData {
+  __typename
+}

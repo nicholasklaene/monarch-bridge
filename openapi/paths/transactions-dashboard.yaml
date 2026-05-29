@@ -1,0 +1,20 @@
+get:
+  tags: [Transactions]
+  summary: Dashboard transactions list (with totals + rule count)
+  description: |
+    Returns transaction rows scoped to a date window plus pagination,
+    along with a totalCount, totalSelectableCount, and a rule-count
+    sidecar. Lightweight shape suitable for dashboard widgets.
+  operationId: getTransactionsDashboard
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Limit"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Offset"
+  responses:
+    "200":
+      description: Paginated transactions with totals.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetTransactionsDashboardResponse"

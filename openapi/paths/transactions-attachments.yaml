@@ -1,0 +1,36 @@
+post:
+  tags: [Transactions]
+  summary: Attach a receipt photo or PDF to a transaction
+  description: |
+    Three-step flow handled internally by the proxy: (1) asks Monarch for signed
+    Cloudinary upload params, (2) forwards the file to Cloudinary, (3) tells
+    Monarch to link the upload to the transaction. Caller sees a single
+    multipart/form-data POST with the file.
+  operationId: uploadTransactionAttachment
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TransactionIdPath"
+  requestBody:
+    required: true
+    content:
+      multipart/form-data:
+        schema:
+          type: object
+          required: [file]
+          properties:
+            file:
+              type: string
+              format: binary
+              description: Receipt photo, scan, or PDF.
+  responses:
+    "200":
+      description: The created attachment.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/UploadTransactionAttachmentResponse"
+    "422":
+      description: Monarch rejected the upload (PayloadError).
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

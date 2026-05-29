@@ -1,0 +1,13 @@
+mutation Common_CreateTransactionMutation($input: CreateTransactionMutationInput!) {
+  createTransaction(input: $input) {
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    transaction {
+      id
+      __typename
+    }
+    __typename
+  }
+}

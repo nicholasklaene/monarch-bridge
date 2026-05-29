@@ -1,0 +1,24 @@
+query Web_DirectLinkAccountSelectDataProvider($institutionId: String!) {
+    institution(id: $institutionId) {
+      id
+      ...LinkInstitutionFields
+    }
+  }
+
+fragment LinkInstitutionFields on Institution {
+    id
+    name
+    plaidInstitutionId
+    finicityInstitutionId
+    mxInstitutionId
+    preferredDataProvider
+    firstBackupDataProvider
+    logo
+    status
+    newConnectionsDisabled
+    hasIssuesReported
+    hasIssuesReportedMessage
+    linkFlowWarnBeforeConnecting
+    linkFlowWarningMessage
+    linkFlowWarningTitle
+  }

@@ -1,0 +1,15 @@
+get:
+  tags: [System]
+  summary: Platform configuration
+  description: |
+    Per-platform config blob: API base URL, config version, plus
+    arbitrary additional settings the client honors. Used by the web
+    app on boot to hydrate its environment.
+  operationId: getPlatformConfig
+  responses:
+    "200":
+      description: Platform config object.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetPlatformConfigResponse"

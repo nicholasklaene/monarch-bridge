@@ -1,0 +1,14 @@
+get:
+  tags: [System]
+  summary: Detailed subscription info
+  description: |
+    Full subscription detail beyond `GET /v1/subscription`: tier, renewal
+    date, billing frequency, amount, payment method, trial dates.
+  operationId: getSubscriptionDetails
+  responses:
+    "200":
+      description: Subscription detail object.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetSubscriptionDetailsResponse"

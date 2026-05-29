@@ -1,0 +1,13 @@
+query Common_GetLatestFinancialInsightRun {
+  financialInsightRuns(limit: 1) {
+    id
+    status
+    errorMessage
+    insightsGeneratedCount
+    __typename
+  }
+  financialInsights {
+    id
+    __typename
+  }
+}

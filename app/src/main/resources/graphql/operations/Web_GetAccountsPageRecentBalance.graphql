@@ -1,0 +1,12 @@
+query Web_GetAccountsPageRecentBalance($startDate: Date) {
+    accounts {
+      id
+      recentBalances(startDate: $startDate)
+      type {
+        name
+        display
+        group
+      }
+      includeInNetWorth
+    }
+  }

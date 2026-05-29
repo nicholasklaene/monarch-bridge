@@ -1,0 +1,11 @@
+query Web_GetSecurityDividends($id: ID!, $startDate: Date, $endDate: Date) {
+  securityDividends(id: $id, startDate: $startDate, endDate: $endDate) {
+    dividends {
+      date
+      amount
+      type
+      __typename
+    }
+    __typename
+  }
+}

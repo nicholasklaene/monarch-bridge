@@ -1,0 +1,10 @@
+mutation Common_DeleteAccount($id: UUID!) {
+  deleteAccount(id: $id) {
+    deleted
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

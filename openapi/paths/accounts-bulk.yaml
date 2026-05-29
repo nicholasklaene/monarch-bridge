@@ -1,0 +1,37 @@
+patch:
+  tags: [Accounts]
+  summary: Bulk-update accounts
+  description: |
+    Forwards Monarch's `updateAccounts` mutation. Send one or more
+    `UpdateAccountsMutationInput` entries; each must include `id` plus any subset of
+    the patchable fields. Returns every updated account.
+
+    Use for "rename three accounts at once" / "hide a set of accounts" / "flip
+    includeInNetWorth on a list" without firing N single `PATCH /v1/accounts/{id}`
+    calls.
+  operationId: bulkUpdateAccounts
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/BulkUpdateAccountsRequest"
+  responses:
+    "200":
+      description: Updated accounts (one per input entry).
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/BulkUpdateAccountsResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+    "422":
+      description: Monarch rejected the mutation (PayloadError).
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

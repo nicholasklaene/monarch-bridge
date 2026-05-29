@@ -1,0 +1,11 @@
+mutation Web_MarkAsRecurring($input: MarkAsRecurringInput!) {
+  markAsRecurring(input: $input) {
+    success
+    stream {
+      id
+      frequency
+      __typename
+    }
+    __typename
+  }
+}

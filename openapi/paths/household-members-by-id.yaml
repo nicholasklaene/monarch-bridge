@@ -1,0 +1,21 @@
+delete:
+  tags: [Settings]
+  summary: Remove a household member
+  description: |
+    Remove a member from the household. Idempotent - re-calling with a
+    member id that's already removed returns `removed=true`.
+  operationId: removeHouseholdMember
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: Monarch household-member (user) id.
+  responses:
+    "200":
+      description: Removal confirmation.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/RemoveHouseholdMemberResponse"

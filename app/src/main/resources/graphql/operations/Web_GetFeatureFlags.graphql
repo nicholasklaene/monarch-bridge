@@ -1,0 +1,8 @@
+query Web_GetFeatureFlags {
+  featureFlags {
+    name
+    enabled
+    variant
+    __typename
+  }
+}

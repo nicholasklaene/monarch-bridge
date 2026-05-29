@@ -1,0 +1,28 @@
+query Web_GoalSelectTransaction($transactionId: UUID!) {
+    getTransaction(id: $transactionId) {
+      id
+      account {
+        id
+        goalAllocations {
+          id
+          goal {
+            id
+            name
+            imageStorageProvider
+            imageStorageProviderId
+            priority
+            archivedAt
+          }
+        }
+      }
+      goal {
+        id
+        name
+        imageStorageProvider
+        imageStorageProviderId
+        priority
+        archivedAt
+      }
+      pending
+    }
+  }

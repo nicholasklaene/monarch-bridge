@@ -1,0 +1,19 @@
+get:
+  tags: [Transactions]
+  summary: Saved split templates
+  description: |
+    Saved reusable percent-based split definitions ("Costco run: 70%
+    Groceries / 30% Household"). The web split modal fires this to
+    populate the "Apply template" dropdown.
+
+    Each template carries a list of percent-of-parent splits. Caller
+    composes the actual `POST /v1/transactions/{id}/splits` request by
+    multiplying the parent amount by each `percent`.
+  operationId: getTransactionSplitTemplates
+  responses:
+    "200":
+      description: All saved split templates.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetTransactionSplitTemplatesResponse"

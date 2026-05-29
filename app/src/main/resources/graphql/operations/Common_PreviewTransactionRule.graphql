@@ -1,0 +1,77 @@
+query Common_PreviewTransactionRule($rule: TransactionRulePreviewInput!, $offset: Int) {
+  transactionRulePreview(input: $rule) {
+    totalCount
+    results(offset: $offset, limit: 30) {
+      newName
+      newSplitTransactions
+      newCategory {
+        id
+        icon
+        name
+        __typename
+      }
+      newOwnerIsJoint
+      newOwnerUser {
+        id
+        displayName
+        profilePictureUrl
+        __typename
+      }
+      newHideFromReports
+      newTags {
+        id
+        name
+        color
+        order
+        __typename
+      }
+      newGoal {
+        id
+        name
+        imageStorageProvider
+        imageStorageProviderId
+        __typename
+      }
+      newBusinessEntity {
+        id
+        name
+        logoUrl
+        color
+        __typename
+      }
+      newBusinessEntityIsUnassigned
+      transaction {
+        id
+        date
+        amount
+        merchant {
+          id
+          name
+          __typename
+        }
+        category {
+          id
+          name
+          icon
+          __typename
+        }
+        ownedByUser {
+          id
+          displayName
+          profilePictureUrl
+          __typename
+        }
+        businessEntity {
+          id
+          name
+          logoUrl
+          color
+          __typename
+        }
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}

@@ -1,0 +1,17 @@
+get:
+  tags: [System]
+  summary: Income report
+  description: |
+    Income breakdown for a date window: total income, average monthly
+    income, and per-source split. Backs the web Reports page Income tab.
+  operationId: getIncomeReport
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: Income summary plus source breakdown.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetIncomeReportResponse"

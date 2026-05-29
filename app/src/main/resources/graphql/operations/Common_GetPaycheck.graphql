@@ -1,0 +1,6 @@
+query Common_GetPaycheck($id: ID!) {
+  paycheck(id: $id) {
+    ...PaycheckFields
+    __typename
+  }
+}

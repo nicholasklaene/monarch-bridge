@@ -1,0 +1,18 @@
+{
+  "portfolio": {
+    "allocationHoldingsDetail": {
+      "holdings": [
+        {
+          "holdingIds": ["h-1", "h-2"],
+          "securityName": "Apple Inc.",
+          "ticker": "AAPL",
+          "securityType": "equity",
+          "securityTypeDisplay": "Equity",
+          "quantity": 10.0,
+          "value": 1750.0
+        }
+      ],
+      "totalCount": 42
+    }
+  }
+}

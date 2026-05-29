@@ -1,0 +1,14 @@
+get:
+  tags: [System]
+  summary: Beta features the account can opt into
+  description: |
+    Beta program list. Each entry has a name, short description, and
+    whether the household is currently enrolled.
+  operationId: getBetaFeatures
+  responses:
+    "200":
+      description: Available beta features.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetBetaFeaturesResponse"

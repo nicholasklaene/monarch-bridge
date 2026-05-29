@@ -1,0 +1,7 @@
+in: query
+name: orderBy
+required: false
+schema:
+  type: string
+  enum: [date, amount]
+description: Monarch sort enum. Both values sort descending.

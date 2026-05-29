@@ -1,0 +1,3 @@
+query Common_GoalsV2MigrationQuery {
+  __typename
+}

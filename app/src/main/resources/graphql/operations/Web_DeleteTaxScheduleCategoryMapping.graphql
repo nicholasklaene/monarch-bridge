@@ -1,0 +1,8 @@
+mutation Web_DeleteTaxScheduleCategoryMapping($input: DeleteTaxScheduleCategoryMappingInput!) {
+    deleteTaxScheduleCategoryMapping(input: $input) {
+      deleted
+      errors {
+        message
+      }
+    }
+  }

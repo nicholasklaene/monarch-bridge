@@ -1,0 +1,3 @@
+query GetSubscriptionStatus {
+  __typename
+}

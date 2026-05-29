@@ -1,0 +1,53 @@
+post:
+  tags: [Goals]
+  summary: Withdraw from a savings goal
+  description: |
+    Withdraw money from a savings goal back into a source account.
+    Reverses (in spirit) a prior contribution; the goal balance drops
+    by `amount`, and Monarch updates the account's available-for-goals
+    balance.
+
+    Pair with `POST /v1/goals/{id}/contributions` to deposit.
+  operationId: withdrawFromGoal
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/GoalIdPath"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required: [amount, accountId]
+          properties:
+            amount:
+              type: number
+              format: double
+              description: Dollar amount to withdraw (positive).
+            accountId:
+              type: string
+              description: Source account id (where the goal balance is parked).
+            date:
+              type: string
+              format: date
+              nullable: true
+              description: Withdrawal date. Defaults to today.
+  responses:
+    "200":
+      description: Created withdrawal event + updated goal + account snapshot.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [goalEventId]
+                properties:
+                  goalEventId: { type: string }
+                  goalId: { type: string, nullable: true }
+                  goalCurrentBalance: { type: number, format: double, nullable: true }
+                  goalProgress: { type: number, format: double, nullable: true }
+                  goalStatus: { type: string, nullable: true }
+                  accountId: { type: string, nullable: true }
+                  accountAvailableBalanceForGoals: { type: number, format: double, nullable: true }

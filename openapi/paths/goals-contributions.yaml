@@ -1,0 +1,38 @@
+post:
+  tags: [Goals]
+  summary: Record a contribution to a savings goal
+  description: |
+    Logs a contribution event against a goal from a specific account.
+    Required: `accountId` and `amount` (in dollars, positive for a
+    contribution, negative for a withdrawal). `date` defaults to today
+    if omitted.
+
+    Use after a manual transfer the user wants attributed to the goal,
+    or to backfill historical progress. Updates the goal's `currentAmount`
+    and appends to its event log (visible via
+    `GET /v1/goals/{id}/events`).
+
+    Distinct from `PUT /v1/goals/{id}/budget` which sets the planned
+    monthly contribution (forecast) rather than logging an actual one.
+  operationId: contributeToGoal
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/GoalIdPath"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/ContributeToGoalRequest"
+  responses:
+    "200":
+      description: Updated goal balance + event metadata.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ContributeToGoalResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

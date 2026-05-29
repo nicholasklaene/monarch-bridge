@@ -1,0 +1,13 @@
+mutation Web_CreateManualAccount($input: CreateManualAccountMutationInput!) {
+  createManualAccount(input: $input) {
+    account {
+      id
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

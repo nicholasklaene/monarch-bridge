@@ -1,0 +1,35 @@
+post:
+  tags: [System]
+  summary: Force Monarch to re-poll Plaid (async)
+  description: |
+    Triggers Monarch to re-poll Plaid for account balance and
+    transaction updates. Fire-and-forget: returns 202 immediately
+    after queueing the refresh.
+
+    Without `accountIds`, refreshes **every** linked account. Pass one
+    or more `accountIds` to scope. Poll progress with
+    `GET /v1/refresh/status` until `data.allComplete` is true (5-60s
+    typically depending on institution).
+
+    For a synchronous version that blocks until done, use
+    `POST /v1/refresh/wait`.
+  operationId: requestRefresh
+  parameters:
+    - in: query
+      name: accountIds
+      required: false
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+      description: Optional list of Monarch account ids. Omit to refresh all accounts.
+  responses:
+    "202":
+      description: Refresh queued.
+    "503":
+      description: No session loaded.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

@@ -1,0 +1,14 @@
+query Web_GetCategoryReport($categoryId: ID!, $startDate: Date, $endDate: Date) {
+  categoryReport(categoryId: $categoryId, startDate: $startDate, endDate: $endDate) {
+    categoryId
+    categoryName
+    totalAmount
+    averagePerMonth
+    months {
+      month
+      amount
+      __typename
+    }
+    __typename
+  }
+}

@@ -1,0 +1,13 @@
+mutation Common_UpdateSavingsGoalsPriorities($input: UpdateSavingsGoalsPrioritiesInput!) {
+  updateSavingsGoalsPriorities(input: $input) {
+    goals {
+      id
+      priority
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+    }
+    __typename
+  }
+}

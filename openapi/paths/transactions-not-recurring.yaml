@@ -1,0 +1,19 @@
+post:
+  tags: [Transactions]
+  summary: Mark a transaction's recurring-stream as not-recurring
+  description: |
+    Tells Monarch that the recurring stream a transaction is attached to is NOT actually
+    recurring. Used to dismiss false-positive recurrence detections.
+
+    Important: Monarch's mutation takes a `streamId`, NOT a transaction id. Pass the
+    transaction's `stream.id` (visible on the transaction detail) as the path `{id}`.
+  operationId: markTransactionStreamAsNotRecurring
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TransactionIdPath"
+  responses:
+    "200":
+      description: Confirmation flag from Monarch.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/MarkAsNotRecurringResponse"

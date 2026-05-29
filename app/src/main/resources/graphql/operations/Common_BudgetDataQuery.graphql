@@ -1,0 +1,25 @@
+query Common_BudgetDataQuery($startDate: Date!, $endDate: Date!) {
+  budgetSystem
+  budgetData(startMonth: $startDate, endMonth: $endDate) {
+    monthlyAmountsByCategory {
+      category {
+        id
+        __typename
+      }
+      monthlyAmounts {
+        month
+        plannedCashFlowAmount
+        plannedSetAsideAmount
+        actualAmount
+        remainingAmount
+        previousMonthRolloverAmount
+        rolloverType
+        cumulativeActualAmount
+        rolloverTargetAmount
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}

@@ -1,0 +1,17 @@
+mutation Common_SetEmailNotificationPrefs($input: SetChannelNotificationPrefsInput!) {
+  setEmailNotificationPreferences(input: $input) {
+    preferences {
+      weeklyRecap
+      budgetAlerts
+      billReminders
+      goalUpdates
+      marketingTips
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

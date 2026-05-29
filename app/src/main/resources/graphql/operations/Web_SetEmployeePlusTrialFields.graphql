@@ -1,0 +1,12 @@
+mutation Web_SetEmployeePlusTrialFields($input: EmployeePlusTrialFieldsInput!) {
+    setEmployeePlusTrialFields(input: $input) {
+      subscription {
+        id
+        plusTrialEndsAt
+        canceledPlusTrialAt
+      }
+      errors {
+        message
+      }
+    }
+  }

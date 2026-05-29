@@ -1,0 +1,53 @@
+mutation Web_ChangeSubscription($input: ChangeStripeSubscriptionMutationInput!) {
+    changeStripeSubscription(input: $input) {
+      subscription {
+        id
+        ...SubscriptionFields
+      }
+      errors {
+        message
+      }
+    }
+  }
+
+fragment SubscriptionFields on HouseholdSubscription {
+    id
+    trialEndsAt
+    trialType
+    trialDurationDays
+    isOnFreeTrial
+    canceledPlusTrialAt
+    plusTrialEndsAt
+    hasChargedForLifetime
+    currentPeriodEndsAt
+    billingPeriod
+    nextPaymentAmount
+    hasStripeSubscriptionId
+    hasPremiumEntitlement
+    entitlements
+    eligibleForTrial
+    willCancelAtPeriodEnd
+    paymentSource
+    hasBillingIssue
+    isSponsor
+    hasHadFreeTrialExtension
+
+    paymentMethod {
+      lastFour
+      brand
+    }
+
+    activePromoCode {
+      code
+      description
+    }
+
+    sponsoredBy {
+      name
+      email
+      profilePictureUrl
+    }
+
+    analyticsFreemiumSummaryStatus
+    isEligibleForCoreToPlusPromo
+  }

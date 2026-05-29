@@ -1,0 +1,12 @@
+mutation Web_BulkUpdateHoldings($input: BulkUpdateHoldingsInput!) {
+  bulkUpdateHoldings(input: $input) {
+    updatedCount
+    failedCount
+    failures {
+      holdingId
+      reason
+      __typename
+    }
+    __typename
+  }
+}

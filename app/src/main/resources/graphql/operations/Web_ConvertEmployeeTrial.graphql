@@ -1,0 +1,13 @@
+mutation Web_ConvertEmployeeTrial {
+    convertEmployeeTrial {
+      subscription {
+        id
+        isOnFreeTrial
+        hasStartedFreeTrial
+        entitlements
+      }
+      errors {
+        message
+      }
+    }
+  }

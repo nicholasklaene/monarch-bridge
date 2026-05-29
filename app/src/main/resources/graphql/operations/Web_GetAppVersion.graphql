@@ -1,0 +1,9 @@
+query Web_GetAppVersion {
+  appVersion {
+    current
+    minimum
+    recommended
+    buildSha
+    __typename
+  }
+}

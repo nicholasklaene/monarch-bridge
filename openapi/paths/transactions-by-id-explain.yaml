@@ -1,0 +1,20 @@
+get:
+  tags: [Transactions]
+  summary: AI explanation for one transaction
+  description: |
+    Monarch's AI-generated explanation for why a transaction was
+    categorized the way it was. Useful for surfacing context in audit
+    or review flows.
+
+    Companion to `GET /v1/transactions/{id}` - the detail call returns
+    the raw fields, this call returns Monarch's narrated rationale.
+  operationId: explainTransactionByPath
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TransactionIdPath"
+  responses:
+    "200":
+      description: Explanation string (may be null).
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ExplainTransactionResponse"

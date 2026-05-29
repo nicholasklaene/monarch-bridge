@@ -1,0 +1,53 @@
+get:
+  tags: [Merchants]
+  summary: Get full detail for one merchant
+  description: |
+    Returns the rich single-merchant view: id, name, `logoUrl`,
+    `transactionCount`, `ruleCount`, `canBeDeleted`,
+    `hasActiveRecurringStreams`, plus the merchant's recurring stream
+    definition when present.
+
+    Wraps Monarch's `Common_GetEditMerchant` query, the richest
+    single-merchant read in the bundle. Use before a delete to check
+    `canBeDeleted`, before a rename to read the current name (required
+    by `PATCH /v1/merchants/{id}/recurrence`), or in a detail view.
+  operationId: getMerchant
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/MerchantIdPath"
+  responses:
+    "200":
+      description: Merchant detail.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetMerchantResponse"
+delete:
+  tags: [Merchants]
+  summary: Delete a merchant
+  description: |
+    Removes a merchant from the catalog. **Destructive** for any
+    transactions and rules that referenced this merchant unless you
+    remap.
+
+    Pass `moveToId` to reassign every transaction and every
+    auto-categorization rule that pointed at this merchant to a
+    different merchant before deletion. Omit to orphan them (the
+    transactions will fall back to displaying the raw `plaidName`).
+
+    Use `GET /v1/merchants/{id}` first to check `canBeDeleted` and
+    `transactionCount`.
+  operationId: deleteMerchant
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/MerchantIdPath"
+    - in: query
+      name: moveToId
+      required: false
+      schema: { type: string }
+      description: Reassign this merchant's transactions and rules to this merchant before deletion.
+  responses:
+    "200":
+      description: Confirmation.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/DeleteMerchantResponse"

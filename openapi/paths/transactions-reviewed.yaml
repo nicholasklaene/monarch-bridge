@@ -1,0 +1,22 @@
+post:
+  tags: [Transactions]
+  summary: Mark a transaction as reviewed
+  description: |
+    Single-shot helper: sets `reviewed=true` on one transaction. Equivalent to
+    `PATCH /v1/transactions/{id}` with `{"reviewed": true}` but smaller in input
+    (no body required) and output (only `id`, `reviewedAt`, `needsReview`).
+
+    Use from review/triage flows where the assistant just needs to dispatch a
+    mark-as-reviewed without rewriting the whole transaction tree.
+
+    To un-mark, send `PATCH /v1/transactions/{id}` with `{"reviewed": false}`.
+  operationId: markTransactionAsReviewed
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TransactionIdPath"
+  responses:
+    "200":
+      description: Updated review-state fields.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/MarkTransactionAsReviewedResponse"

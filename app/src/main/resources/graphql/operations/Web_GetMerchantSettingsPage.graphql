@@ -1,0 +1,13 @@
+query Web_GetMerchantSettingsPage($offset: Int, $orderBy: MerchantOrdering, $search: String) {
+    merchants(offset: $offset, orderBy: $orderBy, search: $search) {
+      id
+      name
+      transactionCount
+      createdAt
+      logoUrl
+      recurringTransactionStream {
+        id
+      }
+    }
+    merchantCount
+  }

@@ -1,0 +1,37 @@
+get:
+  tags: [Holdings]
+  summary: Search the security catalog
+  description: |
+    Free-text search across Monarch's security catalog (Plaid-backed
+    plus user-added). Use to resolve a ticker or company name to the
+    `securityId` required by the manual holding endpoints
+    (`POST /v1/account/{id}/holdings`).
+
+    `q` is required and matches ticker, name, or partial substring.
+    `orderByPopularity: true` ranks by Monarch-wide holding popularity
+    instead of relevance (handy when you know the ticker is common but
+    the search returns less-traded names first).
+  operationId: searchSecurities
+  parameters:
+    - in: query
+      name: q
+      required: true
+      schema: { type: string }
+      description: Search text (ticker, name, partial match).
+    - in: query
+      name: limit
+      required: false
+      schema: { type: integer }
+      description: Cap the result count. Monarch defaults to a small page when omitted.
+    - in: query
+      name: orderByPopularity
+      required: false
+      schema: { type: boolean }
+      description: When true, Monarch ranks by popularity instead of relevance.
+  responses:
+    "200":
+      description: Matching securities.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/SearchSecuritiesResponse"

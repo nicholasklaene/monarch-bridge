@@ -1,0 +1,15 @@
+query Web_GetSpendingReport($startDate: Date, $endDate: Date) {
+  spendingReport(startDate: $startDate, endDate: $endDate) {
+    totalSpend
+    totalBudget
+    percentOfBudget
+    topCategories {
+      categoryId
+      name
+      amount
+      percentOfTotal
+      __typename
+    }
+    __typename
+  }
+}

@@ -1,0 +1,6 @@
+in: query
+name: accountId
+required: false
+schema:
+  type: string
+description: Filter by a single Monarch account id.

@@ -1,0 +1,32 @@
+post:
+  tags: [Rules]
+  summary: Preview transactions a rule would match (dry-run, no persistence)
+  description: |
+    Send a tentative rule shape and get back the transactions that *would* match
+    it if the rule were saved, with the proposed new values (newCategory, newTags,
+    newName, etc.). Useful for building rules interactively without polluting your
+    rule set with throwaway saves.
+
+    Returns up to 30 results per call; page with `offset` to walk the full set.
+  operationId: previewTransactionRule
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Offset"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/TransactionRuleRequest"
+  responses:
+    "200":
+      description: Matching transactions + proposed values.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/PreviewTransactionRuleResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

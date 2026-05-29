@@ -1,0 +1,78 @@
+# Detekt 2.0 config. Key-name reference: https://detekt.dev/docs/rules/
+#
+# Detekt 2.0 renamed most `threshold` keys to descriptive equivalents
+# (`allowedConditions`, `allowedComplexity`, `allowedLines`, etc.) and dropped the
+# top-level `build:` block. Failure-on-finding is now controlled by the Gradle plugin
+# (the default is "fail on any maxIssues > 0" finding count).
+
+complexity:
+  active: true
+  ComplexCondition:
+    allowedConditions: 4
+  CyclomaticComplexMethod:
+    allowedComplexity: 7
+  LongMethod:
+    allowedLines: 30
+    excludes: ['**/test/**', '**/*Test.kt']
+  LongParameterList:
+    allowedFunctionParameters: 6
+    allowedConstructorParameters: 8
+  LargeClass:
+    allowedLines: 200
+    excludes: ['**/test/**', '**/*Test.kt']
+  TooManyFunctions:
+    allowedFunctionsPerClass: 15
+    allowedFunctionsPerObject: 15
+    excludes: ['**/test/**', '**/*Test.kt']
+
+empty-blocks:
+  active: true
+
+exceptions:
+  active: true
+
+naming:
+  active: true
+  ClassNaming:
+    classPattern: '[A-Z][a-zA-Z0-9]*'
+  FunctionNaming:
+    functionPattern: '[a-z][a-zA-Z0-9]*|`.*`'  # backtick names allowed for tests
+  PackageNaming:
+    packagePattern: '[a-z]+(\.[a-z][a-zA-Z0-9]*)*'
+
+performance:
+  active: true
+  SpreadOperator:
+    active: false  # Spring Boot's canonical runApplication<App>(*args) needs spread
+
+potential-bugs:
+  active: true
+
+# Note: the `formatting` rule set was retired in detekt 2.0. Spotless + ktlint enforces
+# formatting, so we don't need a duplicate detekt-side check.
+
+style:
+  active: true
+  UtilityClassWithPublicConstructor:
+    active: false  # misfires on abstract test base classes
+  MagicNumber:
+    active: true
+    ignoreAnnotation: true
+    ignoreNumbers: ['-1', '0', '1', '2']
+    excludes: ['**/test/**', '**/*Test.kt', '**/*IT.kt']
+  NewLineAtEndOfFile:
+    active: true
+  WildcardImport:
+    active: true
+  MaxLineLength:
+    maxLineLength: 140
+    excludes: ['**/test/**', '**/*Test.kt', '**/*IT.kt']
+  ReturnCount:
+    max: 3
+
+comments:
+  active: true
+  UndocumentedPublicClass:
+    active: false
+  UndocumentedPublicFunction:
+    active: false

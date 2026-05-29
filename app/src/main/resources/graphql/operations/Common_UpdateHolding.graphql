@@ -1,0 +1,13 @@
+mutation Common_UpdateHolding($input: UpdateHoldingInput!) {
+  updateHolding(input: $input) {
+    holding {
+      id
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

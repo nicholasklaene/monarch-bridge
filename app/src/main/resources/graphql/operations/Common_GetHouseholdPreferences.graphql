@@ -1,0 +1,20 @@
+query Common_GetHouseholdPreferences {
+  householdPreferences {
+    id
+    newTransactionsNeedReview
+    uncategorizedTransactionsNeedReview
+    pendingTransactionsCanBeEdited
+    aiAssistantEnabled
+    llmEnrichmentEnabled
+    investmentTransactionsEnabled
+    budgetApplyToFutureMonthsDefault
+    hiddenTransactionsBetaEnabled
+    collaborationToolsEnabled
+    aggDataSharingEnabled
+    aiModelTrainingOnUserDataEnabled
+    excludeBusinessFromBudget
+    continuousFinancialMonitoringEnabled
+    eligibleForFinancialInsights
+    __typename
+  }
+}

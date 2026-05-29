@@ -1,0 +1,23 @@
+get:
+  tags: [Accounts]
+  summary: Per-account recent balance fluctuations
+  description: |
+    Returns a short recent-balances series for **each account**,
+    starting at `start` (typically a week or month back). Lighter than
+    pulling each account's full history one-by-one when all you need is
+    a recent sparkline.
+
+    Use for a "what changed lately" dashboard view that highlights
+    accounts with non-trivial movement. For the full per-account series
+    use `GET /v1/account/{id}/history`; for the household-aggregate
+    series use `GET /v1/networth`.
+  operationId: getNetworthRecent
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+  responses:
+    "200":
+      description: Per-account recent-balances arrays.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/NetworthRecentResponse"

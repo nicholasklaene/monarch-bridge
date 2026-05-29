@@ -1,0 +1,72 @@
+patch:
+  tags: [Rules]
+  summary: Update a transaction rule
+  description: |
+    Replaces the criteria and actions on an existing rule.
+
+    **Gotcha**: Monarch's mutation takes the full rule shape, NOT a
+    partial patch. The proxy forwards exactly what you send. Omit any
+    sub-tree you want to clear, but be aware that omitting an array
+    you wanted to keep will wipe it. Fetch the current rule via
+    `GET /v1/transaction-rules` first if in doubt.
+
+    To dry-run a rule shape before saving use
+    `POST /v1/transaction-rules/preview`.
+  operationId: updateTransactionRule
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { type: string }
+      description: Transaction rule id.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/TransactionRuleRequest"
+  responses:
+    "200":
+      description: Rule updated.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/UpdateTransactionRuleResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+    "422":
+      description: Monarch PayloadError.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+delete:
+  tags: [Rules]
+  summary: Delete a transaction rule
+  description: |
+    Removes one auto-categorization rule. **Destructive** but
+    non-cascading: existing transactions that the rule previously
+    categorized keep their assigned category (Monarch does not
+    re-evaluate categories on rule delete).
+
+    To temporarily disable a rule without deleting it, use
+    `PATCH /v1/transaction-rules/{id}` with the rule paused/disabled
+    in the criteria.
+  operationId: deleteTransactionRule
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { type: string }
+      description: Transaction rule id.
+  responses:
+    "200":
+      description: Rule deleted.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/DeleteTransactionRuleResponse"

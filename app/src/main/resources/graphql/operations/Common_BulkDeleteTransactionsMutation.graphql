@@ -1,0 +1,25 @@
+mutation Common_BulkDeleteTransactionsMutation(
+  $selectedTransactionIds: [ID!]
+  $excludedTransactionIds: [ID!]
+  $allSelected: Boolean!
+  $expectedAffectedTransactionCount: Int!
+  $filters: TransactionFilterInput
+) {
+  bulkDeleteTransactions(
+    input: {
+      selectedTransactionIds: $selectedTransactionIds
+      excludedTransactionIds: $excludedTransactionIds
+      isAllSelected: $allSelected
+      expectedAffectedTransactionCount: $expectedAffectedTransactionCount
+      filters: $filters
+    }
+  ) {
+    success
+    affectedCount
+    errors {
+      message
+      __typename
+    }
+    __typename
+  }
+}

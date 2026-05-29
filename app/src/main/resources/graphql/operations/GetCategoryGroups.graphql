@@ -1,0 +1,3 @@
+query GetCategoryGroups {
+  __typename
+}

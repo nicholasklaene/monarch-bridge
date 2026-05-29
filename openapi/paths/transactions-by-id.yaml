@@ -1,0 +1,82 @@
+get:
+  tags: [Transactions]
+  summary: Single-transaction full detail
+  description: |
+    Returns the full denormalized tree for one transaction: amount,
+    date, merchant (with logo), category, account, notes, tags, splits
+    (if split), attachments, recurring-stream metadata, and review
+    state.
+
+    Use when surfacing a transaction in a detail view, or before a
+    PATCH to inspect current state. The list endpoint
+    `GET /v1/transactions` returns a leaner shape per row - this
+    endpoint is the right call when you need the full picture for one.
+  operationId: getTransactionDetail
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TransactionIdPath"
+  responses:
+    "200":
+      description: "Full transaction tree: splits, attachments, merchant, category."
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/TransactionDetailResponse"
+patch:
+  tags: [Transactions]
+  summary: Partial-update a transaction
+  description: |
+    Patches one transaction. Only fields present in the body are
+    forwarded to Monarch; omit a field to leave it untouched.
+
+    Common edits: `categoryId` (re-categorize), `merchantName` (rename
+    via the override), `notes`, `date`, `amount` (manual accounts only -
+    Plaid will overwrite on next sync), `hideFromReports`, `needsReview`.
+
+    For tag mutations use `PUT /v1/transactions/{id}/tags` instead -
+    tags are stored separately. For wholesale edits across many
+    transactions use `PATCH /v1/transactions/bulk`.
+  operationId: updateTransaction
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TransactionIdPath"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/UpdateTransactionRequest"
+  responses:
+    "200":
+      description: Updated transaction.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/UpdateTransactionResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+delete:
+  tags: [Transactions]
+  summary: Delete a transaction
+  description: |
+    Removes one transaction. **Destructive** - the row is gone from
+    Monarch, won't reappear on next sync, and disappears from all
+    aggregates (cashflow, budgets, summaries) for past windows.
+
+    Use for cash entries the user wants to undo or for confirmed
+    duplicate Plaid imports. For bulk cleanup use
+    `POST /v1/transactions/bulk-delete` (supports filter-based deletes
+    too). For likely-duplicate detection across a window use
+    `GET /v1/transactions/duplicates`.
+  operationId: deleteTransaction
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TransactionIdPath"
+  responses:
+    "200":
+      description: Confirmation.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/DeleteTransactionResponse"

@@ -1,0 +1,28 @@
+put:
+  tags: [Transactions]
+  summary: Overwrite the tag set on a transaction
+  description: |
+    Wholesale-replaces every tag on a transaction. Send the complete
+    final tag id list - this is NOT a delta. To add a tag without
+    losing the existing ones, read current tags first via
+    `GET /v1/transactions/{id}` then PUT the merged list.
+
+    Empty list `[]` clears all tags. Tag ids come from
+    `GET /v1/tags`. For bulk tag changes across many transactions use
+    `PATCH /v1/transactions/bulk`.
+  operationId: setTransactionTags
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TransactionIdPath"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/SetTagsRequest"
+  responses:
+    "200":
+      description: Tag set after the overwrite.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/SetTransactionTagsResponse"

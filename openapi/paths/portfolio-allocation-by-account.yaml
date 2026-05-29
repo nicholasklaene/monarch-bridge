@@ -1,0 +1,17 @@
+get:
+  tags: [Holdings]
+  summary: Portfolio allocation grouped by account
+  description: |
+    Allocation breakdown bucketed per investments account (rather than per security).
+    Each row is one account with its percent of portfolio and total dollar value.
+  operationId: getPortfolioAllocationByAccount
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/AccountIdsQuery"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Limit"
+  responses:
+    "200":
+      description: Per-account allocation rows.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/PortfolioAllocationSimpleResponse"

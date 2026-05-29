@@ -1,0 +1,10 @@
+mutation Web_SetAutoReinvest($input: SetAutoReinvestInput!) {
+  setAutoReinvest(input: $input) {
+    enabled
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

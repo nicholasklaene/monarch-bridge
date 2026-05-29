@@ -1,0 +1,72 @@
+name: Publish TypeScript client to npm
+
+# Triggers on a semver tag push (v1.2.3). The TypeScript client lives under
+# clients/typescript/ and is generated from openapi/monarch-bridge.yaml; we
+# ship the generator's output as `monarch-bridge-client` on npm.
+#
+# `npm version --no-git-tag-version` overrides the package.json version with
+# the tag so we don't have to keep the generator output in sync.
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-typescript-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Build + publish to npm
+    runs-on: ubuntu-latest
+    environment: npm
+    defaults:
+      run:
+        working-directory: clients/typescript
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Derive version from tag
+        id: version
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          version="${tag#v}"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "Publishing monarch-bridge-client@${version}"
+
+      - name: Set package version from tag
+        run: npm version "${{ steps.version.outputs.version }}" --no-git-tag-version --allow-same-version
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build
+        run: npm run build
+
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        # `npm publish` errors on a duplicate version. We swallow that specific
+        # case so a re-run of the same tag is a no-op.
+        run: |
+          set +e
+          out=$(npm publish --access public 2>&1)
+          code=$?
+          echo "$out"
+          if [ $code -ne 0 ]; then
+            if echo "$out" | grep -qiE "cannot publish over|previously published|version not changed|EPUBLISHCONFLICT|403"; then
+              echo "Version already published; treating as no-op."
+              exit 0
+            fi
+            exit $code
+          fi

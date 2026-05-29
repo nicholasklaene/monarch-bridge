@@ -1,0 +1,25 @@
+get:
+  tags: [Recurring]
+  summary: Upcoming + recent recurring transaction occurrences
+  description: |
+    Calendar-shaped view: one entry per expected recurring
+    transaction occurrence within `[start, end]`. Each entry has the
+    forecasted date, merchant, category, account, amount, and a
+    `status` (`completed`, `pending`, `predicted`).
+
+    Use for a "what's coming up" subscription/bill view or to
+    reconcile expected vs actual recurring spend. For the stream-
+    shaped view (one row per recurring stream, not per occurrence)
+    use `GET /v1/recurring/all`; for month-level aggregate totals
+    use `GET /v1/recurring/aggregate`.
+  operationId: listRecurring
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: One entry per expected occurrence in the window.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/RecurringResponse"

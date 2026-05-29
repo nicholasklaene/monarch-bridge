@@ -1,0 +1,20 @@
+query Common_GetReviewSummaryByUser {
+  byNeedsReviewByUser: aggregates(
+    groupBy: ["needsReviewByUser"]
+    filters: { needsReview: true, transactionVisibility: all_transactions }
+  ) {
+    groupBy {
+      needsReviewByUser {
+        id
+        name
+        __typename
+      }
+      __typename
+    }
+    summary {
+      count
+      __typename
+    }
+    __typename
+  }
+}

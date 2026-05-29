@@ -1,0 +1,13 @@
+mutation Common_CreateManualInvestmentsAccount($input: CreateManualInvestmentsAccountInput!) {
+  createManualInvestmentsAccount(input: $input) {
+    account {
+      id
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

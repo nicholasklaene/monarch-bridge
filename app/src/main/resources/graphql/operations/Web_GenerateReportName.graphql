@@ -1,0 +1,6 @@
+query Web_GenerateReportName(
+    $transactionFilters: TransactionFilterInput!
+    $reportView: ReportViewInput
+  ) {
+    generatedReportName(transactionFilters: $transactionFilters, reportView: $reportView)
+  }

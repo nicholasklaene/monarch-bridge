@@ -1,0 +1,51 @@
+query Web_GetAdvisorClientsPage {
+    subscriptionSponsor {
+      id
+      name
+    }
+
+    me {
+      email
+    }
+
+    subscriptionSponsorshipInvites {
+      id
+      code
+      label
+      sentToEmail
+      status
+      createdAt
+      sponsorship {
+        id
+        status
+        household {
+          id
+          name
+          profilePictureUrl
+          owner {
+            id
+            name
+            email
+          }
+          lastActivityAt
+        }
+      }
+    }
+
+    subscriptionSponsorAccessGrants {
+      id
+      toEmail
+      householdGivingAccessName
+      userGivingAccessId
+      expiresAt
+    }
+
+    subscriptionSponsorshipDemoAccount {
+      user {
+        id
+        email
+      }
+
+      status
+    }
+  }

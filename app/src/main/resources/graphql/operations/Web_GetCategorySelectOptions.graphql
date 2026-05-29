@@ -1,0 +1,25 @@
+query Web_GetCategorySelectOptions {
+    categoryGroups {
+      id
+      name
+      order
+      type
+      groupLevelBudgetingEnabled
+      categories {
+        id
+        name
+        order
+        icon
+      }
+    }
+    categories {
+      id
+      name
+      order
+      icon
+      group {
+        id
+        type
+      }
+    }
+  }

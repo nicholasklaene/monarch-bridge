@@ -1,0 +1,11 @@
+query GetAccounts {
+  accounts {
+    ...AccountFields
+    __typename
+  }
+  householdPreferences {
+    id
+    accountGroupOrder
+    __typename
+  }
+}

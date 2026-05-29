@@ -1,0 +1,21 @@
+get:
+  tags: [System]
+  summary: Whether a Monarch session is currently loaded
+  description: |
+    Reports whether the proxy has a valid Monarch session token in memory.
+    Use as a precondition before calling any data endpoint: a missing
+    session yields 503 on every other route.
+
+    No session required to call this endpoint (unlike most others). The
+    response includes a coarse loaded/not-loaded flag plus the session's
+    expiry hint. If the session is missing or expired, run the bootstrap
+    CLI to re-auth then call `POST /v1/auth/refresh` to swap in the new
+    token.
+  operationId: getAuthStatus
+  responses:
+    "200":
+      description: Auth status.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/AuthStatusResponse"

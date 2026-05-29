@@ -1,0 +1,18 @@
+get:
+  tags: [Holdings]
+  summary: Portfolio allocation grouped by holding
+  description: |
+    Allocation breakdown bucketed per holding (ticker / security name), capped at
+    `limit` rows. Each row is one security with its percent of portfolio and total
+    dollar value.
+  operationId: getPortfolioAllocationByHoldings
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/AccountIdsQuery"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Limit"
+  responses:
+    "200":
+      description: Per-holding allocation rows.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/PortfolioAllocationSimpleResponse"

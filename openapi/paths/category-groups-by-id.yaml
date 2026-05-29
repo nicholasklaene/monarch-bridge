@@ -1,0 +1,82 @@
+patch:
+  tags: [Categories]
+  summary: Update a category group
+  description: |
+    Patches a category group. Only non-null fields are forwarded to
+    Monarch; omit a field to leave it untouched.
+
+    Editable: `name`, `type` (`income` / `expense` / `transfer`),
+    `budgetVariability`, `groupLevelBudgetingEnabled`, icon and color
+    metadata. For the narrow "just set fixed vs flex" case use the
+    intent-revealing `PATCH /v1/category-groups/{id}/budget-variability`
+    endpoint instead.
+  operationId: updateCategoryGroup
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { type: string }
+      description: Category group id.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/UpdateCategoryGroupRequest"
+  responses:
+    "200":
+      description: Updated group.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/UpdateCategoryGroupResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+    "422":
+      description: Monarch PayloadError.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+delete:
+  tags: [Categories]
+  summary: Delete a category group
+  description: |
+    Removes a category group. **Destructive** for orphaned child
+    categories.
+
+    Pass `moveToGroupId` to remap every child category under this
+    group to another group before deletion. Omit and the orphaned
+    categories may need manual cleanup (Monarch will leave them
+    pointing at a no-longer-existing parent).
+
+    System groups (the Monarch-built-in ones) cannot be deleted.
+  operationId: deleteCategoryGroup
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema: { type: string }
+      description: Category group id.
+    - in: query
+      name: moveToGroupId
+      required: false
+      schema: { type: string }
+      description: Remap this group's child categories to this group before deletion.
+  responses:
+    "200":
+      description: Confirmation.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/DeleteCategoryGroupResponse"
+    "422":
+      description: Monarch PayloadError.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

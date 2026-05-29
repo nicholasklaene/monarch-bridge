@@ -1,0 +1,17 @@
+mutation Common_SetPushNotificationPrefs($input: SetChannelNotificationPrefsInput!) {
+  setPushNotificationPreferences(input: $input) {
+    preferences {
+      weeklyRecap
+      budgetAlerts
+      billReminders
+      goalUpdates
+      marketingTips
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

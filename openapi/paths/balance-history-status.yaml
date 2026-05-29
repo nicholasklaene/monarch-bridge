@@ -1,0 +1,28 @@
+get:
+  tags: [Accounts]
+  summary: Poll the parse status of a balance-history upload
+  description: |
+    Polls the async parse job kicked off by `POST /v1/accounts/{id}/balance-history`.
+    Returns Monarch's current `status` for the session (`pending`,
+    `processing`, `completed`, `failed`).
+
+    Typical flow: upload the CSV, grab the `sessionKey` from that 202
+    response, then call this endpoint every few seconds until `status`
+    reaches `completed` (usually under 10 seconds for a year of monthly
+    snapshots). On `failed`, the response includes a Monarch-side error
+    string explaining the parse problem.
+  operationId: getBalanceHistoryStatus
+  parameters:
+    - in: path
+      name: sessionKey
+      required: true
+      schema:
+        type: string
+      description: Session key returned from the upload call.
+  responses:
+    "200":
+      description: Current parse status.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/BalanceHistoryStatusResponse"

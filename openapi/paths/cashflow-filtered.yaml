@@ -1,0 +1,63 @@
+get:
+  tags: [Transactions]
+  summary: Filtered cashflow page (summary + four breakdowns)
+  description: |
+    Filterable cashflow query: summary aggregates plus year/month/quarter
+    bucketing AND category/group/merchant breakdowns in one shot. Filter
+    by accounts, categories, category groups, merchants, tags.
+  operationId: getCashflowFiltered
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+    - in: query
+      name: accountId
+      required: false
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+      description: Filter to one or more account ids (repeat the param).
+    - in: query
+      name: categoryId
+      required: false
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+      description: Filter to one or more category ids.
+    - in: query
+      name: categoryGroupId
+      required: false
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+      description: Filter to one or more category-group ids.
+    - in: query
+      name: merchantId
+      required: false
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+      description: Filter to one or more merchant ids.
+    - in: query
+      name: tagId
+      required: false
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+      description: Filter to one or more tag ids.
+  responses:
+    "200":
+      description: Summary + bucketed + entity-grouped cashflow.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CashflowFilteredResponse"

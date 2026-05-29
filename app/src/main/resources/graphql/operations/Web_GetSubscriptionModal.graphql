@@ -1,0 +1,57 @@
+query Web_GetSubscriptionModal($promoCode: String, $stripePriceId: String! = "") {
+    subscription {
+      id
+      billingPeriod
+      trialEndsAt
+      trialDurationDays
+      hasPremiumEntitlement
+      entitlements
+      willCancelAtPeriodEnd
+      isOnFreeTrial
+      paymentSource
+      paymentMethod {
+        brand
+        lastFour
+      }
+      hasStripeSubscriptionId
+      hasChargedForLifetime
+      referralRedemption {
+        campaign
+      }
+      analyticsFreemiumSummaryStatus
+      currentPeriodEndsAt
+      nextPaymentAmount
+      hasHadFreeTrialExtension
+      canceledPlusTrialAt
+      plusTrialEndsAt
+      activePromoCode {
+        code
+      }
+      plusUpgradeProratedAmount(stripePriceId: $stripePriceId, promoCode: $promoCode)
+    }
+    plusUpgradeTrial {
+      trialDays
+      isEligible
+    }
+    subscriptionOffering(selectedPlanId: $stripePriceId, stripePromoCode: $promoCode) {
+      promoCodeError
+      promoCodeDescription
+      promoCodeDuration
+      promoCodeDurationInMonths
+      plans {
+        name
+        period
+        tier
+        pricePerPeriodDollars
+        discountedPricePerPeriodDollars
+        stripeId
+        newTrialEndsAt
+        requirePaymentMethod
+        sponsoredBy {
+          name
+          email
+          profilePictureUrl
+        }
+      }
+    }
+  }

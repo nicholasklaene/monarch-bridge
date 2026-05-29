@@ -1,0 +1,25 @@
+get:
+  tags: [Budgets]
+  summary: Monthly budget data + actuals
+  description: |
+    Returns planned vs actual spend per category, per category-group, and
+    for the Flex bucket, broken out month-by-month within `[start, end]`.
+
+    Defaults to last-month through next-month when both `start` and `end`
+    are omitted (matches Monarch's web UI default). Pass an explicit window
+    for historical trend analysis.
+
+    Response includes `budgetData` (the planned/actual matrix) plus the
+    full `categoryGroups` tree so callers don't need a separate list call
+    to resolve names. For just the totals see `GET /v1/cashflow`.
+  operationId: getBudgets
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: budgetData (planned vs actual per category/group/flex/month) + categoryGroups.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/BudgetsResponse"

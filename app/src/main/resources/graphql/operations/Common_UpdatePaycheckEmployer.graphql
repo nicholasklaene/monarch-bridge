@@ -1,0 +1,16 @@
+mutation Common_UpdatePaycheckEmployer($input: UpdatePaycheckEmployerInput!) {
+  updatePaycheckEmployer(input: $input) {
+    employer {
+      id
+      name
+      paycheckCount
+      createdAt
+      __typename
+    }
+    errors {
+      message
+      __typename
+    }
+    __typename
+  }
+}

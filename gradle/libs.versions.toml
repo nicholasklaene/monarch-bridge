@@ -1,0 +1,77 @@
+# Single source of truth for plugin + dep versions.
+# monarch-bridge is a stateless pass-through: no JPA, no Flyway, no Kafka.
+
+[versions]
+kotlin            = "2.3.21"
+java              = "21"
+
+spring-boot       = "3.5.14"
+spring-dep-mgmt   = "1.1.7"
+
+# Testing
+mockk             = "1.14.9"
+wiremock          = "3.13.2"
+assertj           = "3.27.7"
+archunit          = "1.4.2"
+
+# Code quality. Detekt 2.0 is the first line to support Kotlin 2.3 (the 1.23.x line is
+# permanently pinned to Kotlin 2.0.21). 2.0.0-alpha.3 is the version Anthropic's own
+# MCP SDK ships with in production.
+detekt            = "2.0.0-alpha.3"
+ktlint            = "1.8.0"
+spotless          = "7.2.1"
+kover             = "0.9.8"
+
+# OpenAPI / Swagger
+springdoc         = "2.8.17"
+springdoc-gradle  = "1.9.0"
+openapi-generator = "7.22.0"
+swagger-parser    = "2.1.42"
+
+# MCP (:mcp module). Official Anthropic Kotlin SDK; pins Kotlin 2.3.21 transitively.
+mcp-kotlin        = "0.12.0"
+slf4j             = "2.0.18"
+
+# Logging. kotlin-logging wraps SLF4J with idiomatic Kotlin: `logger.info { "lazy ${...}" }`.
+logstash-logback  = "9.0"
+kotlin-logging    = "7.0.7"
+
+[libraries]
+spring-boot-starter-web        = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
+spring-boot-starter-actuator   = { group = "org.springframework.boot", name = "spring-boot-starter-actuator" }
+spring-boot-starter-validation = { group = "org.springframework.boot", name = "spring-boot-starter-validation" }
+spring-boot-starter-test       = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
+
+jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin" }
+kotlin-reflect        = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
+
+wiremock-standalone = { group = "org.wiremock", name = "wiremock-standalone", version.ref = "wiremock" }
+assertj-core        = { group = "org.assertj", name = "assertj-core", version.ref = "assertj" }
+archunit-junit5     = { group = "com.tngtech.archunit", name = "archunit-junit5", version.ref = "archunit" }
+
+logstash-logback-encoder = { group = "net.logstash.logback", name = "logstash-logback-encoder", version.ref = "logstash-logback" }
+kotlin-logging-jvm       = { group = "io.github.oshai", name = "kotlin-logging-jvm", version.ref = "kotlin-logging" }
+
+springdoc-openapi-starter-webmvc-ui = { group = "org.springdoc", name = "springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc" }
+
+# OpenAPI parser used by the :mcp module to derive MCP tools from the spec.
+swagger-parser = { group = "io.swagger.parser.v3", name = "swagger-parser", version.ref = "swagger-parser" }
+
+# Official Anthropic MCP server SDK (Maven Central). Pulls in stdio + types + the
+# kotlinx.serialization-based JSON wire format.
+mcp-kotlin-server = { group = "io.modelcontextprotocol", name = "kotlin-sdk", version.ref = "mcp-kotlin" }
+# slf4j-simple routes log output to stderr, leaving stdout for the MCP JSON-RPC stream.
+slf4j-simple      = { group = "org.slf4j", name = "slf4j-simple", version.ref = "slf4j" }
+
+# detekt-formatting was retired in detekt 2.0 (spotless's ktlint integration covers it).
+
+[plugins]
+kotlin-jvm        = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-spring     = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+spring-boot       = { id = "org.springframework.boot", version.ref = "spring-boot" }
+spring-dep-mgmt   = { id = "io.spring.dependency-management", version.ref = "spring-dep-mgmt" }
+detekt            = { id = "dev.detekt", version.ref = "detekt" }
+spotless          = { id = "com.diffplug.spotless", version.ref = "spotless" }
+kover             = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+springdoc-gradle  = { id = "org.springdoc.openapi-gradle-plugin", version.ref = "springdoc-gradle" }
+openapi-generator = { id = "org.openapi.generator", version.ref = "openapi-generator" }

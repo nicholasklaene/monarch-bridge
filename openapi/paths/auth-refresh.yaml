@@ -1,0 +1,20 @@
+post:
+  tags: [System]
+  summary: Reload session JSON from disk
+  description: |
+    Re-reads `~/.config/monarch-bridge/.mm-session.json` and swaps in the new
+    token without a service restart.
+
+    Use after running the bootstrap CLI's re-auth flow (`mb auth login`) to
+    pick up freshly-issued credentials. Cheap call: just hits the local
+    filesystem and updates an in-memory atomic reference. Returns the
+    post-reload auth status so the caller knows immediately whether the new
+    session is loaded.
+  operationId: refreshAuth
+  responses:
+    "200":
+      description: Session reloaded; returns the new auth status.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/AuthStatusResponse"

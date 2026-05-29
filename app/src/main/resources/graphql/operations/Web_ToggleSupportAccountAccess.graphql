@@ -1,0 +1,8 @@
+mutation Web_ToggleSupportAccountAccess($isEnabled: Boolean!) {
+    toggleSupportAccountAccess(isEnabled: $isEnabled) {
+      grant {
+        id
+        expiresAt
+      }
+    }
+  }

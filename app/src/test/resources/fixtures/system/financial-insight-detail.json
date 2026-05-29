@@ -1,0 +1,26 @@
+{
+  "financialInsight": {
+    "id": "ins-2",
+    "merchantNameDisplay": "Spotify",
+    "merchantLogoUrl": null,
+    "productNameDisplay": "Spotify Premium",
+    "description": "Switch to family plan",
+    "reasoning": "Cheaper per seat",
+    "effort": "MEDIUM",
+    "status": "ACCEPTED",
+    "suggestedActionType": "SWITCH_PLAN",
+    "executionMethod": "MANUAL",
+    "canUseBrowserAutomation": true,
+    "savingsEstimateLow": 5.0,
+    "savingsEstimateHigh": 8.0,
+    "capturedSavingsLow": 0.0,
+    "currentAnnualCost": 119.88,
+    "nextChargeDate": "2026-07-15",
+    "score": 0.6,
+    "opportunityType": "PLAN_SWITCH",
+    "paymentAccount": {"label": "Chase ****1234"},
+    "recurringStreamSnapshot": {"frequency": "monthly"},
+    "playbook": {"id": "pb-1", "diySteps": "1. Log in\n2. Switch plan"},
+    "relatedMerchants": []
+  }
+}

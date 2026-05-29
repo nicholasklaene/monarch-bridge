@@ -1,0 +1,17 @@
+query Web_TargetAmountsGoalsList {
+    goalsV2 {
+      id
+      targetAmount
+      startingAmount
+      type
+      ...Web_GoalInfoRowFields
+    }
+  }
+
+fragment Web_GoalInfoRowFields on GoalV2 {
+      id
+      name
+      priority
+      imageStorageProvider
+      imageStorageProviderId
+    }

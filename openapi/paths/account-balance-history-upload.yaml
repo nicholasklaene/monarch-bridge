@@ -1,0 +1,34 @@
+post:
+  tags: [Accounts]
+  summary: Bulk-backfill balance history for a manual account from a CSV
+  description: |
+    Two-step flow: (1) the proxy forwards the CSV to Monarch's
+    `/account-balance-history/upload/` endpoint, (2) it triggers a parse via the
+    `parseBalanceHistory` GraphQL mutation, then returns the session key. Poll
+    `GET /v1/balance-history/{sessionKey}/status` until `status == "completed"`.
+
+    CSV format (matching Monarch's UI uploader): one header row `date,balance`, then
+    one row per snapshot (`2026-01-31,12345.67`). Negative balances OK for
+    credit/loan accounts.
+  operationId: uploadAccountBalanceHistory
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/AccountIdPath"
+  requestBody:
+    required: true
+    content:
+      multipart/form-data:
+        schema:
+          type: object
+          required: [file]
+          properties:
+            file:
+              type: string
+              format: binary
+              description: CSV with `date,balance` rows. UTF-8.
+  responses:
+    "202":
+      description: Upload accepted; returns the session key. Poll for completion.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/BalanceHistoryUploadResponse"

@@ -1,0 +1,25 @@
+query Web_GetCategoryGroupDetails($id: UUID, $month: Date!, $includeBudgetAmounts: Boolean!) {
+    categoryGroup(id: $id) {
+      id
+      name
+      type
+      rolloverPeriod {
+        id
+        startingBalance
+      }
+      groupLevelBudgetingEnabled
+
+      budgetAmountsForMonth(month: $month) @include(if: $includeBudgetAmounts) {
+        ...CategoryPlanSummaryFields
+      }
+    }
+  }
+
+fragment CategoryPlanSummaryFields on BudgetMonthlyAmounts {
+      month
+      plannedAmount
+      actualAmount
+      remainingAmount
+      previousMonthRolloverAmount
+      rolloverType
+    }

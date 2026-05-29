@@ -1,0 +1,193 @@
+query Web_GetFilteredCashFlowPage(
+  $categories: [UUID!]
+  $categoryGroups: [UUID!]
+  $accounts: [UUID!]
+  $merchants: [UUID!]
+  $startDate: Date
+  $endDate: Date
+  $tags: [ID!]
+) {
+  summary: aggregates(
+    fillEmptyValues: true
+    filters: {
+      startDate: $startDate
+      endDate: $endDate
+      categories: $categories
+      categoryGroups: $categoryGroups
+      merchants: $merchants
+      accounts: $accounts
+      tags: $tags
+    }
+  ) {
+    summary {
+      sumIncome
+      sumExpense
+      savings
+      savingsRate
+      __typename
+    }
+    __typename
+  }
+  byYear: aggregates(
+    groupBy: ["year"]
+    fillEmptyValues: true
+    filters: {
+      startDate: $startDate
+      endDate: $endDate
+      categories: $categories
+      categoryGroups: $categoryGroups
+      merchants: $merchants
+      accounts: $accounts
+      tags: $tags
+    }
+  ) {
+    groupBy {
+      year
+      __typename
+    }
+    summary {
+      savings
+      savingsRate
+      sumIncome
+      sumExpense
+      __typename
+    }
+    __typename
+  }
+  byMonth: aggregates(
+    groupBy: ["month"]
+    fillEmptyValues: true
+    filters: {
+      startDate: $startDate
+      endDate: $endDate
+      categories: $categories
+      categoryGroups: $categoryGroups
+      merchants: $merchants
+      accounts: $accounts
+      tags: $tags
+    }
+  ) {
+    groupBy {
+      month
+      __typename
+    }
+    summary {
+      savings
+      savingsRate
+      sumIncome
+      sumExpense
+      __typename
+    }
+    __typename
+  }
+  byQuarter: aggregates(
+    groupBy: ["quarter"]
+    fillEmptyValues: true
+    filters: {
+      startDate: $startDate
+      endDate: $endDate
+      categories: $categories
+      categoryGroups: $categoryGroups
+      merchants: $merchants
+      accounts: $accounts
+      tags: $tags
+    }
+  ) {
+    groupBy {
+      quarter
+      __typename
+    }
+    summary {
+      savings
+      savingsRate
+      sumIncome
+      sumExpense
+      __typename
+    }
+    __typename
+  }
+  byCategory: aggregates(
+    groupBy: ["category"]
+    filters: {
+      startDate: $startDate
+      endDate: $endDate
+      categories: $categories
+      categoryGroups: $categoryGroups
+      merchants: $merchants
+      accounts: $accounts
+      tags: $tags
+    }
+  ) {
+    groupBy {
+      category {
+        id
+        name
+        icon
+        group {
+          id
+          type
+          __typename
+        }
+        __typename
+      }
+    }
+    summary {
+      sum
+      __typename
+    }
+    __typename
+  }
+  byCategoryGroup: aggregates(
+    groupBy: ["categoryGroup"]
+    filters: {
+      startDate: $startDate
+      endDate: $endDate
+      categories: $categories
+      categoryGroups: $categoryGroups
+      merchants: $merchants
+      accounts: $accounts
+      tags: $tags
+    }
+  ) {
+    groupBy {
+      categoryGroup {
+        id
+        name
+        type
+        __typename
+      }
+    }
+    summary {
+      sum
+      __typename
+    }
+    __typename
+  }
+  byMerchant: aggregates(
+    groupBy: ["merchant"]
+    filters: {
+      startDate: $startDate
+      endDate: $endDate
+      categories: $categories
+      categoryGroups: $categoryGroups
+      merchants: $merchants
+      accounts: $accounts
+      tags: $tags
+    }
+  ) {
+    groupBy {
+      merchant {
+        id
+        name
+        logoUrl
+        __typename
+      }
+    }
+    summary {
+      sumIncome
+      sumExpense
+      __typename
+    }
+    __typename
+  }
+}

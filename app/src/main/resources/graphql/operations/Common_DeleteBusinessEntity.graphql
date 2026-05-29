@@ -1,0 +1,3 @@
+mutation Common_DeleteBusinessEntity {
+  __typename
+}

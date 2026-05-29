@@ -1,0 +1,6 @@
+query Web_GetAutoReinvest($holdingId: ID!) {
+  autoReinvest(holdingId: $holdingId) {
+    enabled
+    __typename
+  }
+}

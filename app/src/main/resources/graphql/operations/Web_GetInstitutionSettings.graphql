@@ -1,0 +1,35 @@
+query Web_GetInstitutionSettings {
+  credentials {
+    id
+    updateRequired
+    disconnectedFromDataProviderAt
+    dataProvider
+    institution {
+      id
+      name
+      url
+      __typename
+    }
+    __typename
+  }
+  accounts(filters: {includeDeleted: true}) {
+    id
+    displayName
+    subtype {
+      display
+      __typename
+    }
+    mask
+    credential {
+      id
+      __typename
+    }
+    deletedAt
+    __typename
+  }
+  subscription {
+    isOnFreeTrial
+    hasPremiumEntitlement
+    __typename
+  }
+}

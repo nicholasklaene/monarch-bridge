@@ -1,0 +1,43 @@
+mutation Web_AnswerQuestionMutation($input: AnswerProfileQuestionInput!) {
+    answerProfileQuestion(input: $input) {
+      success
+      nextQuestion {
+        ...QuestionFields
+      }
+      questionnaireState {
+        ...StateFields
+      }
+    }
+  }
+
+fragment QuestionFields on ProfileQuestion {
+    index
+    ...QuestionHeaderFields
+    ...QuestionFormFields
+  }
+
+fragment QuestionHeaderFields on ProfileQuestion {
+      title
+      description
+    }
+
+fragment QuestionFormFields on ProfileQuestion {
+      name
+      type
+      required
+      options {
+        value
+        label
+      }
+      answer {
+        answer
+        dontKnow
+        answeredAt
+      }
+    }
+
+fragment StateFields on ProfileQuestionnaireState {
+    numQuestionsAnswered
+    numQuestions
+    completed
+  }

@@ -1,0 +1,18 @@
+get:
+  tags: [Tax]
+  summary: Sum + count of transactions by category for a date window
+  description: |
+    Groups all transactions in `[start, end]` by category and returns
+    `{sum, count}` per row. Same shape as cashflow-by-category but with
+    `systemCategory` so callers can map directly to tax schedules.
+  operationId: getTaxCategoryAggregates
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: Aggregates by category.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetTaxCategoryAggregatesResponse"

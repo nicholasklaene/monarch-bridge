@@ -1,0 +1,6 @@
+query Web_GetAccount($id: UUID!) {
+    account(id: $id) {
+      id
+      displayName
+    }
+  }

@@ -1,0 +1,58 @@
+get:
+  tags: [Rules]
+  summary: List all transaction rules
+  description: |
+    Auto-categorization rules. Each rule has matching criteria (merchant,
+    amount range, account, category, etc.) and a set of actions to apply
+    (set category, add tags, hide from reports, split, etc.) whenever a
+    transaction matches. Returned in display order.
+  operationId: listTransactionRules
+  responses:
+    "200":
+      description: All transaction rules, in display order.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ListTransactionRulesResponse"
+post:
+  tags: [Rules]
+  summary: Create a transaction rule
+  description: |
+    Persists a new auto-categorization rule. Criteria and actions are
+    both partial: omit any field to leave it unset (e.g. omit
+    `merchantName` to match on amount-range only).
+
+    Criteria support: merchant name, amount range, account, current
+    category. Actions support: set category, add tags, set merchant
+    name, hide from reports, split. Rules apply to incoming
+    transactions on next sync (Monarch does not retroactively
+    categorize unless the user runs the rule from the UI).
+
+    To dry-run a rule shape before saving, use
+    `POST /v1/transaction-rules/preview` (same body, no persistence).
+  operationId: createTransactionRule
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/TransactionRuleRequest"
+  responses:
+    "200":
+      description: Rule created (Monarch's mutation does not return the saved rule body; fetch via list to see the persisted form).
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CreateTransactionRuleResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+    "422":
+      description: Monarch PayloadError.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

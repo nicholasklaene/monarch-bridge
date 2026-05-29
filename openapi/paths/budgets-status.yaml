@@ -1,0 +1,14 @@
+get:
+  tags: [Budgets]
+  summary: Budget status (initialized? has transactions?)
+  description: |
+    Cheap status check: has-budget, has-transactions, and a flag for
+    Monarch's empty-default-categories bootstrap path.
+  operationId: getBudgetStatus
+  responses:
+    "200":
+      description: Budget status flags.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetBudgetStatusResponse"

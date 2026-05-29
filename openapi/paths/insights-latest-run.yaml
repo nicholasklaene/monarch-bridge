@@ -1,0 +1,15 @@
+get:
+  tags: [System]
+  summary: Latest financial-insight run + insights count
+  description: |
+    Returns just the latest run metadata (id, status, errorMessage,
+    insightsGeneratedCount) and the current total insights count.
+    Faster than `/v1/insights` when all you need is freshness.
+  operationId: getLatestInsightRun
+  responses:
+    "200":
+      description: Latest insight run.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetLatestFinancialInsightRunResponse"

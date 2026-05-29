@@ -1,0 +1,13 @@
+query Common_GetIntegrationStatus {
+  integrationStatus {
+    credentialId
+    institutionName
+    provider
+    status
+    lastSyncedAt
+    errorCode
+    errorMessage
+    needsReauth
+    __typename
+  }
+}

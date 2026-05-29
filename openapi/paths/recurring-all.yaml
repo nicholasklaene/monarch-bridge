@@ -1,0 +1,35 @@
+get:
+  tags: [Recurring]
+  summary: All recurring streams with next-occurrence detail
+  description: |
+    Stream-shaped recurring view: one entry per recurring transaction
+    stream (NOT per occurrence; see `GET /v1/recurring` for the
+    per-date calendar view). Each entry carries the stream definition,
+    the next forecasted occurrence, plus the merchant, category, and
+    account references resolved to full objects.
+
+    Use for a "all my subscriptions and bills" view. Toggle
+    `includeLiabilities` to add credit-report-derived streams (loans,
+    credit-card minimum payments). Toggle `includePending` to include
+    streams Monarch hasn't yet confirmed as recurring.
+  operationId: listAllRecurring
+  parameters:
+    - in: query
+      name: includeLiabilities
+      required: false
+      schema:
+        type: boolean
+      description: Include liability-account-derived streams.
+    - in: query
+      name: includePending
+      required: false
+      schema:
+        type: boolean
+      description: Include pending (not-yet-confirmed) streams.
+  responses:
+    "200":
+      description: All recurring streams.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ListAllRecurringResponse"

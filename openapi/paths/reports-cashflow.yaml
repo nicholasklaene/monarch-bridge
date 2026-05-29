@@ -1,0 +1,19 @@
+get:
+  tags: [System]
+  summary: Cashflow report
+  description: |
+    Full cashflow report: total income / expense / net for the window
+    plus a per-month series. Distinct from `GET /v1/cashflow` (a lighter
+    summary view); this is the per-month chart shape the web Reports tab
+    fires.
+  operationId: getCashflowReport
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+  responses:
+    "200":
+      description: Per-month cashflow plus totals.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetCashflowReportResponse"

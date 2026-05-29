@@ -1,0 +1,17 @@
+query Web_GetTaxPrepCategoryTransactions(
+    $filters: TransactionFilterInput
+    $orderBy: TransactionOrdering
+    $limit: Int
+  ) {
+    allTransactions(filters: $filters) {
+      results(limit: $limit, offset: 0, orderBy: $orderBy) {
+        id
+        amount
+        merchant {
+          id
+          name
+          logoUrl
+        }
+      }
+    }
+  }

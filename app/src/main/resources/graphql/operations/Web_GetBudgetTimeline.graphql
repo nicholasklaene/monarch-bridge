@@ -1,0 +1,13 @@
+query Web_GetBudgetTimeline($startMonth: Date!, $monthCount: Int) {
+  budgetTimeline(startMonth: $startMonth, monthCount: $monthCount) {
+    months {
+      month
+      totalBudget
+      totalActual
+      varianceAmount
+      variancePercent
+      __typename
+    }
+    __typename
+  }
+}

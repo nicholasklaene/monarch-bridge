@@ -1,0 +1,15 @@
+query Web_GetCashflowReport($startDate: Date, $endDate: Date) {
+  cashflowReport(startDate: $startDate, endDate: $endDate) {
+    totalIncome
+    totalExpense
+    netCashflow
+    months {
+      month
+      income
+      expense
+      net
+      __typename
+    }
+    __typename
+  }
+}

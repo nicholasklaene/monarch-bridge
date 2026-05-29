@@ -1,0 +1,18 @@
+query Web_GetTransactionsPage($filters: TransactionFilterInput) {
+    aggregates(filters: $filters) {
+      summary {
+        ...TransactionsSummaryFields
+      }
+    }
+  }
+
+fragment TransactionsSummaryFields on TransactionsSummary {
+      avg
+      max
+      maxExpense
+      sum
+      sumIncome
+      sumExpense
+      first
+      last
+    }

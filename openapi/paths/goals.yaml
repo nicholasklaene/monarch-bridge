@@ -1,0 +1,57 @@
+get:
+  tags: [Goals]
+  summary: List all savings goals
+  description: |
+    Returns every v2 savings goal: active, archived, hard-deleted-but-
+    soft-still-visible, debt and savings types together. Each entry
+    carries name, target amount, current progress, priority, linked
+    accounts, and `archivedAt`.
+
+    Filter client-side on `archivedAt == null` to hide archived. Sort
+    on `priority` for the user's intended display order. For one goal's
+    detail use `GET /v1/goals/{id}`; for the event log use
+    `GET /v1/goals/{id}/events`.
+  operationId: listGoals
+  responses:
+    "200":
+      description: All savings goals.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ListGoalsResponse"
+post:
+  tags: [Goals]
+  summary: Create a new savings or debt-payoff goal
+  description: |
+    Creates one savings goal. Wraps Monarch's `createSavingsGoals`
+    batch mutation with a single-goal body for ergonomics.
+
+    Required: `name` and `targetAmount`. Optional: `targetDate`,
+    `imageStorageProvider`/`imageStorageProviderId` for an icon,
+    `accounts` to pre-link funding accounts. `type` defaults to
+    `"savings"`; pass `"debt"` for a debt-payoff goal (sign
+    convention flips: progress = paying it DOWN).
+
+    Once created, set up monthly contributions via
+    `PUT /v1/goals/{id}/budget` and log actuals via
+    `POST /v1/goals/{id}/contributions`.
+  operationId: createGoal
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/CreateGoalRequest"
+  responses:
+    "200":
+      description: New goal.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CreateGoalResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

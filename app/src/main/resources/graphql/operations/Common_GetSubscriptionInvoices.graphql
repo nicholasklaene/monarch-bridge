@@ -1,0 +1,12 @@
+query Common_GetSubscriptionInvoices {
+  subscriptionInvoices {
+    id
+    date
+    amount
+    status
+    pdfUrl
+    periodStart
+    periodEnd
+    __typename
+  }
+}

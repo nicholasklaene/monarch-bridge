@@ -1,0 +1,8 @@
+query Web_EquityAccountDetails_getLinkedAccount($id: UUID!) {
+    account(id: $id) {
+      id
+      displayName
+      logoUrl
+      icon
+    }
+  }

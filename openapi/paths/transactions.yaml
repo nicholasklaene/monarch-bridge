@@ -1,0 +1,91 @@
+get:
+  tags: [Transactions]
+  summary: Search and list transactions with rich filtering
+  description: |
+    Returns transactions matching the filter set, **newest-first** within
+    `[start, end]`. Use the `search` param for free-text search across
+    merchant + notes + plaid name. Combine with `categoryIds`,
+    `accountIds`, `tagIds` (all multi) to scope.
+
+    Date semantics: `start` is the **oldest allowed date**, NOT "scroll
+    forward from here". `?start=2026-01-01&limit=10` returns the 10
+    newest txns on or after Jan 2026 (probably this week). To get January
+    specifically: `?start=2026-01-01&end=2026-01-31`. To get older rows,
+    bound `end` earlier or paginate with `offset`.
+
+    Bool filters (`hasAttachments`, `isRecurring`, `hideFromReports`,
+    `needsReview`, etc.) accept true/false; omit to not filter on that
+    dimension. Returns the page plus `totalCount` for the filter set.
+    For aggregate stats over the same filter use
+    `GET /v1/transactions/summary`; for the single-row detail use
+    `GET /v1/transactions/{id}`.
+  operationId: listTransactions
+  parameters:
+    - $ref: "../monarch-bridge.yaml#/components/parameters/StartDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/EndDate"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Limit"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Offset"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/AccountIdQuery"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/AccountIdsQuery"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/CategoryIdsQuery"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TagIdsQuery"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/OrderBy"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/Search"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/HasAttachments"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/HasNotes"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/HideFromReports"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/IsSplit"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/IsRecurring"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/ImportedFromMint"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/SyncedFromInstitution"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/NeedsReview"
+    - $ref: "../monarch-bridge.yaml#/components/parameters/TransactionVisibility"
+  responses:
+    "200":
+      description: Page of transactions + totalCount.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ListTransactionsResponse"
+post:
+  tags: [Transactions]
+  summary: Create a manual transaction
+  description: |
+    Adds a transaction by hand into a specific account. Typically used
+    for cash spending, manually-tracked accounts, or to record an
+    item Plaid missed.
+
+    Required: `accountId`, `date`, `amount` (signed: negative for
+    spending, positive for income/refund), and `merchantName`. Optional:
+    `categoryId`, `notes`, `hideFromReports`. Skips Monarch's auto-
+    categorization rule pass - the new transaction lands with exactly
+    the category you supplied (or uncategorized).
+
+    For receipt attachment use `POST /v1/transactions/{id}/attachment`
+    after the create. PayloadError yields 422 on Monarch-side rejection.
+  operationId: createTransaction
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/CreateTransactionRequest"
+  responses:
+    "200":
+      description: New transaction id.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/CreateTransactionResponse"
+    "400":
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"
+    "422":
+      description: Monarch PayloadError.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/ErrorResponse"

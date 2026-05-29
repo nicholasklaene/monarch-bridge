@@ -1,0 +1,10 @@
+query Common_SavingsGoalsCurrentMonthTotals($startMonth: Date!, $endMonth: Date!) {
+  savingsGoals {
+    id
+    monthlyBudgetAmounts(startMonth: $startMonth, endMonth: $endMonth) {
+      totalPlannedAmount
+      __typename
+    }
+    __typename
+  }
+}

@@ -1,0 +1,138 @@
+query Web_GoalDetailV2($goalId: ID!) {
+    goalV2(id: $goalId) {
+      id
+      imageStorageProvider
+      imageStorageProviderId
+      archivedAt
+      newGoalId
+      ...WebGoalDetailsCardFields
+      ...WebGoalBalancesCardFields
+      ...WebGoalCardFields
+      ...WebGoalContributionGraphFields
+      ...WebGoalSettingsModalCardFields
+    }
+  }
+
+fragment WebGoalDetailsCardFields on GoalV2 {
+      id
+      name
+      imageStorageProvider
+      imageStorageProviderId
+      priority
+      plannedMonthlyContribution
+      plannedMonthlyPretaxContribution
+      targetAmount
+      currentAmount
+      startingAmount
+      type
+      objective
+    }
+
+fragment WebGoalBalancesCardFields on GoalV2 {
+      id
+      type
+      defaultName
+      accountAllocations {
+        id
+        ...WebGoalAccountBalanceRowFields
+      }
+    }
+
+fragment WebGoalAccountBalanceRowFields on GoalAccountAllocation {
+      id
+      currentAmount
+      currentMonthChange {
+        percent
+        amount
+      }
+      account {
+        id
+        displayName
+        hideFromList
+        deactivatedAt
+        icon
+        logoUrl
+        type {
+          name
+        }
+        ...AccountMaskFields
+      }
+    }
+
+fragment AccountMaskFields on Account {
+    id
+    mask
+    subtype {
+      display
+    }
+  }
+
+fragment WebGoalCardFields on GoalV2 {
+      id
+      imageStorageProvider
+      imageStorageProviderId
+      priority
+      archivedAt
+      objective
+      plannedMonthlyContribution
+      plannedMonthlyPretaxContribution
+      accountAllocations {
+        id
+        currentAmount
+
+        currentMonthChange {
+          amount
+        }
+
+        account {
+          id
+          logoUrl
+          icon
+          displayName
+          currentBalance
+          displayBalance
+        }
+      }
+      ...WebGoalNameProgressBarFields
+    }
+
+fragment WebGoalNameProgressBarFields on GoalV2 {
+      id
+      name
+      defaultName
+      targetAmount
+      startingAmount
+      currentAmount
+      completedAt
+      archivedAt
+      type
+      completionPercent
+      accountAllocations {
+        id
+      }
+    }
+
+fragment WebGoalContributionGraphFields on GoalV2 {
+      id
+      plannedMonthlyContribution
+      monthlyContributionSummaries {
+        month
+        sum
+        sumCredit
+        sumDebit
+        plannedAmount
+      }
+    }
+
+fragment WebGoalSettingsModalCardFields on GoalV2 {
+      id
+      type
+      name
+      objective
+      imageStorageProvider
+      imageStorageProviderId
+      targetAmount
+      startingAmount
+      plannedMonthlyContribution
+      plannedMonthlyPretaxContribution
+    }

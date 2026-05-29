@@ -1,0 +1,19 @@
+mutation Common_UpdatePaycheck($input: UpdatePaycheckInput!) {
+  updatePaycheck(input: $input) {
+    paycheck {
+      ...PaycheckFields
+      __typename
+    }
+    errors {
+      fieldErrors {
+        field
+        messages
+        __typename
+      }
+      message
+      code
+      __typename
+    }
+    __typename
+  }
+}

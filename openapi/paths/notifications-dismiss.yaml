@@ -1,0 +1,30 @@
+post:
+  tags: [System]
+  summary: Dismiss one notification
+  description: |
+    Permanently dismiss a single activity event. Distinct from
+    `read` - dismissed events are hidden entirely (will not reappear
+    even if unread).
+  operationId: dismissNotification
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: Monarch activity-event id.
+  responses:
+    "200":
+      description: Updated event id + dismissedAt timestamp.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [data]
+            properties:
+              data:
+                type: object
+                required: [id]
+                properties:
+                  id: { type: string }
+                  dismissedAt: { type: string, nullable: true }

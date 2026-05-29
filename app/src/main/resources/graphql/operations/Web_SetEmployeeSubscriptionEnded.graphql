@@ -1,0 +1,13 @@
+mutation Web_SetEmployeeSubscriptionEnded($input: EmployeeSubscriptionEndedInput!) {
+    setEmployeeSubscriptionEnded(input: $input) {
+      subscription {
+        id
+        isOnFreeTrial
+        entitlements
+        willCancelAtPeriodEnd
+      }
+      errors {
+        message
+      }
+    }
+  }

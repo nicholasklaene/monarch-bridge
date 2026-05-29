@@ -1,0 +1,106 @@
+query GetJointPlanningData($startDate: Date!, $endDate: Date!) {
+  budgetData(startMonth: $startDate, endMonth: $endDate) {
+    monthlyAmountsByCategory {
+      category { id __typename }
+      monthlyAmounts {
+        month
+        plannedCashFlowAmount
+        plannedSetAsideAmount
+        actualAmount
+        remainingAmount
+        previousMonthRolloverAmount
+        rolloverType
+        __typename
+      }
+      __typename
+    }
+    monthlyAmountsByCategoryGroup {
+      categoryGroup { id __typename }
+      monthlyAmounts {
+        month
+        plannedCashFlowAmount
+        actualAmount
+        remainingAmount
+        previousMonthRolloverAmount
+        rolloverType
+        __typename
+      }
+      __typename
+    }
+    monthlyAmountsForFlexExpense {
+      budgetVariability
+      monthlyAmounts {
+        month
+        plannedCashFlowAmount
+        actualAmount
+        remainingAmount
+        previousMonthRolloverAmount
+        rolloverType
+        __typename
+      }
+      __typename
+    }
+    totalsByMonth {
+      month
+      totalIncome {
+        plannedAmount
+        actualAmount
+        remainingAmount
+        previousMonthRolloverAmount
+        __typename
+      }
+      totalExpenses {
+        plannedAmount
+        actualAmount
+        remainingAmount
+        previousMonthRolloverAmount
+        __typename
+      }
+      totalFixedExpenses {
+        plannedAmount
+        actualAmount
+        remainingAmount
+        previousMonthRolloverAmount
+        __typename
+      }
+      totalFlexibleExpenses {
+        plannedAmount
+        actualAmount
+        remainingAmount
+        previousMonthRolloverAmount
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+  categoryGroups {
+    id
+    name
+    order
+    groupLevelBudgetingEnabled
+    type
+    budgetVariability
+    rolloverPeriod {
+      id
+      startMonth
+      endMonth
+      __typename
+    }
+    categories {
+      id
+      name
+      icon
+      order
+      rolloverPeriod {
+        id
+        startMonth
+        endMonth
+        startingBalance
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}

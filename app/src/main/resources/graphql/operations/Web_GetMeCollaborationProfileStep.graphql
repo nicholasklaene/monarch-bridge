@@ -1,0 +1,12 @@
+query Web_GetMeCollaborationProfileStep {
+    me {
+      id
+      displayName
+      profilePicture {
+        id
+        cloudinaryPublicId
+        thumbnailUrl
+      }
+      largeProfilePictureUrl
+    }
+  }

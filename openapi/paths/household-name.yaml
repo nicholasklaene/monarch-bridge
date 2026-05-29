@@ -1,0 +1,20 @@
+put:
+  tags: [Settings]
+  summary: Update household name
+  description: |
+    Rename the household. The new name appears in invitation emails and
+    on every member's home screen.
+  operationId: updateHouseholdName
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../monarch-bridge.yaml#/components/schemas/UpdateHouseholdNameRequest"
+  responses:
+    "200":
+      description: Updated household record.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/UpdateHouseholdNameResponse"

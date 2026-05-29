@@ -1,0 +1,26 @@
+mutation Common_UpdateHouseholdPreferences($input: UpdateHouseholdPreferencesInput!) {
+  updateHouseholdPreferences(input: $input) {
+    householdPreferences {
+      id
+      newTransactionsNeedReview
+      uncategorizedTransactionsNeedReview
+      pendingTransactionsCanBeEdited
+      aiAssistantEnabled
+      llmEnrichmentEnabled
+      investmentTransactionsEnabled
+      budgetApplyToFutureMonthsDefault
+      hiddenTransactionsBetaEnabled
+      collaborationToolsEnabled
+      aggDataSharingEnabled
+      aiModelTrainingOnUserDataEnabled
+      excludeBusinessFromBudget
+      continuousFinancialMonitoringEnabled
+      __typename
+    }
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

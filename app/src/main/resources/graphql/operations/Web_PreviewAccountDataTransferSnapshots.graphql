@@ -1,0 +1,15 @@
+query Web_PreviewAccountDataTransferSnapshots($input: PreviewCopySnapshotsInput!) {
+    previewAccountDataTransferSnapshots(input: $input) {
+      previewSnapshots {
+        date
+        signedBalance
+      }
+      fromAccountSummary {
+        numSnapshots
+      }
+      toAccountSummary {
+        numSnapshots
+        numNewerSnapshots
+      }
+    }
+  }

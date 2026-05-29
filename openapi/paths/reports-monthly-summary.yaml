@@ -1,0 +1,24 @@
+get:
+  tags: [System]
+  summary: Monthly report summary
+  description: |
+    One-month summary bundle Monarch sends to the monthly-recap email
+    and the web monthly-summary widget. Single-row aggregate covering
+    net income, total spending, total income, savings rate, and the top
+    merchant / category callouts.
+  operationId: getMonthlyReportSummary
+  parameters:
+    - in: query
+      name: month
+      required: true
+      schema:
+        type: string
+        format: date
+      description: First-of-month date, e.g. `2026-05-01`.
+  responses:
+    "200":
+      description: Monthly summary.
+      content:
+        application/json:
+          schema:
+            $ref: "../monarch-bridge.yaml#/components/schemas/GetMonthlyReportSummaryResponse"

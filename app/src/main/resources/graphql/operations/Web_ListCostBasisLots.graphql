@@ -1,0 +1,11 @@
+query Web_ListCostBasisLots($holdingId: ID!) {
+  costBasisLots(holdingId: $holdingId) {
+    id
+    acquisitionDate
+    quantity
+    costBasis
+    currentValue
+    unrealizedGain
+    __typename
+  }
+}

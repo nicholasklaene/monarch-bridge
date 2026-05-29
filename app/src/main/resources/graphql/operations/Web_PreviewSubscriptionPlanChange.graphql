@@ -1,0 +1,9 @@
+query Web_PreviewSubscriptionPlanChange($input: PreviewSubscriptionPlanChangeInput!) {
+  previewSubscriptionPlanChange(input: $input) {
+    proratedCharge
+    newRenewalDate
+    currency
+    summary
+    __typename
+  }
+}

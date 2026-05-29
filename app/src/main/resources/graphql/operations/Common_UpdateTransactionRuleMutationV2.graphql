@@ -1,0 +1,9 @@
+mutation Common_UpdateTransactionRuleMutationV2($input: UpdateTransactionRuleInput!) {
+  updateTransactionRuleV2(input: $input) {
+    errors {
+      ...PayloadErrorFields
+      __typename
+    }
+    __typename
+  }
+}

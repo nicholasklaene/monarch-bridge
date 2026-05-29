@@ -1,0 +1,6 @@
+query Common_TransactionExplainQuery($id: UUID!) {
+  explainTransaction(id: $id) {
+    explanation
+    __typename
+  }
+}
